@@ -218,8 +218,8 @@
       </div>
     </div>
 
-    <!-- Tab Bar -->
-    <nav class="tab-btn-bar">
+    <!-- ─── TABBAR ─────────────────────────────── -->
+    <nav class="tabbar">
       <a class="tab-btn active" href="index.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         <span class="tab-txt">Book</span>
@@ -249,14 +249,7 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let APP = { user: JSON.parse(localStorage.getItem('sf_user') || 'null'), pendingRide: JSON.parse(localStorage.getItem('sf_pending_ride') || 'null') };
 
-    const DEMO_DRIVERS = [
-      { name: 'Ramesh Patil', mobile: '9876543210', auto_number: 'MH12AB1234', img: 'auto.jpg' },
-      { name: 'Suresh More',  mobile: '9123456780', auto_number: 'MH15CD5678', img: 'auto.jpg' },
-      { name: 'Vijay Desai',  mobile: '9988776655', auto_number: 'MH14EF9999', img: 'auto.jpg' },
-    ];
-
     window.onload = () => {
-      // Re-read storage to get most recent profile data
       APP.user = JSON.parse(localStorage.getItem('sf_user') || 'null');
       updateGreeting();
       
@@ -344,33 +337,45 @@
       showToast('Welcome back! 👋');
     }
 
+    // Handle Ride Status from Supabase
+    function handleRideUpdate(payload) {
+      const ride = payload.new;
+      if (ride.status === 'accepted' && ride.id === APP.pendingRideId) {
+        showRideConfirmed(ride);
+      }
+    }
+
+    // SIMULATED DEMO MODE (Instant Accept for Demo)
+    function simulateAccept(rideId) {
+      setTimeout(async () => {
+        const demoDriver = {
+          status: 'accepted',
+          driver_name: 'Rajesh ‘Auto’ Patil', 
+          driver_mobile: '+91 91234 56789',
+          auto_number: 'MH 12 AB 4567',
+          driver_profile_image: 'https://ui-avatars.com/api/?name=Rajesh+Auto&background=0050ff&color=fff',
+          accepted_at: new Date().toISOString()
+        };
+        
+        // Update database to simulate real acceptance
+        const { error } = await _supabase.from('ride_bookings').update(demoDriver).eq('id', rideId);
+        if(!error) {
+           showToast('🛺 Driver found instantly!');
+        }
+      }, 4000); // 4 seconds delay for "realism"
+    }
+
     async function bookRide() {
-      const from = document.getElementById('inp-from').value.trim();
-      const to = document.getElementById('inp-to').value.trim();
-      if (!from || !to) { showToast('Enter pickup and destination'); return; }
+      const pickup = document.getElementById('inp-from').value.trim();
+      const drop = document.getElementById('inp-to').value.trim();
+      
+      if (!pickup || !drop) { showToast('Please enter both locations'); return; }
+      
       setLoading(true);
-      const ridePayload = {
+      const booking = {
         customer_id: APP.user.id,
         customer_name: APP.user.full_name,
         customer_mobile: APP.user.mobile,
-        pickup_address: from,
-        dropoff_address: to,
-        estimated_fare: 40 + Math.floor(Math.random() * 80),
-        status: 'pending',
-        customer_profile_image: APP.user.profile_image_url || null
-      };
-      const { data, error } = await _supabase.from('ride_bookings').insert(ridePayload).select().single();
-      setLoading(false);
-      if (error) { showToast('Booking failed. Try again.'); return; }
-      APP.pendingRide = data;
-      localStorage.setItem('sf_pending_ride', JSON.stringify(data));
-      showActiveRideUI(data);
-      showToast('Searching for verified autos... 🔍');
-      triggerDriverNotification(ridePayload);
-
-      // --- DEMO: Simulate driver acceptance after 5 seconds ---
-      setTimeout(() => simulateDriverAcceptance(data), 5000);
-    }
 
     async function simulateDriverAcceptance(ride) {
       const demo = DEMO_DRIVERS[Math.floor(Math.random() * DEMO_DRIVERS.length)];
