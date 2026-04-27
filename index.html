@@ -350,17 +350,17 @@
       setTimeout(async () => {
         const demoDriver = {
           status: 'accepted',
-          driver_name: 'Rajesh ‘Auto’ Patil', 
-          driver_mobile: '+91 91234 56789',
-          auto_number: 'MH 12 AB 4567',
-          driver_profile_image: 'https://ui-avatars.com/api/?name=Rajesh+Auto&background=0050ff&color=fff',
+          driver_name: 'Rakesh Kumar', 
+          driver_mobile: '9876543210',
+          auto_number: 'MH12HK6778',
+          driver_profile_image: 'https://eouqjkvfbjefbyindqjp.supabase.co/storage/v1/object/public/driver-profiles/129480db-3d9a-4a5d-97e4-948b4c2c62b9/profile.jpg',
           accepted_at: new Date().toISOString()
         };
         
         // Update database to simulate real acceptance
         const { error } = await _supabase.from('ride_bookings').update(demoDriver).eq('id', rideId);
         if(!error) {
-           showToast('🛺 Driver found instantly!');
+           showToast('🛺 Rakesh Kumar is on the way!');
         }
       }, 4000); // 4 seconds delay for "realism"
     }
