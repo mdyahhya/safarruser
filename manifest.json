@@ -1,0 +1,17 @@
+{
+  "name": "Safarr Passenger",
+  "short_name": "Safarr",
+  "description": "Book metered autos instantly in Pune.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0050ff",
+  "theme_color": "#0050ff",
+  "icons": [
+    {
+      "src": "user.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
