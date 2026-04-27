@@ -639,7 +639,7 @@
                         body: `${ride.pickup_address} ➜ ${ride.dropoff_address}`
                     };
 
-                    await fetch('https://safarr.yahya.in/.netlify/functions/notify-drivers', {
+                    await fetch('/.netlify/functions/notify-drivers', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ subscriptions, payload })
