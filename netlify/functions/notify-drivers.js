@@ -5,9 +5,9 @@ const webpush = require('web-push');
 // VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY
 try {
   webpush.setVapidDetails(
-    process.env.VAPID_SUBJECT || 'mailto:safarrrides@gmail.com',
-    process.env.VAPID_PUBLIC_KEY || 'BPk13h06zakSh4-5vSFnt__Wsf4k0gGB6-_qtyw0ceKG4YATLxRz_M7_rBBuwDkfbWQUoJjQFlFNXsiQyFGytDY',
-    process.env.VAPID_PRIVATE_KEY || '4bDrLrXT5A_B0vnxuQAmDa4ZlLnddgmp4V4zjo6XoXY'
+    process.env.VAPID_SUBJECT,
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
   );
 } catch (e) {
   console.warn('Web push setup error:', e);
