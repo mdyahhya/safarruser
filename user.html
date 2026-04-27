@@ -157,6 +157,7 @@
                 <input type="number" class="input" id="otp-input" placeholder="1 2 3 4" style="text-align:center; letter-spacing: 12px; font-weight:700">
             </div>
             <button class="btn-auth" onclick="verifyOTP()">Verify & Continue</button>
+            <button class="btn-auth" style="background:var(--gray-light); color:var(--navy); margin-top:12px" onclick="showScreen('screen-auth')">Back</button>
             <p class="toggle-auth">Didn't receive? <span onclick="showToast('OTP Resent!')">Resend Code</span></p>
         </div>
     </div>
@@ -176,7 +177,10 @@
                     <label class="label">Residential Address</label>
                     <textarea class="input" id="inp-address" rows="3" placeholder="Flat No, Wing, Area, Pune"></textarea>
                 </div>
-                <button class="btn-auth" onclick="nextObStep(2)">Next Step</button>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px">
+                    <button class="btn-auth" style="background:var(--gray-light); color:var(--navy)" onclick="logout()">Back</button>
+                    <button class="btn-auth" onclick="nextObStep(2)">Next Step</button>
+                </div>
             </div>
 
             <!-- Step 2: Emergency -->
@@ -189,7 +193,10 @@
                     <label class="label">Emergency Contact 2</label>
                     <input type="text" class="input" id="inp-ec2" placeholder="Friend: 9123456780">
                 </div>
-                <button class="btn-auth" onclick="submitOnboarding()">Complete Profile 🎉</button>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px">
+                    <button class="btn-auth" style="background:var(--gray-light); color:var(--navy)" onclick="nextObStep(1)">Back</button>
+                    <button class="btn-auth" onclick="submitOnboarding()">Complete</button>
+                </div>
             </div>
         </div>
     </div>
@@ -539,8 +546,9 @@
         function nextObStep(n) {
             document.querySelectorAll('.ob-step').forEach(s => s.style.display = 'none');
             document.getElementById('ob-step-' + n).style.display = 'block';
-            document.getElementById('ob-bar').style.width = (n === 2 ? 100 : 66) + '%';
-            document.getElementById('ob-step-title').textContent = n === 2 ? 'Emergency Contacts' : 'Verify Info';
+            document.getElementById('ob-bar').style.width = (n === 2 ? 100 : 33) + '%';
+            document.getElementById('ob-step-title').textContent = n === 2 ? 'Emergency Contacts' : 'Personal Details';
+            document.getElementById('ob-step-desc').textContent = n === 2 ? 'Who should we contact in emergency?' : 'Complete your profile to book rides';
         }
     </script>
 </body>
