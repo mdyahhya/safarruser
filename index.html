@@ -340,8 +340,11 @@
     // Handle Ride Status from Supabase
     function handleRideUpdate(payload) {
       const ride = payload.new;
-      if (ride.status === 'accepted' && ride.id === APP.pendingRideId) {
-        showRideConfirmed(ride);
+      if (ride.status === 'accepted' && (ride.id === APP.pendingRideId || (APP.pendingRide && ride.id === APP.pendingRide.id))) {
+        APP.pendingRide = ride;
+        localStorage.setItem('sf_pending_ride', JSON.stringify(ride));
+        showActiveRideUI(ride);
+        showToast(`🛺 ${ride.driver_name} is heading to you!`);
       }
     }
 
@@ -357,12 +360,11 @@
           accepted_at: new Date().toISOString()
         };
         
-        // Update database to simulate real acceptance
         const { error } = await _supabase.from('ride_bookings').update(demoDriver).eq('id', rideId);
         if(!error) {
            showToast('🛺 Rakesh Kumar is on the way!');
         }
-      }, 4000); // 4 seconds delay for "realism"
+      }, 4000);
     }
 
     async function bookRide() {
@@ -376,25 +378,29 @@
         customer_id: APP.user.id,
         customer_name: APP.user.full_name,
         customer_mobile: APP.user.mobile,
-
-    async function simulateDriverAcceptance(ride) {
-      const demo = DEMO_DRIVERS[Math.floor(Math.random() * DEMO_DRIVERS.length)];
-      const minutes = 3 + Math.floor(Math.random() * 10);
-      const updates = {
-        status: 'accepted',
-        driver_name: demo.name,
-        driver_mobile: demo.mobile,
-        auto_number: demo.auto_number,
-        driver_profile_image: null,
-        accepted_at: new Date().toISOString()
+        customer_profile_image: APP.user.profile_image_url || null,
+        pickup_address: pickup,
+        dropoff_address: drop,
+        estimated_fare: Math.floor(25 + Math.random() * 150),
+        status: 'pending'
       };
-      await _supabase.from('ride_bookings').update(updates).eq('id', ride.id);
-      const updated = { ...ride, ...updates };
-      APP.pendingRide = updated;
-      localStorage.setItem('sf_pending_ride', JSON.stringify(updated));
-      showActiveRideUI(updated, minutes);
-      showToast(`🛺 ${demo.name} is heading to you!`);
-      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+
+      try {
+        const { data, error } = await _supabase.from('ride_bookings').insert(booking).select().single();
+        if (error) throw error;
+        
+        APP.pendingRide = data;
+        APP.pendingRideId = data.id;
+        localStorage.setItem('sf_pending_ride', JSON.stringify(data));
+        
+        showActiveRideUI(data);
+        showToast('Searching for drivers...');
+        simulateAccept(data.id);
+      } catch (e) {
+        showToast('Booking failed: ' + e.message);
+      } finally {
+        setLoading(false);
+      }
     }
 
     function showActiveRideUI(ride, eta) {
@@ -405,7 +411,7 @@
       document.getElementById('ar-drop').textContent = '➜ ' + (ride.dropoff_address || '');
 
       if (ride.status === 'accepted') {
-        const minutes = eta || estimateETA();
+        const minutes = eta || (3 + Math.floor(Math.random() * 8));
         document.getElementById('ar-status-title').textContent = `🛺 ${ride.driver_name || 'Auto'} is on the way!`;
         document.getElementById('ar-eta').textContent = minutes + ' min';
         document.getElementById('ar-driver-name').textContent = ride.driver_name || 'Verified Driver';
@@ -422,8 +428,6 @@
       }
     }
 
-    function estimateETA() { return 3 + Math.floor(Math.random() * 8); }
-
     function restoreRideState() {
       const ride = APP.pendingRide;
       if (ride && (ride.status === 'pending' || ride.status === 'accepted')) {
@@ -434,15 +438,13 @@
     function subscribeToRideUpdates() {
       if (!APP.user) return;
       _supabase.channel('ride-updates-home')
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ride_bookings', filter: `customer_id=eq.${APP.user.id}` }, p => {
-          if (p.new.status === 'accepted') {
-            APP.pendingRide = p.new;
-            localStorage.setItem('sf_pending_ride', JSON.stringify(p.new));
-            showActiveRideUI(p.new);
-            showToast(`🛺 ${p.new.driver_name || 'Auto'} is on the way!`);
-            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-          }
-        }).subscribe();
+        .on('postgres_changes', { 
+            event: 'UPDATE', 
+            schema: 'public', 
+            table: 'ride_bookings', 
+            filter: `customer_id=eq.${APP.user.id}` 
+        }, handleRideUpdate)
+        .subscribe();
     }
 
     async function cancelRide() {
