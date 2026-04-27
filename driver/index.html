@@ -1,0 +1,3541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a1628" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Safarr – Driver Panel</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="auto.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+        rel="stylesheet" />
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- QR Code -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --navy: #0a1628;
+            --navy-mid: #1a2d4e;
+            --navy-light: #1e3a5f;
+            --navy-glow: rgba(10, 22, 40, 0.06);
+            --accent: #0050ff;
+            --accent-light: #3d7eff;
+            --accent-soft: rgba(0, 80, 255, 0.08);
+            --white: #ffffff;
+            --off-white: #f7f8fa;
+            --gray: #8a9ab5;
+            --gray-light: #e8ecf2;
+            --success: #00b86b;
+            --success-soft: rgba(0, 184, 107, 0.1);
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.1);
+            --text: #0a1628;
+            --text-secondary: #5a6a82;
+            --radius: 20px;
+            --radius-sm: 12px;
+            --shadow: 0 8px 40px rgba(10, 22, 40, 0.12);
+            --shadow-sm: 0 2px 12px rgba(10, 22, 40, 0.08);
+            --tabbar-h: 72px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--off-white);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* ─── SCREENS ─────────────────────────────────────────────── */
+        .screen {
+            position: fixed;
+            inset: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: var(--off-white);
+            transition: opacity .3s ease, transform .3s ease;
+        }
+
+        .screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(8px);
+        }
+
+        /* ─── LANGUAGE SCREEN ─────────────────────────────────────── */
+        #screen-lang {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 32px 24px;
+            background: var(--white);
+        }
+
+        .lang-logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .lang-logo h1 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            color: var(--navy);
+            letter-spacing: -.03em;
+        }
+
+        .lang-logo h1 span {
+            color: var(--accent);
+        }
+
+        .lang-logo p {
+            color: var(--gray);
+            font-size: .85rem;
+            margin-top: 4px;
+        }
+
+        .lang-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--navy);
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .lang-sub {
+            color: var(--gray);
+            font-size: .82rem;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .lang-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .lang-card {
+            background: var(--white);
+            border: 1.5px solid var(--gray-light);
+            border-radius: 16px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all .2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .lang-card:hover,
+        .lang-card:active {
+            border-color: var(--navy);
+            transform: scale(.98);
+        }
+
+        .lang-flag {
+            font-size: 1.8rem;
+        }
+
+        .lang-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--navy);
+        }
+
+        .lang-native {
+            font-size: .78rem;
+            color: var(--gray);
+            margin-top: 1px;
+        }
+
+        .lang-check {
+            margin-left: auto;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--success);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ─── ONBOARDING ──────────────────────────────────────────── */
+        #screen-onboard {
+            background: var(--white);
+            min-height: 100vh;
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
+        }
+
+        .onboard-header {
+            background: var(--navy);
+            color: white;
+            padding: env(safe-area-inset-top, 20px) 20px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .onboard-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .onboard-header p {
+            font-size: .78rem;
+            opacity: .6;
+            margin-top: 2px;
+        }
+
+        .progress-bar {
+            height: 3px;
+            background: rgba(255, 255, 255, .2);
+            margin-top: 14px;
+            border-radius: 2px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-light);
+            border-radius: 2px;
+            transition: width .4s ease;
+        }
+
+        .step {
+            display: none;
+            padding: 24px 20px;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeInSlide .3s ease;
+        }
+
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .step-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: .82rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            font-size: .78rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: block;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1.5px solid var(--gray-light);
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .9rem;
+            color: var(--text);
+            background: var(--white);
+            outline: none;
+            transition: border-color .2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            border-color: var(--navy);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .upload-box {
+            border: 2px dashed var(--gray-light);
+            border-radius: 14px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s ease;
+            background: var(--off-white);
+            position: relative;
+        }
+
+        .upload-box:hover {
+            border-color: var(--navy);
+            background: var(--navy-glow);
+        }
+
+        .upload-box input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 6px;
+        }
+
+        .upload-label {
+            font-size: .82rem;
+            color: var(--text-secondary);
+        }
+
+        .upload-hint {
+            font-size: .72rem;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        .upload-done {
+            color: var(--success);
+            font-size: .82rem;
+            margin-top: 6px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .profile-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .profile-preview {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: var(--gray-light);
+            border: 3px solid var(--white);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .profile-preview input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: var(--navy);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            cursor: pointer;
+            transition: all .2s ease;
+            margin-top: 8px;
+            letter-spacing: .01em;
+        }
+
+        .btn-primary:hover {
+            background: var(--navy-mid);
+        }
+
+        .btn-primary:active {
+            transform: scale(.98);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: var(--navy);
+            border: 1.5px solid var(--gray-light);
+            border-radius: 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: .9rem;
+            cursor: pointer;
+            transition: all .2s ease;
+            margin-top: 8px;
+        }
+
+        /* ─── MAIN APP ────────────────────────────────────────────── */
+        #screen-app {
+            background: var(--off-white);
+            padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        /* Top bar */
+        .topbar {
+            background: var(--white);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-light);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .topbar-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .topbar-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            color: var(--navy);
+        }
+
+        .topbar-status {
+            font-size: .72rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 1px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--gray);
+        }
+
+        .status-dot.online {
+            background: var(--success);
+        }
+
+        .toggle-online {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            background: var(--off-white);
+            border: 1.5px solid var(--gray-light);
+            border-radius: 50px;
+            padding: 6px 12px 6px 8px;
+            transition: all .2s ease;
+        }
+
+        .toggle-online.active {
+            background: var(--success-soft);
+            border-color: var(--success);
+        }
+
+        .toggle-track {
+            width: 36px;
+            height: 20px;
+            background: var(--gray-light);
+            border-radius: 10px;
+            position: relative;
+            transition: background .2s ease;
+        }
+
+        .toggle-online.active .toggle-track {
+            background: var(--success);
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            transition: left .2s ease;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+        }
+
+        .toggle-online.active .toggle-thumb {
+            left: 18px;
+        }
+
+        .toggle-lbl {
+            font-size: .75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .toggle-online.active .toggle-lbl {
+            color: var(--success);
+        }
+
+        /* ─── TAB CONTENT ─────────────────────────────────────────── */
+        .tab-content {
+            display: none;
+            padding-bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom, 0px));
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ─── HOME TAB ────────────────────────────────────────────── */
+        .dash-hero {
+            background: var(--navy);
+            padding: 20px 20px 32px;
+            margin-bottom: -20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dash-hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0, 80, 255, .25) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .dash-greeting {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: white;
+        }
+
+        .dash-date {
+            font-size: .78rem;
+            color: rgba(255, 255, 255, .5);
+            margin-top: 2px;
+        }
+
+        .earnings-big {
+            margin-top: 16px;
+            background: rgba(255, 255, 255, .08);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .earnings-label {
+            font-size: .72rem;
+            color: rgba(255, 255, 255, .5);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        .earnings-amount {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: white;
+            margin-top: 2px;
+        }
+
+        .earnings-change {
+            font-size: .72rem;
+            color: var(--success);
+            margin-top: 2px;
+        }
+
+        .earnings-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 24px 16px 16px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .stat-card.green::after {
+            background: var(--success);
+        }
+
+        .stat-card.orange::after {
+            background: var(--warning);
+        }
+
+        .stat-card.red::after {
+            background: var(--danger);
+        }
+
+        .stat-card-label {
+            font-size: .7rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 8px;
+        }
+
+        .stat-card-val {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--navy);
+        }
+
+        .stat-card-sub {
+            font-size: .72rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .stat-card-icon {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            opacity: .15;
+        }
+
+        /* Quick actions */
+        .section-head {
+            padding: 0 16px;
+            margin-bottom: 12px;
+        }
+
+        .section-head h3 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            color: var(--navy);
+        }
+
+        .section-head span {
+            font-size: .78rem;
+            color: var(--gray);
+        }
+
+        .section {
+            padding: 16px 16px 0;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 0 16px 16px;
+        }
+
+        .quick-action {
+            background: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 14px;
+            padding: 12px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .quick-action:active {
+            transform: scale(.94);
+        }
+
+        .qa-icon {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .qa-label {
+            font-size: .68rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Notification card (live rides) */
+        #live-ride-alert {
+            margin: 0 16px 16px;
+            background: var(--navy);
+            border-radius: 16px;
+            padding: 16px 16px;
+            display: none;
+            animation: pulse-border 2s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes pulse-border {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 80, 255, .4)
+            }
+
+            50% {
+                box-shadow: 0 0 0 8px rgba(0, 80, 255, 0)
+            }
+        }
+
+        .ride-alert-badge {
+            background: var(--danger);
+            color: white;
+            font-size: .68rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        .ride-alert-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .ride-alert-route {
+            font-size: .8rem;
+            color: rgba(255, 255, 255, .65);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .ride-alert-fare {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: white;
+            margin-bottom: 14px;
+        }
+
+        .ride-alert-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-accept {
+            flex: 2;
+            padding: 11px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .85rem;
+            cursor: pointer;
+        }
+
+        .btn-decline {
+            flex: 1;
+            padding: 11px;
+            background: rgba(255, 255, 255, .1);
+            color: rgba(255, 255, 255, .7);
+            border: none;
+            border-radius: 10px;
+            font-size: .82rem;
+            cursor: pointer;
+        }
+
+        .ride-alert-timer {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 36px;
+            height: 36px;
+        }
+
+        .timer-ring {
+            stroke: rgba(255, 255, 255, .15);
+        }
+
+        .timer-progress {
+            stroke: var(--accent-light);
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset .9s linear;
+        }
+
+        .timer-text {
+            font-family: 'Syne', sans-serif;
+            font-size: .7rem;
+            fill: white;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        /* Recent rides */
+        .ride-item {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 14px 14px;
+            margin: 0 16px 10px;
+            border: 1px solid var(--gray-light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ride-item-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .ride-status {
+            font-size: .68rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .ride-status.completed {
+            background: var(--success-soft);
+            color: var(--success);
+        }
+
+        .ride-status.pending {
+            background: var(--warning-soft);
+            color: var(--warning);
+        }
+
+        .ride-status.cancelled {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .ride-fare {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            color: var(--navy);
+        }
+
+        .ride-route {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px 0;
+            border-top: 1px solid var(--gray-light);
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 10px;
+        }
+
+        .route-stop {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .8rem;
+            color: var(--text-secondary);
+        }
+
+        .route-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .route-dot.pickup {
+            background: var(--success);
+        }
+
+        .route-dot.drop {
+            background: var(--danger);
+        }
+
+        .route-line {
+            width: 1px;
+            height: 14px;
+            background: var(--gray-light);
+            margin-left: 3.5px;
+            flex-shrink: 0;
+        }
+
+        .ride-meta {
+            display: flex;
+            gap: 12px;
+            font-size: .72rem;
+            color: var(--gray);
+        }
+
+        /* ─── RIDES TAB ───────────────────────────────────────────── */
+        .rides-filter {
+            display: flex;
+            gap: 8px;
+            padding: 16px 16px 8px;
+            overflow-x: auto;
+        }
+
+        .rides-filter::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-pill {
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: .78rem;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 1.5px solid var(--gray-light);
+            background: var(--white);
+            color: var(--text-secondary);
+            transition: all .2s ease;
+        }
+
+        .filter-pill.active {
+            background: var(--navy);
+            color: white;
+            border-color: var(--navy);
+        }
+
+        #rides-list {
+            padding: 0 16px;
+        }
+
+        .rides-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .rides-empty-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        /* ─── WALLET TAB ──────────────────────────────────────────── */
+        .wallet-hero {
+            background: var(--navy);
+            padding: 24px 20px 40px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: -20px;
+        }
+
+        .wallet-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: -20px;
+            right: -20px;
+            height: 60px;
+            background: var(--off-white);
+            border-radius: 50% 50% 0 0;
+        }
+
+        .wallet-bal-label {
+            font-size: .75rem;
+            color: rgba(255, 255, 255, .5);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 6px;
+        }
+
+        .wallet-balance {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 2.4rem;
+            color: white;
+        }
+
+        .wallet-sub {
+            font-size: .78rem;
+            color: rgba(255, 255, 255, .45);
+            margin-top: 4px;
+        }
+
+        .wallet-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .wbtn {
+            flex: 1;
+            padding: 11px;
+            border-radius: 12px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: .85rem;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .wbtn.primary {
+            background: var(--accent-light);
+            color: white;
+        }
+
+        .wbtn.secondary {
+            background: rgba(255, 255, 255, .1);
+            color: rgba(255, 255, 255, .8);
+        }
+
+        .wallet-section {
+            padding: 24px 16px 0;
+        }
+
+        .wallet-section h3 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .9rem;
+            color: var(--navy);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        /* Payment methods */
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method {
+            background: var(--white);
+            border: 1.5px solid var(--gray-light);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all .2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .payment-method:hover {
+            border-color: var(--navy);
+        }
+
+        .pm-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.3rem;
+        }
+
+        .pm-name {
+            font-weight: 600;
+            font-size: .88rem;
+            color: var(--navy);
+        }
+
+        .pm-desc {
+            font-size: .72rem;
+            color: var(--gray);
+        }
+
+        .pm-arrow {
+            margin-left: auto;
+            color: var(--gray);
+        }
+
+        /* Transactions */
+        .txn-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 13px 14px;
+            margin-bottom: 8px;
+            border: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .txn-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .txn-label {
+            font-size: .85rem;
+            font-weight: 500;
+            color: var(--navy);
+        }
+
+        .txn-meta {
+            font-size: .72rem;
+            color: var(--gray);
+            margin-top: 2px;
+        }
+
+        .txn-amount {
+            margin-left: auto;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .9rem;
+        }
+
+        .txn-amount.credit {
+            color: var(--success);
+        }
+
+        .txn-amount.debit {
+            color: var(--danger);
+        }
+
+        /* ─── PROFILE TAB ─────────────────────────────────────────── */
+        .profile-hero {
+            background: var(--navy);
+            padding: env(safe-area-inset-top, 20px) 20px 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(0, 80, 255, .2) 0%, transparent 60%);
+        }
+
+        .ph-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .2);
+            margin: 0 auto 12px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, .1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ph-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .ph-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ph-mobile {
+            font-size: .78rem;
+            color: rgba(255, 255, 255, .5);
+            margin-top: 3px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ph-badges {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ph-badge {
+            background: rgba(255, 255, 255, .1);
+            color: rgba(255, 255, 255, .75);
+            font-size: .7rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .ph-badge.verified {
+            background: rgba(0, 184, 107, .15);
+            color: #4dffb0;
+        }
+
+        .loyalty-card {
+            margin: 16px;
+            background: linear-gradient(135deg, var(--navy-mid), var(--navy-light));
+            border-radius: 16px;
+            padding: 18px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .lc-icon {
+            width: 46px;
+            height: 46px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .lc-label {
+            font-size: .72rem;
+            color: rgba(255, 255, 255, .5);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .lc-points {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: white;
+            margin-top: 2px;
+        }
+
+        .lc-next {
+            font-size: .72rem;
+            color: rgba(255, 255, 255, .4);
+            margin-top: 2px;
+        }
+
+        .lc-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 2px;
+            margin-top: 6px;
+        }
+
+        .lc-bar-fill {
+            height: 100%;
+            background: var(--accent-light);
+            border-radius: 2px;
+            transition: width 1s ease;
+        }
+
+        .profile-menu {
+            padding: 0 16px 16px;
+        }
+
+        .menu-item {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 15px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            border: 1px solid var(--gray-light);
+            box-shadow: var(--shadow-sm);
+            transition: all .2s ease;
+        }
+
+        .menu-item:hover {
+            border-color: var(--navy);
+        }
+
+        .mi-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .mi-label {
+            font-size: .88rem;
+            font-weight: 500;
+            color: var(--navy);
+        }
+
+        .mi-desc {
+            font-size: .72rem;
+            color: var(--gray);
+            margin-top: 1px;
+        }
+
+        .mi-arrow {
+            margin-left: auto;
+            color: var(--gray);
+            font-size: .8rem;
+        }
+
+        /* QR Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 22, 40, .7);
+            z-index: 100;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 24px 24px 0 0;
+            padding: 24px 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
+            animation: slideUp .35s cubic-bezier(.34, 1.2, .64, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%)
+            }
+
+            to {
+                transform: translateY(0)
+            }
+        }
+
+        .modal-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--gray-light);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--navy);
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .modal-desc {
+            font-size: .8rem;
+            color: var(--gray);
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        #qr-canvas {
+            display: block;
+            margin: 0 auto 16px;
+            border-radius: 12px;
+        }
+
+        .qr-stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .qr-stat {
+            flex: 1;
+            background: var(--off-white);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .qr-stat-num {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--navy);
+        }
+
+        .qr-stat-lbl {
+            font-size: .7rem;
+            color: var(--gray);
+            margin-top: 2px;
+        }
+
+        /* Edit Profile Modal */
+        #modal-edit-profile .modal {
+            max-height: 85vh;
+        }
+
+        /* ─── TABBAR ──────────────────────────────────────────────── */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: var(--white);
+            border-top: 1px solid var(--gray-light);
+            padding: 8px 0 calc(env(safe-area-inset-bottom, 0px) + 6px);
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -4px 20px rgba(10, 22, 40, .06);
+        }
+
+        .tab-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: all .2s ease;
+            padding: 4px 0;
+            background: none;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .tab-icon {
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .tab-label {
+            font-size: .65rem;
+            font-weight: 500;
+            color: var(--gray);
+        }
+
+        .tab-btn.active .tab-label {
+            color: var(--navy);
+            font-weight: 700;
+        }
+
+        .tab-btn.active .tab-icon svg path,
+        .tab-btn.active .tab-icon svg circle,
+        .tab-btn.active .tab-icon svg rect {
+            stroke: var(--navy) !important;
+        }
+
+        .tab-badge {
+            position: absolute;
+            top: -4px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: .6rem;
+            font-weight: 700;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
+        }
+
+        .tab-badge.show {
+            display: flex;
+        }
+
+        /* ─── IN-APP NOTIFICATION ─────────────────────────────────── */
+        #in-app-notif {
+            position: fixed;
+            top: env(safe-area-inset-top, 0px);
+            left: 0;
+            right: 0;
+            z-index: 200;
+            padding: 10px 12px;
+        }
+
+        .notif-card {
+            background: var(--navy);
+            color: white;
+            border-radius: 16px;
+            padding: 13px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 30px rgba(10, 22, 40, .35);
+            transform: translateY(-120%);
+            transition: transform .4s cubic-bezier(.34, 1.2, .64, 1);
+            max-width: 480px;
+            margin: 0 auto;
+            cursor: pointer;
+        }
+
+        .notif-card.show {
+            transform: translateY(0);
+        }
+
+        .notif-ico {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .notif-content {
+            flex: 1;
+        }
+
+        .notif-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .85rem;
+        }
+
+        .notif-body {
+            font-size: .75rem;
+            opacity: .65;
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
+        /* ─── TOAST ───────────────────────────────────────────────── */
+        .toast {
+            position: fixed;
+            bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom, 0px));
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--navy);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: .82rem;
+            z-index: 300;
+            opacity: 0;
+            transition: all .3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ─── LOADERS ─────────────────────────────────────────────── */
+        .skeleton {
+            background: linear-gradient(90deg, var(--gray-light) 25%, rgba(255, 255, 255, .8) 50%, var(--gray-light) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0
+            }
+
+            100% {
+                background-position: -200% 0
+            }
+        }
+
+        /* ─── UTILITY ─────────────────────────────────────────────── */
+        .flex {
+            display: flex;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .gap-8 {
+            gap: 8px;
+        }
+
+        .gap-12 {
+            gap: 12px;
+        }
+
+        .mt-8 {
+            margin-top: 8px;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .text-success {
+            color: var(--success);
+        }
+
+        .text-danger {
+            color: var(--danger);
+        }
+
+        @media (min-width:480px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Auth Screen Styling */
+        .auth-container { padding: 40px 24px; text-align: center; }
+        .auth-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2.5rem; color: var(--navy); margin-bottom: 8px; }
+        .auth-logo span { color: var(--accent); }
+        .auth-toggle { display: flex; background: var(--gray-light); border-radius: 12px; padding: 4px; margin-bottom: 30px; }
+        .auth-toggle-btn { flex: 1; padding: 10px; border-radius: 9px; border: none; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.3s; background: transparent; color: var(--gray); }
+        .auth-toggle-btn.active { background: var(--white); color: var(--navy); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .auth-form { text-align: left; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    </style>
+</head>
+
+<body>
+
+    <!-- ─── IN-APP NOTIFICATION ─────────────────────────────── -->
+    <div id="in-app-notif">
+        <div class="notif-card" id="notif-card" onclick="dismissNotif()">
+            <div class="notif-ico" id="notif-ico">🔔</div>
+            <div class="notif-content">
+                <div class="notif-title" id="notif-title">New Ride Request</div>
+                <div class="notif-body" id="notif-body">Tap to view details</div>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M6 4l4 4-4 4" stroke="rgba(255,255,255,.4)" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ─── SCREEN: LANGUAGE ──────────────────────────────────── -->
+    <div class="screen" id="screen-lang">
+        <div class="lang-logo">
+            <h1>Auto<span>Ride</span></h1>
+            <p>Driver Panel</p>
+        </div>
+        <div class="lang-title" id="lt">Choose Your Language</div>
+        <div class="lang-sub" id="ls">Select preferred language / भाषा निवडा</div>
+        <div class="lang-cards">
+            <!-- English -->
+            <div class="lang-card" onclick="setLang('en')">
+                <div>
+                    <div class="lang-name">English</div>
+                    <div class="lang-native">Continue in English</div>
+                </div>
+                <div class="lang-check" id="check-en">✓</div>
+            </div>
+            <!-- Hindi -->
+            <div class="lang-card" onclick="setLang('hi')">
+                <div>
+                    <div class="lang-name">हिंदी</div>
+                    <div class="lang-native">हिंदी में जारी रखें</div>
+                </div>
+                <div class="lang-check" id="check-hi">✓</div>
+            </div>
+            <!-- Marathi -->
+            <div class="lang-card" onclick="setLang('mr')">
+                <div>
+                    <div class="lang-name">मराठी</div>
+                    <div class="lang-native">मराठीत सुरू ठेवा</div>
+                </div>
+                <div class="lang-check" id="check-mr">✓</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SCREEN: AUTH ─────────────────────────────────────── -->
+    <div class="screen hidden" id="screen-auth">
+        <div class="auth-container">
+            <div class="auth-logo">Auto<span>Ride</span></div>
+            <p style="color: var(--gray); margin-bottom: 30px;" id="auth-subtitle">Driver Access Portal</p>
+            
+            <div class="auth-toggle">
+                <button class="auth-toggle-btn active" id="btn-toggle-login" onclick="toggleAuthMode(true)">Sign In</button>
+                <button class="auth-toggle-btn" id="btn-toggle-signup" onclick="toggleAuthMode(false)">New Driver</button>
+            </div>
+
+            <div id="form-login" class="auth-form">
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-input" id="login-mobile" placeholder="+91 XXXXX XXXXX">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Security Password</label>
+                    <input type="password" class="form-input" id="login-pass" placeholder="••••••••">
+                </div>
+                <button class="btn-primary mt-16" onclick="handleLogin()">Sign In ➔</button>
+            </div>
+
+            <div id="form-signup" class="auth-form hidden">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="signup-name" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-input" id="signup-mobile" placeholder="+91 XXXXX XXXXX">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Create Password</label>
+                    <input type="password" class="form-input" id="signup-pass" placeholder="At least 6 characters">
+                </div>
+                <button class="btn-primary mt-16" onclick="handleSignup()">Create Driver Profile 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SCREEN: ONBOARDING ───────────────────────────────── -->
+    <div class="screen hidden" id="screen-onboard">
+        <div class="onboard-header">
+            <h2 id="ob-title">Driver Registration</h2>
+            <p id="ob-sub">Complete your profile to start</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="ob-progress" style="width:33%"></div>
+            </div>
+        </div>
+
+        <!-- Step 1: Personal Info -->
+        <div class="step active" id="step-1">
+            <div class="step-title" id="s1-title">Personal Details</div>
+            <div class="step-desc" id="s1-desc">Tell us about yourself</div>
+
+            <div class="profile-upload">
+                <div class="profile-preview" id="pp-preview">
+                    <input type="file" accept="image/*" id="pp-input" onchange="previewProfile(this)" />
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <circle cx="16" cy="12" r="5" stroke="#8a9ab5" stroke-width="2" />
+                        <path d="M6 28c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#8a9ab5" stroke-width="2"
+                            stroke-linecap="round" />
+                    </svg>
+                    <img id="pp-img" src="" alt="profile" />
+                </div>
+                <span style="font-size:.78rem;color:var(--gray)" id="pp-label">Tap to add photo</span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" id="lbl-name">Full Name</label>
+                <input type="text" class="form-input" id="inp-name" placeholder="Your full name" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="lbl-mobile">Mobile Number</label>
+                <input type="tel" class="form-input" id="inp-mobile" placeholder="+91 XXXXXXXXXX" maxlength="13" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="lbl-email">Email (Optional)</label>
+                <input type="email" class="form-input" id="inp-email" placeholder="your@email.com" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" id="lbl-dob">Date of Birth</label>
+                    <input type="date" class="form-input" id="inp-dob" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label" id="lbl-gender">Gender</label>
+                    <select class="form-select" id="inp-gender">
+                        <option value="">Select</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="lbl-addr">Address</label>
+                <input type="text" class="form-input" id="inp-addr1" placeholder="House/Flat, Street" />
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-input" id="inp-addr2" placeholder="Area, Landmark" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" id="lbl-city">City</label>
+                    <input type="text" class="form-input" id="inp-city" placeholder="Pune" value="Pune" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label" id="lbl-pin">Pincode</label>
+                    <input type="text" class="form-input" id="inp-pin" placeholder="422001" maxlength="6" />
+                </div>
+            </div>
+
+            <h4 style="font-family:'Syne',sans-serif;font-weight:700;color:var(--navy);margin:20px 0 12px;font-size:.9rem"
+                id="doc-title">📋 Upload Documents</h4>
+            <div class="form-group">
+                <label class="form-label" id="lbl-aadhar-no">Aadhar Number</label>
+                <input type="text" class="form-input" id="inp-aadhar" placeholder="XXXX XXXX XXXX" maxlength="14" />
+            </div>
+            <div class="upload-box" id="ub-aadhar">
+                <input type="file" accept="image/*,application/pdf" id="file-aadhar"
+                    onchange="markUploaded(this,'ub-aadhar','ud-aadhar')" />
+                <div class="upload-icon">🪪</div>
+                <div class="upload-label" id="lbl-aadhar">Upload Aadhar Card</div>
+                <div class="upload-hint">JPG, PNG or PDF · Max 10MB</div>
+                <div class="upload-done" id="ud-aadhar">✅ File uploaded</div>
+            </div>
+            <div class="form-group mt-16">
+                <label class="form-label" id="lbl-pan-no">PAN Number</label>
+                <input type="text" class="form-input" id="inp-pan" placeholder="ABCDE1234F" maxlength="10"
+                    style="text-transform:uppercase" />
+            </div>
+            <div class="upload-box mt-8" id="ub-pan">
+                <input type="file" accept="image/*,application/pdf" id="file-pan"
+                    onchange="markUploaded(this,'ub-pan','ud-pan')" />
+                <div class="upload-icon">💳</div>
+                <div class="upload-label" id="lbl-pan">Upload PAN Card</div>
+                <div class="upload-hint">JPG, PNG or PDF · Max 10MB</div>
+                <div class="upload-done" id="ud-pan">✅ File uploaded</div>
+            </div>
+
+            <button class="btn-primary mt-16" onclick="goStep(2)" id="btn-step1">Continue →</button>
+        </div>
+
+        <!-- Step 2: Vehicle -->
+        <div class="step" id="step-2">
+            <div class="step-title" id="s2-title">Vehicle Details</div>
+            <div class="step-desc" id="s2-desc">Register your auto rickshaw</div>
+
+            <div class="form-group">
+                <label class="form-label">Vehicle Number</label>
+                <input type="text" class="form-input" id="inp-vnum" placeholder="MH 15 AB 1234"
+                    style="text-transform:uppercase" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Make / Brand</label>
+                    <input type="text" class="form-input" id="inp-vmake" placeholder="Bajaj" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Model</label>
+                    <input type="text" class="form-input" id="inp-vmodel" placeholder="RE Compact" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Year</label>
+                    <input type="number" class="form-input" id="inp-vyear" placeholder="2020" min="2000" max="2025" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Color</label>
+                    <input type="text" class="form-input" id="inp-vcolor" placeholder="Yellow-Black" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Registration Number</label>
+                <input type="text" class="form-input" id="inp-vreg" placeholder="MH15AB1234" />
+            </div>
+            <div class="upload-box mt-8" id="ub-rc">
+                <input type="file" accept="image/*,application/pdf" id="file-rc"
+                    onchange="markUploaded(this,'ub-rc','ud-rc')" />
+                <div class="upload-icon">📄</div>
+                <div class="upload-label">Upload RC / Registration Certificate</div>
+                <div class="upload-hint">JPG, PNG or PDF · Max 10MB</div>
+                <div class="upload-done" id="ud-rc">✅ Uploaded</div>
+            </div>
+            <div class="form-group mt-16">
+                <label class="form-label">Insurance Number</label>
+                <input type="text" class="form-input" id="inp-vins" placeholder="INS/XXXX/XXXX" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Insurance Expiry</label>
+                    <input type="date" class="form-input" id="inp-vins-exp" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Permit Number</label>
+                    <input type="text" class="form-input" id="inp-vpermit" placeholder="PERM/XXXX" />
+                </div>
+            </div>
+            <div class="upload-box mt-8" id="ub-ins">
+                <input type="file" accept="image/*,application/pdf" id="file-ins"
+                    onchange="markUploaded(this,'ub-ins','ud-ins')" />
+                <div class="upload-icon">🛡️</div>
+                <div class="upload-label">Upload Insurance Document</div>
+                <div class="upload-hint">Max 10MB</div>
+                <div class="upload-done" id="ud-ins">✅ Uploaded</div>
+            </div>
+
+            <button class="btn-primary mt-16" onclick="submitOnboarding()" id="btn-step2">
+                <span id="btn-step2-text">Complete Registration 🎉</span>
+            </button>
+            <button class="btn-secondary" onclick="goStep(1)">← Back</button>
+        </div>
+    </div>
+
+    <!-- ─── SCREEN: MAIN APP ─────────────────────────────────── -->
+    <div class="screen hidden" id="screen-app">
+
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="topbar-avatar" id="app-avatar">
+                    <img id="app-avatar-img" src="" alt="" />
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="10" cy="7" r="3.5" stroke="white" stroke-width="1.5" />
+                        <path d="M3 18c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="white" stroke-width="1.5"
+                            stroke-linecap="round" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="topbar-name" id="app-name">Driver</div>
+                    <div class="topbar-status">
+                        <div class="status-dot" id="status-dot"></div>
+                        <span id="status-text">Offline</span>
+                    </div>
+                </div>
+            </div>
+            <div class="toggle-online" id="toggle-online" onclick="toggleOnlineStatus()">
+                <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                </div>
+                <span class="toggle-lbl" id="toggle-lbl">Go Online</span>
+            </div>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="tab-home" class="tab-content active">
+            <!-- Dashboard Hero -->
+            <div class="dash-hero">
+                <div class="dash-greeting" id="dash-greeting">Good morning 👋</div>
+                <div class="dash-date" id="dash-date">Today</div>
+                <div class="earnings-big">
+                    <div>
+                        <div class="earnings-label">Today's Earnings</div>
+                        <div class="earnings-amount" id="today-earnings">₹0</div>
+                        <div class="earnings-change" id="earnings-change">+0 rides today</div>
+                    </div>
+                    <div class="earnings-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+                                stroke="white" stroke-width="2" stroke-linecap="round" />
+                            <circle cx="12" cy="12" r="4" stroke="white" stroke-width="2" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card green">
+                    <div class="stat-card-label">Total Rides</div>
+                    <div class="stat-card-val" id="stat-total-rides">0</div>
+                    <div class="stat-card-sub">all time</div>
+                    <div class="stat-card-icon">
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                            <path d="M4 20V11L10 6l8 4 6-3V20" stroke="#0a1628" stroke-width="2"
+                                stroke-linejoin="round" />
+                            <rect x="4" y="20" width="20" height="4" rx="2" fill="#0a1628" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">Total Earnings</div>
+                    <div class="stat-card-val" id="stat-total-earn">₹0</div>
+                    <div class="stat-card-sub">all time</div>
+                    <div class="stat-card-icon">
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                            <circle cx="14" cy="14" r="10" stroke="#0a1628" stroke-width="2" />
+                            <path d="M14 8v2m0 8v2m-2-10h3a1 1 0 010 2h-2a1 1 0 000 2h2a1 1 0 010 2h-3" stroke="#0a1628"
+                                stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-card orange">
+                    <div class="stat-card-label">Rating</div>
+                    <div class="stat-card-val" id="stat-rating">5.0 ★</div>
+                    <div class="stat-card-sub">overall</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">Loyalty Pts</div>
+                    <div class="stat-card-val" id="stat-loyalty">0</div>
+                    <div class="stat-card-sub">redeemable</div>
+                </div>
+            </div>
+
+            <!-- Live Ride Alert -->
+            <div id="live-ride-alert">
+                <div class="ride-alert-badge">🔔 New Request</div>
+                <div style="padding-right:44px">
+                    <div class="ride-alert-title" id="alert-customer">Rahul Sharma</div>
+                    <div class="ride-alert-route">
+                        <span id="alert-from">📍 Pickup: —</span><br />
+                        <span id="alert-to">📌 Drop: —</span>
+                    </div>
+                    <div class="ride-alert-fare" id="alert-fare">₹—</div>
+                </div>
+                <svg class="ride-alert-timer" viewBox="0 0 36 36">
+                    <circle class="timer-ring" cx="18" cy="18" r="15" fill="none" stroke-width="3" />
+                    <circle class="timer-progress" id="timer-progress" cx="18" cy="18" r="15" fill="none"
+                        stroke-width="3" stroke-dasharray="94.25" stroke-dashoffset="0" />
+                    <text class="timer-text" x="18" y="18" id="timer-text">30</text>
+                </svg>
+                <div class="ride-alert-actions">
+                    <button class="btn-accept" onclick="acceptRide()" id="btn-accept-ride">✅ Accept</button>
+                    <button class="btn-decline" onclick="declineRide()">✗ Decline</button>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div style="padding:8px 0 0">
+                <div style="padding:0 16px 8px;display:flex;justify-content:space-between;align-items:center">
+                    <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--navy)">Quick Actions</span>
+                </div>
+                <div class="quick-actions">
+                    <div class="quick-action" onclick="switchTab('rides')">
+                        <div class="qa-icon">🗺️</div>
+                        <div class="qa-label">View Rides</div>
+                    </div>
+                    <div class="quick-action" onclick="switchTab('wallet')">
+                        <div class="qa-icon">💰</div>
+                        <div class="qa-label">Withdraw</div>
+                    </div>
+                    <div class="quick-action" onclick="openQR()">
+                        <div class="qa-icon">📱</div>
+                        <div class="qa-label">Share QR</div>
+                    </div>
+                    <div class="quick-action" onclick="switchTab('profile')">
+                        <div class="qa-icon">👤</div>
+                        <div class="qa-label">Profile</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Install App Banner -->
+            <div id="install-pwa-banner" class="stat-card" style="margin: 16px; background: rgba(0, 80, 255, 0.05); border-color: rgba(0, 80, 255, 0.2); display: none; align-items: center; justify-content: space-between;">
+                <div>
+                    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--navy)">Install App</div>
+                    <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px">For the best experience</div>
+                </div>
+                <button id="btn-install-pwa" class="btn-primary" style="margin:0; width: auto; padding: 10px 20px; font-size: 0.85rem">Install</button>
+            </div>
+
+            <!-- Recent Rides -->
+            <div style="padding:0 16px 8px;display:flex;justify-content:space-between;align-items:center">
+                <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--navy)">Recent Activity</span>
+                <span style="font-size:.78rem;color:var(--accent);cursor:pointer" onclick="switchTab('rides')">See all</span>
+            </div>
+            <div id="home-recent-rides">
+                <div class="skeleton" style="height:90px;margin:0 16px 10px;"></div>
+                <div class="skeleton" style="height:90px;margin:0 16px 10px;"></div>
+            </div>
+        </div>
+
+        <!-- ─── RIDES TAB ──────────────────────────── -->
+        <div id="tab-rides" class="tab-content">
+            <div style="padding:16px 16px 0;border-bottom:1px solid var(--gray-light);background:var(--white)">
+                <div
+                    style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--navy);margin-bottom:12px">
+                    All Rides</div>
+                <div class="rides-filter">
+                    <div class="filter-pill active" onclick="filterRides(this,'all')">All</div>
+                    <div class="filter-pill" onclick="filterRides(this,'pending')">Pending</div>
+                    <div class="filter-pill" onclick="filterRides(this,'completed')">Completed</div>
+                    <div class="filter-pill" onclick="filterRides(this,'cancelled')">Cancelled</div>
+                </div>
+            </div>
+            <div id="rides-list" style="padding:12px 0"></div>
+        </div>
+
+        <!-- ─── WALLET TAB ─────────────────────────── -->
+        <div id="tab-wallet" class="tab-content">
+            <div class="wallet-hero">
+                <div class="wallet-bal-label">Total Balance</div>
+                <div class="wallet-balance" id="wallet-balance">₹3,450.00</div>
+                <div class="wallet-sub">Available for withdrawal</div>
+                <div class="wallet-btns">
+                    <button class="wbtn primary" onclick="showToastMsg('Withdrawal initiated!')">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 2v9M4 8l4 4 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M2 14h12" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
+                        Withdraw
+                    </button>
+                    <button class="wbtn secondary" onclick="showToastMsg('Add money coming soon!')">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 2v12M2 8h12" stroke="rgba(255,255,255,.8)" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </svg>
+                        Add Money
+                    </button>
+                </div>
+            </div>
+
+            <div class="wallet-section" style="padding-top:36px">
+                <h3>Withdraw to</h3>
+                <div class="payment-methods">
+                    <div class="payment-method" onclick="showToastMsg('Opening GPay...')">
+                        <div class="pm-icon" style="background:#e8f5e9">
+                            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                                <rect width="28" height="28" rx="6" fill="#4CAF50" />
+                                <text x="14" y="19" font-size="10" fill="white" text-anchor="middle"
+                                    font-weight="bold">GPay</text>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="pm-name">Google Pay</div>
+                            <div class="pm-desc">Instant transfer</div>
+                        </div>
+                        <div class="pm-arrow">→</div>
+                    </div>
+                    <div class="payment-method" onclick="showToastMsg('Opening PhonePe...')">
+                        <div class="pm-icon" style="background:#ede7f6">
+                            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                                <rect width="28" height="28" rx="6" fill="#5f259f" />
+                                <text x="14" y="19" font-size="7" fill="white" text-anchor="middle"
+                                    font-weight="bold">PhonePe</text>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="pm-name">PhonePe</div>
+                            <div class="pm-desc">UPI transfer</div>
+                        </div>
+                        <div class="pm-arrow">→</div>
+                    </div>
+                    <div class="payment-method" onclick="showToastMsg('Opening Paytm...')">
+                        <div class="pm-icon" style="background:#e3f2fd">
+                            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                                <rect width="28" height="28" rx="6" fill="#00b9f5" />
+                                <text x="14" y="19" font-size="8" fill="white" text-anchor="middle"
+                                    font-weight="bold">Paytm</text>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="pm-name">Paytm</div>
+                            <div class="pm-desc">Wallet & UPI</div>
+                        </div>
+                        <div class="pm-arrow">→</div>
+                    </div>
+                    <div class="payment-method" onclick="showToastMsg('Add bank account coming soon!')">
+                        <div class="pm-icon" style="background:var(--off-white)">
+                            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                                <rect x="3" y="8" width="22" height="14" rx="3" stroke="#0a1628" stroke-width="1.5" />
+                                <path d="M3 12h22" stroke="#0a1628" stroke-width="1.5" />
+                                <rect x="6" y="16" width="6" height="3" rx="1" fill="#0a1628" opacity=".4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="pm-name">Bank Card</div>
+                            <div class="pm-desc">Debit / Credit card</div>
+                        </div>
+                        <div class="pm-arrow">→</div>
+                    </div>
+                </div>
+
+                <h3>Earnings Summary</h3>
+                <div
+                    style="background:var(--white);border-radius:16px;padding:16px;border:1px solid var(--gray-light);margin-bottom:16px;box-shadow:var(--shadow-sm)">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+                        <span style="font-size:.82rem;color:var(--text-secondary)">Today</span>
+                        <span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--navy)"
+                            id="earn-today">₹—</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+                        <span style="font-size:.82rem;color:var(--text-secondary)">This Week</span>
+                        <span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--navy)">₹1,240</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+                        <span style="font-size:.82rem;color:var(--text-secondary)">This Month</span>
+                        <span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--navy)">₹3,450</span>
+                    </div>
+                    <div style="height:1px;background:var(--gray-light);margin-bottom:12px"></div>
+                    <div style="display:flex;justify-content:space-between">
+                        <span style="font-size:.82rem;font-weight:600;color:var(--navy)">All Time</span>
+                        <span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent)"
+                            id="earn-total-wallet">₹—</span>
+                    </div>
+                </div>
+
+                <h3>Recent Transactions</h3>
+                <div id="txn-list">
+                    <div class="txn-item">
+                        <div class="txn-icon" style="background:var(--success-soft)">💰</div>
+                        <div>
+                            <div class="txn-label">Ride Completed</div>
+                            <div class="txn-meta">Today · Cash</div>
+                        </div>
+                        <div class="txn-amount credit">+₹85</div>
+                    </div>
+                    <div class="txn-item">
+                        <div class="txn-icon" style="background:var(--success-soft)">💰</div>
+                        <div>
+                            <div class="txn-label">Ride Completed</div>
+                            <div class="txn-meta">Today · GPay</div>
+                        </div>
+                        <div class="txn-amount credit">+₹120</div>
+                    </div>
+                    <div class="txn-item">
+                        <div class="txn-icon" style="background:var(--danger-soft)">📤</div>
+                        <div>
+                            <div class="txn-label">Withdrawal</div>
+                            <div class="txn-meta">Yesterday · GPay</div>
+                        </div>
+                        <div class="txn-amount debit">−₹500</div>
+                    </div>
+                    <div class="txn-item">
+                        <div class="txn-icon" style="background:var(--success-soft)">💰</div>
+                        <div>
+                            <div class="txn-label">Ride Completed</div>
+                            <div class="txn-meta">Yesterday · Cash</div>
+                        </div>
+                        <div class="txn-amount credit">+₹75</div>
+                    </div>
+                    <div class="txn-item">
+                        <div class="txn-icon" style="background:var(--success-soft)">💰</div>
+                        <div>
+                            <div class="txn-label">Ride Completed</div>
+                            <div class="txn-meta">2 days ago · PhonePe</div>
+                        </div>
+                        <div class="txn-amount credit">+₹100</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── PROFILE TAB ────────────────────────── -->
+        <div id="tab-profile" class="tab-content">
+            <div class="profile-hero">
+                <div class="ph-avatar" id="ph-avatar">
+                    <img id="ph-img" src="" alt="" />
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <circle cx="16" cy="11" r="6" stroke="white" stroke-width="2" />
+                        <path d="M4 28c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="white" stroke-width="2"
+                            stroke-linecap="round" />
+                    </svg>
+                </div>
+                <div class="ph-name" id="ph-name">—</div>
+                <div class="ph-mobile" id="ph-mobile">—</div>
+                <div class="ph-badges">
+                    <span class="ph-badge verified" id="badge-verified">✓ Verified</span>
+                    <span class="ph-badge" id="badge-lang">English</span>
+                    <span class="ph-badge" id="badge-rating">⭐ 5.0</span>
+                </div>
+            </div>
+
+            <!-- Loyalty Card -->
+            <div class="loyalty-card">
+                <div class="lc-icon">🏆</div>
+                <div style="flex:1">
+                    <div class="lc-label">Loyalty Points</div>
+                    <div class="lc-points" id="lc-points">0 pts</div>
+                    <div class="lc-next" id="lc-next">500 pts needed for Gold</div>
+                    <div class="lc-bar mt-8">
+                        <div class="lc-bar-fill" id="lc-bar" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Items -->
+            <div class="profile-menu">
+                <div class="menu-item" onclick="openEditProfile()">
+                    <div class="mi-icon" style="background:var(--accent-soft)">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M13 3l2 2-9 9H4v-2l9-9z" stroke="var(--accent)" stroke-width="1.5"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="mi-label">Edit Profile</div>
+                        <div class="mi-desc">Update name, photo, contact</div>
+                    </div>
+                    <div class="mi-arrow">›</div>
+                </div>
+                <div class="menu-item" onclick="openQR()">
+                    <div class="mi-icon" style="background:var(--navy-glow)">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <rect x="2" y="2" width="6" height="6" rx="1" stroke="var(--navy)" stroke-width="1.5" />
+                            <rect x="10" y="2" width="6" height="6" rx="1" stroke="var(--navy)" stroke-width="1.5" />
+                            <rect x="2" y="10" width="6" height="6" rx="1" stroke="var(--navy)" stroke-width="1.5" />
+                            <path d="M10 10h2v2h-2zM14 10v2M10 14h2M14 14v-2" stroke="var(--navy)" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="mi-label">My Referral QR</div>
+                        <div class="mi-desc">Share & track installations</div>
+                    </div>
+                    <div class="mi-arrow">›</div>
+                </div>
+                <div class="menu-item" onclick="showToastMsg('Vehicle details coming soon!')">
+                    <div class="mi-icon" style="background:var(--success-soft)">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M2 13V8l4-4 5 2.5 4-2.5 1 2V13" stroke="var(--success)" stroke-width="1.5"
+                                stroke-linejoin="round" />
+                            <rect x="2" y="13" width="14" height="2.5" rx="1.25" fill="var(--success)" opacity=".5" />
+                            <circle cx="5" cy="15.5" r="1.5" fill="var(--success)" />
+                            <circle cx="13" cy="15.5" r="1.5" fill="var(--success)" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="mi-label">Vehicle Details</div>
+                        <div class="mi-desc">Manage your auto registration</div>
+                    </div>
+                    <div class="mi-arrow">›</div>
+                </div>
+                <div class="menu-item" onclick="showToastMsg('Documents coming soon!')">
+                    <div class="mi-icon" style="background:var(--warning-soft)">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M4 2h7l4 4v10a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="var(--warning)"
+                                stroke-width="1.5" />
+                            <path d="M11 2v4h4" stroke="var(--warning)" stroke-width="1.5" stroke-linejoin="round" />
+                            <path d="M6 8h6M6 11h4" stroke="var(--warning)" stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="mi-label">My Documents</div>
+                        <div class="mi-desc">Aadhar, PAN, RC, Insurance</div>
+                    </div>
+                    <div class="mi-arrow">›</div>
+                </div>
+                <div class="menu-item" onclick="showToastMsg('Support chat coming soon!')">
+                    <div class="mi-icon" style="background:var(--accent-soft)">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path
+                                d="M9 2C5.134 2 2 4.91 2 8.5c0 1.74.72 3.32 1.9 4.48L3 16l3.26-1.1A7.2 7.2 0 009 15c3.866 0 7-2.91 7-6.5S12.866 2 9 2z"
+                                stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="mi-label">Help & Support</div>
+                        <div class="mi-desc">Chat with our team</div>
+                    </div>
+                    <div class="mi-arrow">›</div>
+                </div>
+                <div class="menu-item" onclick="confirmLogout()">
+                    <div class="mi-icon" style="background:var(--danger-soft)">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M7 16H3a1 1 0 01-1-1V3a1 1 0 011-1h4M12 13l4-4-4-4M16 9H7" stroke="var(--danger)"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="mi-label" style="color:var(--danger)">Sign Out</div>
+                        <div class="mi-desc">Log out of your account</div>
+                    </div>
+                    <div class="mi-arrow">›</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TABBAR ─────────────────────────────── -->
+        <nav class="tabbar">
+            <button class="tab-btn active" id="tab-btn-home" onclick="switchTab('home')">
+                <div class="tab-icon">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                        <path d="M3 10.5L11 3l8 7.5V20a1 1 0 01-1 1H14v-5H8v5H4a1 1 0 01-1-1v-9.5z" stroke="#0a1628"
+                            stroke-width="1.5" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <span class="tab-label" id="tlbl-home" data-t="home">Home</span>
+            </button>
+            <button class="tab-btn" id="tab-btn-rides" onclick="switchTab('rides')">
+                <div class="tab-icon">
+                    <div class="tab-badge" id="rides-badge">0</div>
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                        <path d="M3 17V9L8 4l6 3 5-3 1 3V17" stroke="#8a9ab5" stroke-width="1.5"
+                            stroke-linejoin="round" />
+                        <rect x="3" y="17" width="16" height="3" rx="1.5" fill="#8a9ab5" />
+                        <circle cx="6.5" cy="20" r="2" stroke="#8a9ab5" stroke-width="1.5" />
+                        <circle cx="15.5" cy="20" r="2" stroke="#8a9ab5" stroke-width="1.5" />
+                    </svg>
+                </div>
+                <span class="tab-label" id="tlbl-rides" data-t="rides">Rides</span>
+            </button>
+            <button class="tab-btn" id="tab-btn-wallet" onclick="switchTab('wallet')">
+                <div class="tab-icon">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                        <rect x="2" y="6" width="18" height="13" rx="2" stroke="#8a9ab5" stroke-width="1.5" />
+                        <path d="M16 12.5a.5.5 0 110 1 .5.5 0 010-1" stroke="#8a9ab5" stroke-width="1.5"
+                            stroke-linecap="round" />
+                        <path d="M2 10h18M6 6V4" stroke="#8a9ab5" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <span class="tab-label" id="tlbl-wallet" data-t="wallet">Wallet</span>
+            </button>
+            <button class="tab-btn" id="tab-btn-profile" onclick="switchTab('profile')">
+                <div class="tab-icon">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                        <circle cx="11" cy="8" r="4" stroke="#8a9ab5" stroke-width="1.5" />
+                        <path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="#8a9ab5" stroke-width="1.5"
+                            stroke-linecap="round" />
+                    </svg>
+                </div>
+                <span class="tab-label" id="tlbl-profile" data-t="profile">Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ─── QR MODAL ───────────────────────────────────────── -->
+    <div class="modal-overlay" id="modal-qr" onclick="closeModalOutside(event,'modal-qr')">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-title">📱 Your Referral QR</div>
+            <div class="modal-desc">Share this QR to invite people to Safarr. Track how many scanned and installed.
+            </div>
+            <img id="qr-share-img" src="qr.jpeg" alt="QR Code" style="width:200px; height:200px; display:block; margin:20px auto; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+            <div class="qr-stats">
+                <div class="qr-stat">
+                    <div class="qr-stat-num" id="qr-scans">—</div>
+                    <div class="qr-stat-lbl">Scans</div>
+                </div>
+                <div class="qr-stat">
+                    <div class="qr-stat-num" id="qr-installs">—</div>
+                    <div class="qr-stat-lbl">Installs</div>
+                </div>
+                <div class="qr-stat">
+                    <div class="qr-stat-num" id="qr-pts">—</div>
+                    <div class="qr-stat-lbl">Points Earned</div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="downloadQR()">⬇️ Download QR</button>
+            <button class="btn-secondary" onclick="closeModal('modal-qr')">Close</button>
+        </div>
+    </div>
+
+    <!-- ─── EDIT PROFILE MODAL ─────────────────────────────── -->
+    <div class="modal-overlay" id="modal-edit-profile" onclick="closeModalOutside(event,'modal-edit-profile')">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-title">Edit Profile</div>
+            <div class="modal-desc">Update your personal information</div>
+            <div class="profile-upload" style="margin-bottom:16px">
+                <div class="profile-preview" id="ep-preview" style="cursor:pointer">
+                    <input type="file" accept="image/*" id="ep-input" onchange="previewEditProfile(this)" />
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <circle cx="16" cy="12" r="5" stroke="#8a9ab5" stroke-width="2" />
+                        <path d="M6 28c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#8a9ab5" stroke-width="2"
+                            stroke-linecap="round" />
+                    </svg>
+                    <img id="ep-img" src="" alt="profile"
+                        style="width:100%;height:100%;object-fit:cover;display:none;border-radius:50%" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" id="ep-name" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mobile</label>
+                <input type="tel" class="form-input" id="ep-mobile" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="ep-email" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <input type="text" class="form-input" id="ep-addr" />
+            </div>
+            <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
+            <button class="btn-secondary" onclick="closeModal('modal-edit-profile')">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════
+        // SUPABASE CONFIG — Replace with your credentials
+        // ═══════════════════════════════════════════════════════════════
+        const SUPABASE_URL = 'https://eouqjkvfbjefbyindqjp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvdXFqa3ZmYmplZmJ5aW5kcWpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTM2NjAsImV4cCI6MjA5MjY4OTY2MH0.yivlkQjKt4r6Lx507BsuM48t9aIM-7OBJOx91_6XEfw';
+
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            realtime: { params: { eventsPerSecond: 10 } }
+        });
+
+        // ═══════════════════════════════════════════════════════════════
+        // APP STATE
+        // ═══════════════════════════════════════════════════════════════
+        let APP = {
+            lang: localStorage.getItem('sf_lang') || 'en',
+            driverData: JSON.parse(localStorage.getItem('sf_driver') || 'null'),
+            isOnline: false,
+            currentTab: 'home',
+            allRides: [],
+            pendingRides: [],
+            currentAlertRide: null,
+            timerInterval: null,
+            timerCount: 30,
+            realtimeChannel: null,
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // I18N
+        // ═══════════════════════════════════════════════════════════════
+        const T = {
+            en: {
+                greeting_morning: 'Good Morning', greeting_afternoon: 'Good Afternoon', greeting_evening: 'Good Evening',
+                online: 'Online', offline: 'Offline', go_online: 'Go Online', go_offline: 'Go Offline',
+                home: 'Home', rides: 'Rides', wallet: 'Wallet', profile: 'Profile',
+                today_earnings: "Today's Earnings", total_rides: 'Total Rides',
+                ob_title: 'Driver Registration', ob_sub: 'Complete profile to start',
+                s1_title: 'Personal Details', s1_desc: 'Tell us about yourself',
+                s2_title: 'Vehicle Details', s2_desc: 'Register your auto rickshaw',
+                accept: 'Accept', decline: 'Decline', new_request: 'New Ride Request',
+                fare: 'Fare', distance: 'Distance', wallet_bal: 'Wallet Balance',
+            },
+            hi: {
+                greeting_morning: 'शुभ प्रभात (Morning)', greeting_afternoon: 'नमस्ते (Hello)', greeting_evening: 'शुभ संध्या (Evening)',
+                online: 'ऑनलाइन (Online)', offline: 'ऑफलाइन (Offline)', go_online: 'ऑनलाइन जाएं (Online)', go_offline: 'ऑफलाइन जाएं (Offline)',
+                home: 'होम (Home)', rides: 'राइड्स (Rides)', wallet: 'वॉलेट (Wallet)', profile: 'प्रोफ़ाइल (Profile)',
+                today_earnings: 'आज की कमाई (Earnings)', total_rides: 'कुल राइड्स (Total Rides)',
+                ob_title: 'ड्राइवर (Driver) पंजीकरण', ob_sub: 'प्रोफ़ाइल (Profile) पूरी करें',
+                s1_title: 'व्यक्तिगत (Personal) विवरण', s1_desc: 'जानकारी दें',
+                s2_title: 'वाहन (Vehicle) विवरण', s2_desc: 'ऑटो रिक्शा (Auto) पंजीकृत करें',
+                accept: 'स्वीकार (Accept)', decline: 'इनकार (Decline)', new_request: 'नई (New) राइड रिक्वेस्ट',
+                fare: 'किराया (Fare)', distance: 'दूरी (Distance)', wallet_bal: 'वॉलेट बैलेंस (Balance)',
+            },
+            mr: {
+                greeting_morning: 'शुभ प्रभात (Morning)', greeting_afternoon: 'नमस्कार (Hello)', greeting_evening: 'शुभ संध्या (Evening)',
+                online: 'ऑनलाइन (Online)', offline: 'ऑफलाइन (Offline)', go_online: 'ऑनलाइन व्हा (Online)', go_offline: 'ऑफलाइन व्हा (Offline)',
+                home: 'होम (Home)', rides: 'राईड्स (Rides)', wallet: 'वॉलेट (Wallet)', profile: 'प्रोफाईल (Profile)',
+                today_earnings: 'आजची कमाई (Earnings)', total_rides: 'एकूण Rides',
+                ob_title: 'ड्रायव्हर (Driver) नोंदणी', ob_sub: 'प्रोफाईल (Profile) पूर्ण करा',
+                s1_title: 'तुमची (Personal) माहिती', s1_desc: 'माहिती द्या',
+                s2_title: 'वाहन (Vehicle) तपशील', s2_desc: 'ऑटो (Auto) नोंदणी करा',
+                accept: 'स्वीकार करा (Accept)', decline: 'रद्द करा (Decline)', new_request: 'नवीन (New) राईड रिक्वेस्ट',
+                fare: 'भाडे (Fare)', distance: 'अंतर (Distance)', wallet_bal: 'वॉलेट बॅलेन्स (Balance)',
+            }
+        };
+
+        function t(key) { return (T[APP.lang] || T.en)[key] || key; }
+
+        // ═══════════════════════════════════════════════════════════════
+        // INIT
+        // ═══════════════════════════════════════════════════════════════
+        window.addEventListener('DOMContentLoaded', init);
+
+        async function init() {
+            const saved = localStorage.getItem('sf_driver');
+            const lang = localStorage.getItem('sf_lang');
+
+            if (saved) {
+                APP.driverData = JSON.parse(saved);
+                APP.lang = lang || 'en';
+                applyLang();
+                showScreen('screen-app');
+                startDashboard(); 
+                return;
+            }
+
+            if (lang) {
+                APP.lang = lang;
+                applyLang();
+                showScreen('screen-auth');
+            } else {
+                showScreen('screen-lang');
+            }
+
+            updateGreeting();
+            setInterval(updateGreeting, 60000);
+            initPWAInstall();
+        }
+
+        function startDashboard() {
+            populateApp();
+            loadRides();
+            subscribeRealtime();
+            updateGreeting();
+            setInterval(updateGreeting, 60000);
+            initPWAInstall();
+        }
+
+        function toggleAuthMode(isLogin) {
+            document.getElementById('btn-toggle-login').classList.toggle('active', isLogin);
+            document.getElementById('btn-toggle-signup').classList.toggle('active', !isLogin);
+            document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+            document.getElementById('form-signup').classList.toggle('hidden', isLogin);
+            document.getElementById('auth-subtitle').textContent = isLogin ? 'Driver Access Portal' : 'Register as a Partner';
+        }
+
+        async function handleLogin() {
+            const mobile = document.getElementById('login-mobile').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+
+            if (!mobile || !pass) { showToastMsg('Enter all details'); return; }
+
+            const { data, error } = await _supabase.from('auto_drivers')
+                .select('*').eq('mobile', mobile).eq('password', pass).single();
+
+            if (error || !data) { showToastMsg('Invalid mobile or password'); return; }
+
+            APP.driverData = data;
+            localStorage.setItem('sf_driver', JSON.stringify(data));
+            showScreen('screen-app');
+            startDashboard();
+            showToastMsg('Welcome back! 👋');
+        }
+
+        async function handleSignup() {
+            const name = document.getElementById('signup-name').value.trim();
+            const mobile = document.getElementById('signup-mobile').value.trim();
+            const pass = document.getElementById('signup-pass').value.trim();
+
+            if (!name || !mobile || !pass) { showToastMsg('Fill all fields'); return; }
+            if (pass.length < 4) { showToastMsg('Password too short'); return; }
+
+            const payload = { full_name: name, mobile: mobile, password: pass };
+            
+            const { data: existing } = await _supabase.from('auto_drivers').select('id').eq('mobile', mobile).single();
+            if (existing) { showToastMsg('Mobile already registered'); return; }
+
+            const { data, error } = await _supabase.from('auto_drivers').insert(payload).select().single();
+            
+            if (error) { showToastMsg('Signup failed: ' + error.message); return; }
+
+            APP.driverData = data;
+            localStorage.setItem('sf_driver', JSON.stringify(data));
+            
+            document.getElementById('inp-name').value = name;
+            document.getElementById('inp-mobile').value = mobile;
+            showScreen('screen-onboard');
+            showToastMsg('Profile created! Now complete onboarding.');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // PWA INSTALLATION
+        // ═══════════════════════════════════════════════════════════════
+        let deferredPrompt = null;
+        function isPWAInstalled() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || document.referrer.includes('android-app://');
+        }
+        function initPWAInstall() {
+            const banner = document.getElementById('install-pwa-banner');
+            const btnInstall = document.getElementById('btn-install-pwa');
+
+            // If uninstalled, localstorage key will remain but display-mode won't match standalone.
+            if (!isPWAInstalled()) {
+                banner.style.display = 'flex';
+            }
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                if (!isPWAInstalled()) {
+                    banner.style.display = 'flex';
+                }
+            });
+
+            window.addEventListener('appinstalled', () => {
+                banner.style.display = 'none';
+                deferredPrompt = null;
+                showToastMsg('✅ Safarr Driver installed!');
+            });
+
+            btnInstall.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                }
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS && !window.navigator.standalone) {
+                    showToastMsg('Tap Share ⬆ then "Add to Home Screen"');
+                }
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // SCREENS
+        // ═══════════════════════════════════════════════════════════════
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // LANGUAGE
+        // ═══════════════════════════════════════════════════════════════
+        function setLang(lang) {
+            APP.lang = lang;
+            localStorage.setItem('sf_lang', lang);
+            document.querySelectorAll('.lang-check').forEach(c => c.style.display = 'none');
+            const el = document.getElementById('check-' + lang);
+            if (el) el.style.display = 'flex';
+            setTimeout(() => {
+                showScreen('screen-auth');
+                applyLang();
+                applyOnboardingLang();
+            }, 350);
+        }
+
+        function applyLang() {
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                if (key) el.textContent = t(key);
+            });
+            // Manual overrides for specific elements that need special formatting
+            const langBadge = document.getElementById('badge-lang');
+            if (langBadge) {
+                langBadge.textContent = APP.lang === 'hi' ? 'हिंदी' : APP.lang === 'mr' ? 'मराठी' : 'English';
+            }
+        }
+
+        function applyOnboardingLang() {
+            applyLang(); // Since we now use data-t
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // ONBOARDING
+        // ═══════════════════════════════════════════════════════════════
+        function goStep(n) {
+            const name = document.getElementById('inp-name').value.trim();
+            const mobile = document.getElementById('inp-mobile').value.trim();
+            if (n === 2) {
+                if (!name) { showToastMsg('Please enter your name'); return; }
+                if (!mobile || mobile.length < 10) { showToastMsg('Enter a valid mobile number'); return; }
+            }
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step-' + n).classList.add('active');
+            document.getElementById('ob-progress').style.width = (n === 1 ? 33 : 66) + '%';
+            document.getElementById('screen-onboard').scrollTo(0, 0);
+        }
+
+        function previewProfile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = document.getElementById('pp-img');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('pp-label').textContent = '✅ Photo added';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function markUploaded(input, boxId, doneId) {
+            if (input.files && input.files[0]) {
+                document.getElementById(doneId).style.display = 'block';
+            }
+        }
+
+        async function submitOnboarding() {
+            const vnum = document.getElementById('inp-vnum').value.trim();
+            const vmake = document.getElementById('inp-vmake').value.trim();
+            if (!vnum) { showToastMsg('Enter vehicle number'); return; }
+            if (!vmake) { showToastMsg('Enter vehicle make/brand'); return; }
+
+            const btn = document.getElementById('btn-step2');
+            const btnText = document.getElementById('btn-step2-text');
+            btn.disabled = true;
+            btnText.textContent = 'Saving...';
+            document.getElementById('ob-progress').style.width = '100%';
+
+            const driverPayload = {
+                full_name: document.getElementById('inp-name').value.trim(),
+                mobile: document.getElementById('inp-mobile').value.trim(),
+                email: document.getElementById('inp-email').value.trim() || null,
+                date_of_birth: document.getElementById('inp-dob').value || null,
+                gender: document.getElementById('inp-gender').value || null,
+                address_line1: document.getElementById('inp-addr1').value.trim() || null,
+                address_line2: document.getElementById('inp-addr2').value.trim() || null,
+                city: document.getElementById('inp-city').value.trim() || 'Pune',
+                pincode: document.getElementById('inp-pin').value.trim() || null,
+                aadhar_number: document.getElementById('inp-aadhar').value.trim() || null,
+                pan_number: document.getElementById('inp-pan').value.trim().toUpperCase() || null,
+                language: APP.lang,
+                onboarding_complete: true,
+            };
+
+            try {
+                // Insert driver
+                const { data: driver, error: dErr } = await _supabase
+                    .from('auto_drivers')
+                    .insert(driverPayload)
+                    .select()
+                    .single();
+
+                if (dErr) throw dErr;
+
+                // Upload profile image if provided
+                const ppFile = document.getElementById('pp-input').files[0];
+                if (ppFile && driver) {
+                    const ext = ppFile.name.split('.').pop();
+                    const path = `${driver.id}/profile.${ext}`;
+                    const { error: upErr } = await _supabase.storage.from('driver-profiles').upload(path, ppFile, { upsert: true });
+                    if (!upErr) {
+                        const { data: urlData } = _supabase.storage.from('driver-profiles').getPublicUrl(path);
+                        await _supabase.from('auto_drivers').update({ profile_image_url: urlData.publicUrl }).eq('id', driver.id);
+                        driver.profile_image_url = urlData.publicUrl;
+                    }
+                }
+
+                // Insert vehicle
+                const vehiclePayload = {
+                    driver_id: driver.id,
+                    vehicle_number: vnum.toUpperCase(),
+                    vehicle_name: vmake,
+                    vehicle_model: document.getElementById('inp-vmodel').value.trim() || null,
+                    vehicle_year: parseInt(document.getElementById('inp-vyear').value) || null,
+                    vehicle_color: document.getElementById('inp-vcolor').value.trim() || null,
+                    registration_number: document.getElementById('inp-vreg').value.trim() || vnum.toUpperCase(),
+                    insurance_number: document.getElementById('inp-vins').value.trim() || null,
+                    insurance_expiry: document.getElementById('inp-vins-exp').value || null,
+                    permit_number: document.getElementById('inp-vpermit').value.trim() || null,
+                };
+
+                const { error: vErr } = await _supabase.from('auto_vehicles').insert(vehiclePayload);
+                if (vErr) console.warn('Vehicle insert error:', vErr);
+
+                // Save locally
+                APP.driverData = driver;
+                localStorage.setItem('sf_driver', JSON.stringify(driver));
+
+                showToastMsg('🎉 Registration complete!');
+                setTimeout(() => {
+                    showScreen('screen-app');
+                    applyLang();
+                    populateApp();
+                    loadRides();
+                    subscribeRealtime();
+                }, 800);
+
+            } catch (err) {
+                console.error('Onboarding error:', err);
+                showToastMsg('Error: ' + (err.message || 'Something went wrong'));
+                btn.disabled = false;
+                btnText.textContent = 'Complete Registration 🎉';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // POPULATE APP
+        // ═══════════════════════════════════════════════════════════════
+        function populateApp() {
+            if (!APP.driverData) return;
+            const d = APP.driverData;
+
+            document.getElementById('app-name').textContent = d.full_name || 'Driver';
+            document.getElementById('ph-name').textContent = d.full_name || '—';
+            document.getElementById('ph-mobile').textContent = d.mobile || '—';
+            document.getElementById('stat-total-rides').textContent = d.total_rides || 0;
+            document.getElementById('stat-total-earn').textContent = '₹' + (d.total_earnings || 0);
+            document.getElementById('stat-rating').textContent = (d.rating || 5.0).toFixed(1) + ' ★';
+            document.getElementById('stat-loyalty').textContent = d.loyalty_points || 0;
+            document.getElementById('badge-rating').textContent = '⭐ ' + (d.rating || 5.0).toFixed(1);
+            document.getElementById('lc-points').textContent = (d.loyalty_points || 0) + ' pts';
+            document.getElementById('qr-scans').textContent = d.qr_scans || 0;
+            document.getElementById('qr-installs').textContent = d.qr_installs || 0;
+            document.getElementById('qr-pts').textContent = (d.qr_installs || 0) * 10;
+
+            const barPct = Math.min(((d.loyalty_points || 0) / 500) * 100, 100);
+            document.getElementById('lc-bar').style.width = barPct + '%';
+            document.getElementById('lc-next').textContent = d.loyalty_points >= 500 ? '🥇 Gold Member' : (500 - (d.loyalty_points || 0)) + ' pts needed for Gold';
+
+            document.getElementById('earn-total-wallet').textContent = '₹' + (d.total_earnings || 0);
+            document.getElementById('today-earnings').textContent = '₹0';
+            document.getElementById('earnings-change').textContent = '+0 rides today';
+            document.getElementById('earn-today').textContent = '₹0';
+
+            // Profile image
+            if (d.profile_image_url) {
+                ['app-avatar-img', 'ph-img'].forEach(id => {
+                    const img = document.getElementById(id);
+                    img.src = d.profile_image_url;
+                    img.style.display = 'block';
+                });
+            }
+
+            // Verification
+            document.getElementById('badge-verified').textContent = d.is_verified ? '✓ Verified' : '⏳ Pending';
+
+            // Edit profile prefill
+            document.getElementById('ep-name').value = d.full_name || '';
+            document.getElementById('ep-mobile').value = d.mobile || '';
+            document.getElementById('ep-email').value = d.email || '';
+            document.getElementById('ep-addr').value = d.address_line1 || '';
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // GREETING
+        // ═══════════════════════════════════════════════════════════════
+        function updateGreeting() {
+            const h = new Date().getHours();
+            let g = h < 12 ? t('greeting_morning') : h < 17 ? t('greeting_afternoon') : t('greeting_evening');
+            const name = APP.driverData?.full_name?.split(' ')[0] || 'Driver';
+            const el = document.getElementById('dash-greeting');
+            if (el) el.textContent = g + ', ' + name + ' 👋';
+            const dateEl = document.getElementById('dash-date');
+            if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // ONLINE TOGGLE
+        // ═══════════════════════════════════════════════════════════════
+        function toggleOnlineStatus() {
+            APP.isOnline = !APP.isOnline;
+            const tog = document.getElementById('toggle-online');
+            const lbl = document.getElementById('toggle-lbl');
+            const dot = document.getElementById('status-dot');
+            const stxt = document.getElementById('status-text');
+
+            if (APP.isOnline) {
+                tog.classList.add('active');
+                lbl.textContent = t('go_offline');
+                dot.classList.add('online');
+                stxt.textContent = t('online');
+                showToastMsg('🟢 You are now Online');
+                if (APP.driverData?.id) {
+                    _supabase.from('auto_drivers').update({ is_online: true }).eq('id', APP.driverData.id).then();
+                }
+                enablePushNotifications();
+            } else {
+                tog.classList.remove('active');
+                lbl.textContent = t('go_online');
+                dot.classList.remove('online');
+                stxt.textContent = t('offline');
+                showToastMsg('⚫ You are now Offline');
+                if (APP.driverData?.id) {
+                    _supabase.from('auto_drivers').update({ is_online: false }).eq('id', APP.driverData.id).then();
+                }
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // LOAD RIDES
+        // ═══════════════════════════════════════════════════════════════
+        async function loadRides() {
+            try {
+                const { data, error } = await _supabase
+                    .from('ride_bookings')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(50);
+
+                if (error) throw error;
+                APP.allRides = data || [];
+                renderRidesList(APP.allRides);
+                renderHomeRides();
+                updateRideBadge();
+                updateTodayStats();
+            } catch (err) {
+                console.error('Load rides error:', err);
+                // Show demo data if Supabase not configured
+                loadDemoRides();
+            }
+        }
+
+        function loadDemoRides() {
+            APP.allRides = [
+                { id: '1', customer_name: 'Rahul Sharma', customer_mobile: '9876543210', pickup_address: 'Swargate, Pune', dropoff_address: 'Pune Railway Station', distance_km: 6.2, estimated_fare: 85, status: 'pending', payment_method: 'cash', created_at: new Date().toISOString() },
+                { id: '2', customer_name: 'Priya Patil', customer_mobile: '9823456789', pickup_address: 'Kothrud, Pune', dropoff_address: 'Pune Central Mall', distance_km: 3.8, estimated_fare: 55, status: 'completed', actual_fare: 55, payment_method: 'gpay', created_at: new Date(Date.now() - 7200000).toISOString() },
+                { id: '3', customer_name: 'Amit Deshmukh', customer_mobile: '9765432109', pickup_address: 'Viman Nagar, Pune', dropoff_address: 'Magarpatta City', distance_km: 9.1, estimated_fare: 120, status: 'completed', actual_fare: 120, payment_method: 'cash', created_at: new Date(Date.now() - 14400000).toISOString() },
+                { id: '4', customer_name: 'Sneha Kulkarni', customer_mobile: '9654321098', pickup_address: 'Baner, Pune', dropoff_address: 'Hinjewadi Phase 1', distance_km: 5.4, estimated_fare: 75, status: 'cancelled', payment_method: 'phonepe', created_at: new Date(Date.now() - 21600000).toISOString() },
+                { id: '5', customer_name: 'Vijay More', customer_mobile: '9543210987', pickup_address: 'Shivajinagar, Pune', dropoff_address: 'Sassoon Hospital Pune', distance_km: 7.7, estimated_fare: 100, status: 'pending', payment_method: 'cash', created_at: new Date(Date.now() - 120000).toISOString() },
+            ];
+            renderRidesList(APP.allRides);
+            renderHomeRides();
+            updateRideBadge();
+            updateTodayStats();
+        }
+
+        function updateTodayStats() {
+            const today = new Date().toDateString();
+            const todayRides = APP.allRides.filter(r => new Date(r.created_at).toDateString() === today);
+            const completedToday = todayRides.filter(r => r.status === 'completed');
+            const todayEarnings = completedToday.reduce((sum, r) => sum + (r.actual_fare || r.estimated_fare || 0), 0);
+            document.getElementById('today-earnings').textContent = '₹' + todayEarnings.toFixed(0);
+            document.getElementById('earnings-change').textContent = '+' + completedToday.length + ' rides today';
+            document.getElementById('earn-today').textContent = '₹' + todayEarnings.toFixed(0);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // RENDER RIDES
+        // ═══════════════════════════════════════════════════════════════
+        function renderRideCard(ride) {
+            const time = new Date(ride.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+            const date = new Date(ride.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+            const fare = ride.actual_fare || ride.estimated_fare || 0;
+            return `
+    <div class="ride-item" id="ride-${ride.id}">
+      <div class="ride-item-top">
+        <span class="ride-status ${ride.status}">${ride.status.toUpperCase()}</span>
+        <span class="ride-fare">₹${fare}</span>
+      </div>
+      <div style="font-size:.8rem;color:var(--text-secondary);margin-bottom:8px">
+        👤 ${ride.customer_name} · 📞 ${ride.customer_mobile}
+      </div>
+      <div class="ride-route">
+        <div class="route-stop"><div class="route-dot pickup"></div>${ride.pickup_address}</div>
+        <div style="display:flex;align-items:flex-start;gap:8px;margin:2px 0"><div class="route-line"></div></div>
+        <div class="route-stop"><div class="route-dot drop"></div>${ride.dropoff_address}</div>
+      </div>
+      <div class="ride-meta">
+        <span>📅 ${date} ${time}</span>
+        ${ride.distance_km ? `<span>📍 ${ride.distance_km} km</span>` : ''}
+        <span>💳 ${ride.payment_method || 'cash'}</span>
+      </div>
+    </div>
+  `;
+        }
+
+        function renderRidesList(rides) {
+            const container = document.getElementById('rides-list');
+            if (!rides || !rides.length) {
+                container.innerHTML = `<div class="rides-empty"><div class="rides-empty-icon">🚗</div><p>No rides found</p></div>`;
+                return;
+            }
+            container.innerHTML = rides.map(renderRideCard).join('');
+        }
+
+        function renderHomeRides() {
+            const container = document.getElementById('home-recent-rides');
+            const recent = APP.allRides.slice(0, 3);
+            if (!recent.length) {
+                container.innerHTML = `<div style="text-align:center;padding:24px;color:var(--gray);font-size:.85rem">No rides yet</div>`;
+                return;
+            }
+            container.innerHTML = recent.map(renderRideCard).join('');
+        }
+
+        function filterRides(el, status) {
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
+            const filtered = status === 'all' ? APP.allRides : APP.allRides.filter(r => r.status === status);
+            renderRidesList(filtered);
+        }
+
+        function updateRideBadge() {
+            const pending = APP.allRides.filter(r => r.status === 'pending').length;
+            const badge = document.getElementById('rides-badge');
+            if (pending > 0) {
+                badge.textContent = pending;
+                badge.classList.add('show');
+            } else {
+                badge.classList.remove('show');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // REALTIME SUBSCRIPTIONS
+        // ═══════════════════════════════════════════════════════════════
+        function subscribeRealtime() {
+            if (APP.realtimeChannel) _supabase.removeChannel(APP.realtimeChannel);
+
+            APP.realtimeChannel = _supabase
+                .channel('ride-bookings')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'ride_bookings' }, handleNewRide)
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ride_bookings' }, handleRideUpdate)
+                .subscribe((status) => {
+                    console.log('[Realtime] Status:', status);
+                });
+        }
+
+        function handleNewRide(payload) {
+            const ride = payload.new;
+            console.log('[Realtime] New ride:', ride);
+
+            APP.allRides.unshift(ride);
+            renderRidesList(APP.allRides);
+            renderHomeRides();
+            updateRideBadge();
+
+            // Show in-app notification
+            showInAppNotif('🚗 New Ride Request!', `${ride.pickup_address} → ${ride.dropoff_address}`, 'rides');
+
+            // Show ride alert if driver is online
+            if (APP.isOnline && ride.status === 'pending') {
+                showRideAlert(ride);
+            }
+
+            // Try push notification via SW
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'SHOW_NOTIFICATION',
+                    title: '🚗 New Ride Request!',
+                    body: `₹${ride.estimated_fare || '—'} · ${ride.pickup_address}`,
+                    tag: 'new-ride',
+                    data: { rideId: ride.id }
+                });
+            }
+        }
+
+        function handleRideUpdate(payload) {
+            const updated = payload.new;
+            const idx = APP.allRides.findIndex(r => r.id === updated.id);
+            if (idx !== -1) APP.allRides[idx] = updated;
+            renderRidesList(APP.allRides);
+            renderHomeRides();
+            updateRideBadge();
+            updateTodayStats();
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // RIDE ALERT (Live)
+        // ═══════════════════════════════════════════════════════════════
+        function showRideAlert(ride) {
+            APP.currentAlertRide = ride;
+            document.getElementById('alert-customer').textContent = ride.customer_name;
+            document.getElementById('alert-from').textContent = '📍 ' + ride.pickup_address;
+            document.getElementById('alert-to').textContent = '📌 ' + ride.dropoff_address;
+            document.getElementById('alert-fare').textContent = '₹' + (ride.estimated_fare || '—');
+            document.getElementById('live-ride-alert').style.display = 'block';
+            document.getElementById('btn-accept-ride').disabled = false;
+            document.getElementById('btn-accept-ride').textContent = '✅ Accept';
+
+            // Timer
+            APP.timerCount = 30;
+            clearInterval(APP.timerInterval);
+            updateTimer(30);
+            APP.timerInterval = setInterval(() => {
+                APP.timerCount--;
+                updateTimer(APP.timerCount);
+                if (APP.timerCount <= 0) {
+                    clearInterval(APP.timerInterval);
+                    hideRideAlert();
+                }
+            }, 1000);
+
+            // Vibrate
+            if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+        }
+
+        function updateTimer(sec) {
+            const circumference = 94.25;
+            const offset = circumference - (sec / 30) * circumference;
+            document.getElementById('timer-progress').style.strokeDashoffset = offset;
+            document.getElementById('timer-text').textContent = sec;
+        }
+
+        function hideRideAlert() {
+            document.getElementById('live-ride-alert').style.display = 'none';
+            APP.currentAlertRide = null;
+            clearInterval(APP.timerInterval);
+        }
+
+        async function acceptRide() {
+            if (!APP.currentAlertRide) return;
+            const ride = APP.currentAlertRide;
+            document.getElementById('btn-accept-ride').disabled = true;
+            document.getElementById('btn-accept-ride').textContent = 'Accepting...';
+            clearInterval(APP.timerInterval);
+
+            try {
+                await _supabase.from('ride_bookings').update({
+                    status: 'accepted',
+                    driver_id: APP.driverData?.id || null,
+                    accepted_at: new Date().toISOString()
+                }).eq('id', ride.id);
+                showToastMsg('✅ Ride accepted!');
+                hideRideAlert();
+            } catch (err) {
+                showToastMsg('Accept failed: ' + err.message);
+                document.getElementById('btn-accept-ride').disabled = false;
+                document.getElementById('btn-accept-ride').textContent = '✅ Accept';
+            }
+        }
+
+        function declineRide() {
+            clearInterval(APP.timerInterval);
+            hideRideAlert();
+            showToastMsg('Ride declined');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // TAB NAVIGATION
+        // ═══════════════════════════════════════════════════════════════
+        function switchTab(tab, push = true) {
+            if (push && tab !== APP.currentTab) {
+                history.pushState({ tab: tab }, '');
+            }
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('tab-btn-' + tab).classList.add('active');
+            APP.currentTab = tab;
+
+            // Fix tabbar SVG stroke colors
+            document.querySelectorAll('.tab-btn:not(.active) .tab-icon svg path, .tab-btn:not(.active) .tab-icon svg circle, .tab-btn:not(.active) .tab-icon svg rect').forEach(el => {
+                el.setAttribute('stroke', '#8a9ab5');
+                el.setAttribute('fill', 'none');
+            });
+
+            if (tab === 'rides') {
+                renderRidesList(APP.allRides);
+                document.getElementById('rides-badge').classList.remove('show');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // IN-APP NOTIFICATION
+        // ═══════════════════════════════════════════════════════════════
+        let notifTimer;
+        function showInAppNotif(title, body, targetTab) {
+            document.getElementById('notif-title').textContent = title;
+            document.getElementById('notif-body').textContent = body;
+            const card = document.getElementById('notif-card');
+            card.classList.add('show');
+            card.onclick = () => { dismissNotif(); if (targetTab) switchTab(targetTab); };
+            clearTimeout(notifTimer);
+            notifTimer = setTimeout(dismissNotif, 4500);
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        }
+
+        function dismissNotif() {
+            document.getElementById('notif-card').classList.remove('show');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // PROFILE EDIT
+        // ═══════════════════════════════════════════════════════════════
+        function openEditProfile() {
+            document.getElementById('modal-edit-profile').classList.add('open');
+        }
+
+        function previewEditProfile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = document.getElementById('ep-img');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function saveProfile() {
+            const name = document.getElementById('ep-name').value.trim();
+            const mobile = document.getElementById('ep-mobile').value.trim();
+            if (!name) { showToastMsg('Name required'); return; }
+
+            const updates = {
+                full_name: name,
+                mobile: mobile,
+                email: document.getElementById('ep-email').value.trim() || null,
+                address_line1: document.getElementById('ep-addr').value.trim() || null,
+            };
+
+            try {
+                if (APP.driverData?.id) {
+                    // Upload new photo if selected
+                    const epFile = document.getElementById('ep-input').files[0];
+                    if (epFile) {
+                        const ext = epFile.name.split('.').pop();
+                        const path = `${APP.driverData.id}/profile.${ext}`;
+                        await _supabase.storage.from('driver-profiles').upload(path, epFile, { upsert: true });
+                        const { data: urlData } = _supabase.storage.from('driver-profiles').getPublicUrl(path);
+                        updates.profile_image_url = urlData.publicUrl;
+                    }
+
+                    const { data, error } = await _supabase
+                        .from('auto_drivers')
+                        .update(updates)
+                        .eq('id', APP.driverData.id)
+                        .select().single();
+
+                    if (error) throw error;
+                    APP.driverData = { ...APP.driverData, ...data };
+                } else {
+                    APP.driverData = { ...APP.driverData, ...updates };
+                }
+
+                localStorage.setItem('sf_driver', JSON.stringify(APP.driverData));
+                populateApp();
+                closeModal('modal-edit-profile');
+                showToastMsg('✅ Profile updated!');
+            } catch (err) {
+                showToastMsg('Error: ' + err.message);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // QR CODE
+        // ═══════════════════════════════════════════════════════════════
+        function openQR() {
+            document.getElementById('modal-qr').classList.add('open');
+            // Static QR used as per request
+            document.getElementById('qr-scans').textContent = APP.driverData?.qr_scans || Math.floor(Math.random() * 20 + 5);
+
+            document.getElementById('qr-scans').textContent = APP.driverData?.qr_scans || Math.floor(Math.random() * 20 + 5);
+            document.getElementById('qr-installs').textContent = APP.driverData?.qr_installs || Math.floor(Math.random() * 8 + 1);
+            document.getElementById('qr-pts').textContent = (APP.driverData?.qr_installs || 3) * 10;
+        }
+
+        function downloadQR() {
+            const link = document.createElement('a');
+            link.download = 'safarr-referral-qr.jpeg';
+            link.href = 'qr.jpeg';
+            link.click();
+            showToastMsg('📥 QR downloaded!');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // MODALS
+        // ═══════════════════════════════════════════════════════════════
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
+
+        // ═══════════════════════════════════════════════════════════════
+        // LOGOUT
+        // ═══════════════════════════════════════════════════════════════
+        function confirmLogout() {
+            if (confirm('Sign out of Safarr?')) {
+                if (APP.driverData?.id) {
+                    _supabase.from('auto_drivers').update({ is_online: false }).eq('id', APP.driverData.id).then();
+                }
+                localStorage.removeItem('sf_driver');
+                localStorage.removeItem('sf_lang');
+                APP.driverData = null;
+                APP.lang = 'en';
+                showScreen('screen-lang');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // TOAST
+        // ═══════════════════════════════════════════════════════════════
+        let toastTimer;
+        function showToastMsg(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // Alias used inline
+        const showToast = showToastMsg;
+
+        // ═══════════════════════════════════════════════════════════════
+        // SERVICE WORKER
+        // ═══════════════════════════════════════════════════════════════
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+                .then(reg => {
+                    console.log('[Driver App] SW registered');
+                    reg.addEventListener('updatefound', () => {
+                        reg.installing?.addEventListener('statechange', function () {
+                            if (this.state === 'installed' && navigator.serviceWorker.controller) {
+                                this.postMessage({ type: 'SKIP_WAITING' });
+                            }
+                        });
+                    });
+                })
+                .catch(err => console.warn('[Driver App] SW failed:', err));
+
+            navigator.serviceWorker.addEventListener('message', e => {
+                if (e.data?.type === 'RIDE_ACCEPTED') {
+                    switchTab('rides');
+                }
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // PUSH NOTIFICATION REQUEST
+        // ═══════════════════════════════════════════════════════════════
+        async function requestPushPermission() {
+            if (!('serviceWorker' in navigator) || !window.PushManager) return;
+            if (Notification.permission === 'default') {
+                const perm = await Notification.requestPermission();
+                if (perm === 'granted') showToastMsg('🔔 Notifications enabled!');
+            }
+            if (Notification.permission === 'granted') {
+                try {
+                    const reg = await navigator.serviceWorker.ready;
+                    const sub = await reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        // Your Public VAPID Key
+                        applicationServerKey: urlB64ToUint8Array('BKWUx27yPtwTWcQBYo_O9Rjv-z_q2cZ_f_r3Nc8SOl6EFEN3gamdkYviA4RfZSjXpnwzGPI-3O9BoMO_dIjMUU8')
+                    });
+                    
+                    if(APP.driverData && APP.driverData.id) {
+                        await _supabase.from('auto_drivers').update({ push_sub: JSON.stringify(sub) }).eq('id', APP.driverData.id).then();
+                    }
+                } catch (err) {
+                    console.error('Push sub error:', err);
+                }
+            }
+        }
+
+        function urlB64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }
+            return outputArray;
+        }
+
+        // Request push permission after page loads
+        setTimeout(requestPushPermission, 3000);
+
+        // ═══════════════════════════════════════════════════════════════
+        // SIMULATE NEW RIDE (DEMO — for testing without customer app)
+        // Comment out in production
+        // ═══════════════════════════════════════════════════════════════
+        function simulateNewRide() {
+            const names = ['Rahul Sharma', 'Priya Patil', 'Amit Deshmukh', 'Sneha Kulkarni', 'Vijay More', 'Kavita Joshi'];
+            const pickups = ['Swargate Pune', 'Kothrud Stand', 'Viman Nagar', 'Baner Phata', 'Shivajinagar', 'Hinjewadi'];
+            const drops = ['Pune Station', 'Sassoon Hospital', 'Pune Central', 'Phoenix Mall', 'Airport', 'Kalyani Nagar'];
+            const ride = {
+                id: 'demo-' + Date.now(),
+                customer_name: names[Math.floor(Math.random() * names.length)],
+                customer_mobile: '98' + Math.floor(Math.random() * 100000000).toString().padStart(8, '0'),
+                pickup_address: pickups[Math.floor(Math.random() * pickups.length)],
+                dropoff_address: drops[Math.floor(Math.random() * drops.length)],
+                distance_km: (Math.random() * 8 + 2).toFixed(1),
+                estimated_fare: Math.round((Math.random() * 100 + 40) / 5) * 5,
+                status: 'pending',
+                payment_method: ['cash', 'gpay', 'phonepe'][Math.floor(Math.random() * 3)],
+                created_at: new Date().toISOString(),
+            };
+            handleNewRide({ new: ride });
+        }
+
+        // Auto-simulate after 8 seconds if driver is demo (not real supabase)
+        setTimeout(() => {
+            if (!APP.driverData?.id || SUPABASE_URL.includes('YOUR_PROJECT')) {
+                simulateNewRide();
+            }
+        }, 8000);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "Safarr Driver App",
+  "short_name": "Safarr Driver",
+  "description": "Professional driver dashboard for Safarr partners.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a1628",
+  "theme_color": "#0a1628",
+  "icons": [
+    {
+      "src": "auto.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
