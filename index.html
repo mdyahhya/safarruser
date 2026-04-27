@@ -5,13 +5,41 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0a1628" />
-  <meta name="description" content="Safarr – Book auto rickshaws instantly in Pune" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Safarr" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
+  <style>
+    /* Prevent flicker by hiding body until redirect check is done */
+    body { visibility: hidden; background: #0a1628; }
+  </style>
+  <script>
+    (function() {
+      const driverData = localStorage.getItem('sf_driver');
+      const userData = localStorage.getItem('sf_user');
+      const params = new URLSearchParams(window.location.search);
+      const forcedRole = params.get('role');
+
+      // 1. Auto-Redirect if logged in
+      if (driverData) {
+        window.location.href = 'auto.html';
+        return;
+      }
+      if (userData) {
+        window.location.href = 'user.html';
+        return;
+      }
+
+      // 2. Dynamic Manifest Injection based on role preference
+      const role = localStorage.getItem('sf_role') || (forcedRole === 'user' ? 'user' : 'auto');
+      const manifestFile = role === 'user' ? 'manifest-user.json' : 'manifest-auto.json';
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = manifestFile;
+      document.head.appendChild(link);
+      
+      // Show body if no redirect
+      window.addEventListener('DOMContentLoaded', () => {
+        document.body.style.visibility = 'visible';
+      });
+    })();
+  </script>
   <title>Safarr – Auto Rickshaw App</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="auto.jpg" />
@@ -622,9 +650,8 @@
       <!-- Role Cards -->
       <div class="role-cards">
         <!-- Auto Driver Card -->
-        <a href="auto.html" class="role-card primary" id="card-driver">
+        <div class="role-card primary" id="card-driver" onclick="setRoleAndGo('auto', 'auto.html')" style="cursor:pointer">
           <div class="card-icon">
-            <!-- Auto Rickshaw SVG -->
             <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
               <path d="M4 20V12L9 7l6 3 6-3 3 4.5V20" stroke="white" stroke-width="2" stroke-linejoin="round" />
               <rect x="4" y="20" width="22" height="4" rx="2" fill="white" opacity="0.8" />
@@ -640,33 +667,29 @@
           </div>
           <div class="card-arrow">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M2.5 7h9M7 2.5l4.5 4.5L7 11.5" stroke="white" stroke-width="1.5" stroke-linecap="round"
-                stroke-linejoin="round" />
+              <path d="M2.5 7h9M7 2.5l4.5 4.5L7 11.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </div>
-        </a>
+        </div>
 
         <!-- User Card -->
-        <a href="user.html" class="role-card" id="card-user">
+        <div class="role-card" id="card-user" onclick="setRoleAndGo('user', 'user.html')" style="cursor:pointer">
           <div class="card-icon">
-            <!-- User SVG -->
             <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
               <circle cx="14" cy="10" r="5" stroke="#0a1628" stroke-width="2" />
-              <path d="M4 24c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#0a1628" stroke-width="2"
-                stroke-linecap="round" />
+              <path d="M4 24c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#0a1628" stroke-width="2" stroke-linecap="round" />
             </svg>
           </div>
           <div class="card-content">
             <div class="card-label">I'm a Passenger</div>
-            <div class="card-desc">Book rides quickly & safely</div>
+            <div class="card-desc">Book reliable, metered rides instantly</div>
           </div>
           <div class="card-arrow">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M2.5 7h9M7 2.5l4.5 4.5L7 11.5" stroke="#0a1628" stroke-width="1.5" stroke-linecap="round"
-                stroke-linejoin="round" />
+              <path d="M2.5 7h9M7 2.5l4.5 4.5L7 11.5" stroke="#0a1628" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </div>
-        </a>
+        </div>
       </div>
     </main>
 
@@ -677,9 +700,19 @@
   </div>
 
   <script>
-    // Redirect if already logged in as driver
-    if (localStorage.getItem('sf_driver')) {
-      window.location.href = 'auto.html';
+    function setRoleAndGo(role, url) {
+      localStorage.setItem('sf_role', role);
+      // Update manifest link dynamically for install prompt
+      const oldManifest = document.querySelector('link[rel="manifest"]');
+      if (oldManifest) oldManifest.remove();
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = role === 'user' ? 'manifest-user.json' : 'manifest-auto.json';
+      document.head.appendChild(link);
+      
+      setTimeout(() => {
+        window.location.href = url;
+      }, 100);
     }
 
     // ─── Config ───────────────────────────────────────────────────────
