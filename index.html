@@ -151,6 +151,15 @@
         .toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: var(--navy); color: white; padding: 14px 28px; border-radius: 50px; font-size: 0.9rem; z-index: 10000; opacity: 0; transition: all 0.3s ease; pointer-events: none; font-weight: 500; box-shadow: var(--shadow-lg); text-align: center; width: auto; white-space: nowrap; }
         .skeleton { background: linear-gradient(90deg, #eff2f6 25%, #f7f8fa 50%, #eff2f6 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 12px; }
         @keyframes loading { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+        /* Payment Methods */
+        .payment-methods { display: flex; flex-direction: column; gap: 10px; margin: 24px 0; text-align: left; }
+        .payment-method { background: var(--white); border: 1.5px solid var(--gray-light); border-radius: 18px; padding: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all .2s ease; box-shadow: var(--shadow); }
+        .payment-method:active { transform: scale(0.98); border-color: var(--primary); }
+        .pm-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+        .pm-name { font-weight: 700; font-size: 0.95rem; color: var(--navy); }
+        .pm-desc { font-size: 0.75rem; color: var(--gray); margin-top: 2px; }
+        .pm-arrow { margin-left: auto; color: var(--gray-light); font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -360,6 +369,23 @@
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
                             Refer Friend
                         </button>
+                    </div>
+                <div class="payment-methods">
+                    <h3 style="font-family:'Syne',sans-serif; margin-bottom: 4px;">Top-up via</h3>
+                    <div class="payment-method" onclick="showToast('Opening Google Pay...')">
+                        <div class="pm-icon"><img src="gpay.png" style="width:100%;height:100%;object-fit:contain;"></div>
+                        <div class="pm-info"><div class="pm-name">Google Pay</div><div class="pm-desc">Instant UPI Transfer</div></div>
+                        <div class="pm-arrow">›</div>
+                    </div>
+                    <div class="payment-method" onclick="showToast('Opening PhonePe...')">
+                        <div class="pm-icon"><img src="phonepe.png" style="width:100%;height:100%;object-fit:contain;"></div>
+                        <div class="pm-info"><div class="pm-name">PhonePe</div><div class="pm-desc">Fast Checkout</div></div>
+                        <div class="pm-arrow">›</div>
+                    </div>
+                    <div class="payment-method" onclick="showToast('Opening Paytm...')">
+                        <div class="pm-icon"><img src="paytm.png" style="width:100%;height:100%;object-fit:contain;"></div>
+                        <div class="pm-info"><div class="pm-name">Paytm Wallet</div><div class="pm-desc">Secure Payments</div></div>
+                        <div class="pm-arrow">›</div>
                     </div>
                 </div>
 
