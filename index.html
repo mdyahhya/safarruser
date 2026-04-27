@@ -291,7 +291,34 @@
                     <button id="btn-install-pwa" style="background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 14px; font-weight: 700; font-size: 0.85rem;">Install</button>
                 </div>
 
-                <div class="booking-card">
+                <!-- Active Ride Tracking Card -->
+                <div id="active-ride-card" style="display:none; background: var(--white); border-radius: 24px; padding: 24px; box-shadow: var(--shadow-lg); margin-bottom: 24px; border: 2px solid var(--primary);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h3 style="font-family:'Syne',sans-serif; color:var(--navy);" id="ar-status-title">Searching for Auto... 🔍</h3>
+                        <div style="background:var(--primary); color:white; padding:4px 10px; border-radius:12px; font-size:0.75rem; font-weight:bold;" id="ar-eta">-- min</div>
+                    </div>
+                    
+                    <div id="ar-driver-details" style="display:none; background:var(--off-white); padding:16px; border-radius:16px; margin-bottom:16px; align-items:center; gap:16px;">
+                        <img id="ar-driver-img" src="auto.jpg" style="width:60px; height:60px; border-radius:30px; object-fit:cover; border:2px solid var(--primary);">
+                        <div style="flex:1;">
+                            <div style="font-weight:800; font-family:'Syne',sans-serif; font-size:1.1rem; color:var(--navy);" id="ar-driver-name">Driver Name</div>
+                            <div style="font-size:0.8rem; color:var(--gray); margin-top:2px;">Auto No: <span id="ar-auto-no" style="font-weight:bold; color:var(--navy);">--</span></div>
+                            <div style="font-size:0.8rem; color:var(--gray); margin-top:2px;" id="ar-driver-mobile">+91 --</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size:0.85rem; color:var(--gray); margin-bottom:16px; border-left:2px solid var(--primary); padding-left:12px;">
+                        <div id="ar-pickup" style="font-weight:600; color:var(--navy);">Pickup</div>
+                        <div style="height:6px;"></div>
+                        <div id="ar-drop" style="font-weight:600; color:var(--navy);">Drop</div>
+                    </div>
+                    
+                    <div style="display:flex; gap:12px;">
+                        <button class="btn-primary" style="flex:1; padding:12px;" onclick="location.reload()">Refresh Status</button>
+                    </div>
+                </div>
+
+                <div class="booking-card" id="booking-card">
                     <div class="ride-title" style="margin-bottom: 24px;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                         Where to?
@@ -475,6 +502,10 @@
                 <h3 class="modal-title">Edit Profile</h3>
                 <button class="modal-close" onclick="hideEditProfile()">✕</button>
             </div>
+            <div class="form-group" style="text-align:center;">
+                <img id="ep-img" src="" style="width:80px;height:80px;border-radius:40px;display:none;margin:0 auto 10px;object-fit:cover;">
+                <input type="file" id="ep-input" accept="image/*" class="input" style="font-size:0.8rem; margin:auto;" onchange="if(this.files[0]){document.getElementById('ep-img').src=URL.createObjectURL(this.files[0]);document.getElementById('ep-img').style.display='block';}">
+            </div>
             <div class="form-group">
                 <label class="label">Full Name</label>
                 <input type="text" class="input" id="ep-name">
@@ -485,7 +516,15 @@
             </div>
             <div class="form-group">
                 <label class="label">Address</label>
-                <textarea class="input" id="ep-addr" rows="3"></textarea>
+                <textarea class="input" id="ep-addr" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="label">Emergency Contact 1</label>
+                <input type="tel" class="input" id="ep-emg1" placeholder="+91">
+            </div>
+            <div class="form-group">
+                <label class="label">Emergency Contact 2</label>
+                <input type="tel" class="input" id="ep-emg2" placeholder="+91">
             </div>
             <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
         </div>
@@ -616,7 +655,8 @@
                 pickup_address: from,
                 dropoff_address: to,
                 estimated_fare: 40 + Math.floor(Math.random() * 80),
-                status: 'pending'
+                status: 'pending',
+                customer_profile_image: APP.user.profile_image_url
             };
 
             const { data, error } = await _supabase.from('ride_bookings').insert(ridePayload).select().single();
@@ -625,6 +665,12 @@
             if (error) { showToast('Booking failed. Try again.'); return; }
 
             APP.pendingRide = data;
+            
+            // Show Active Ride UI immediately
+            document.getElementById('booking-card').style.display = 'none';
+            document.getElementById('active-ride-card').style.display = 'block';
+            updateActiveRideUI(data);
+
             showToast('Searching for verified autos... 🔍');
             triggerDriverNotification(ridePayload);
         }
@@ -653,12 +699,46 @@
                 .on('postgres_changes', { event:'UPDATE', schema:'public', table:'ride_bookings', filter:`customer_id=eq.${APP.user.id}` }, 
                 p => {
                     if (p.new.status === 'accepted') {
-                        document.getElementById('notif-body').textContent = `Driver accepted! Head to ${p.new.pickup_address}`;
+                        APP.pendingRide = p.new;
+                        updateActiveRideUI(p.new);
+                        
+                        document.getElementById('notif-body').textContent = `Auto ${p.new.auto_number} is arriving!`;
                         document.getElementById('notif-pill').style.display = 'flex';
                         if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
                         loadRideHistory();
                     }
                 }).subscribe();
+        }
+
+        function updateActiveRideUI(ride) {
+            if (!ride) return;
+            
+            const card = document.getElementById('active-ride-card');
+            const bookingCard = document.getElementById('booking-card');
+            
+            bookingCard.style.display = 'none';
+            card.style.display = 'block';
+            
+            document.getElementById('ar-pickup').textContent = '📍 ' + ride.pickup_address;
+            document.getElementById('ar-drop').textContent = '➜ ' + ride.dropoff_address;
+
+            if (ride.status === 'accepted') {
+                document.getElementById('ar-status-title').textContent = 'Auto is on the way! 🛺';
+                document.getElementById('ar-eta').textContent = '5 min'; // Simulated ETA
+                document.getElementById('ar-driver-details').style.display = 'flex';
+                
+                document.getElementById('ar-driver-name').textContent = ride.driver_name || 'Verified Driver';
+                document.getElementById('ar-auto-no').textContent = ride.auto_number || '--';
+                document.getElementById('ar-driver-mobile').textContent = ride.driver_mobile || '';
+                
+                if (ride.driver_profile_image) {
+                    document.getElementById('ar-driver-img').src = ride.driver_profile_image;
+                }
+            } else {
+                document.getElementById('ar-status-title').textContent = 'Searching for Auto... 🔍';
+                document.getElementById('ar-eta').textContent = '-- min';
+                document.getElementById('ar-driver-details').style.display = 'none';
+            }
         }
 
         function switchTab(t) {
@@ -687,13 +767,24 @@
         }
 
         function populateProfile() {
-            const nameShort = APP.user.full_name.split(' ')[0];
+            const nameShort = APP.user.full_name?.split(' ')[0] || 'User';
             document.getElementById('app-user-name').textContent = nameShort;
-            document.getElementById('ph-name-txt').textContent = APP.user.full_name;
-            document.getElementById('ph-mobile-txt').textContent = APP.user.mobile;
-            document.getElementById('ep-name').value = APP.user.full_name;
+            document.getElementById('ph-name-txt').textContent = APP.user.full_name || '';
+            document.getElementById('ph-mobile-txt').textContent = APP.user.mobile || '';
+            document.getElementById('ep-name').value = APP.user.full_name || '';
             document.getElementById('ep-email').value = APP.user.email || '';
             document.getElementById('ep-addr').value = APP.user.address || '';
+            document.getElementById('ep-emg1').value = APP.user.emergency_contact1 || '';
+            document.getElementById('ep-emg2').value = APP.user.emergency_contact2 || '';
+            
+            const imgEl = document.getElementById('ph-avatar-img');
+            if (APP.user.profile_image_url) {
+                imgEl.src = APP.user.profile_image_url + '?t=' + Date.now();
+                document.getElementById('ep-img').src = APP.user.profile_image_url + '?t=' + Date.now();
+                document.getElementById('ep-img').style.display = 'block';
+            } else {
+                imgEl.src = 'user.jpg'; /* Fallback */
+            }
         }
 
         function showEditProfile() { document.getElementById('modal-edit-profile').classList.add('active'); }
@@ -702,18 +793,37 @@
         async function saveProfile() {
             const updates = {
                 full_name: document.getElementById('ep-name').value.trim(),
-                email: document.getElementById('ep-email').value.trim(),
-                address: document.getElementById('ep-addr').value.trim()
+                email: document.getElementById('ep-email').value.trim() || null,
+                address: document.getElementById('ep-addr').value.trim() || null,
+                emergency_contact1: document.getElementById('ep-emg1').value.trim() || null,
+                emergency_contact2: document.getElementById('ep-emg2').value.trim() || null,
             };
             setLoading(true);
-            const { error } = await _supabase.from('safarr_users').update(updates).eq('id', APP.user.id);
-            setLoading(false);
-            if (!error) {
-                APP.user = { ...APP.user, ...updates };
+
+            try {
+                const epFile = document.getElementById('ep-input').files[0];
+                if (epFile) {
+                    const ext = epFile.name.split('.').pop();
+                    const path = `${APP.user.id}/profile.${ext}`;
+                    await _supabase.storage.from('passenger-profiles').upload(path, epFile, { upsert: true });
+                    const { data: urlData } = _supabase.storage.from('passenger-profiles').getPublicUrl(path);
+                    updates.profile_image_url = urlData.publicUrl;
+                }
+
+                const { data, error } = await _supabase.from('safarr_users')
+                    .update(updates).eq('id', APP.user.id).select().single();
+                    
+                if (error) throw error;
+                
+                APP.user = { ...APP.user, ...data };
                 localStorage.setItem('sf_user', JSON.stringify(APP.user));
                 populateProfile();
                 hideEditProfile();
                 showToast('Profile updated successfully!');
+            } catch (e) {
+                showToast('Error saving profile: ' + e.message);
+            } finally {
+                setLoading(false);
             }
         }
 
