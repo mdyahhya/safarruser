@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0050ff">
+  <title>Safarr – Wallet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    :root{--primary:#0050ff;--primary-soft:rgba(0,80,255,.08);--navy:#0a1628;--white:#fff;--off-white:#f8f9fc;--gray:#8a9ab5;--gray-light:#eff2f6;--success:#00c853;--radius:24px;--shadow:0 10px 30px rgba(10,22,40,.08);--shadow-lg:0 20px 50px rgba(0,80,255,.15)}
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy)}
+    .app-header{padding:60px 24px 20px;background:var(--white);display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.02)}
+    .content{padding:24px;padding-bottom:110px}
+    .wallet-hero{background:var(--primary);padding:32px 24px;border-radius:30px;color:#fff;position:relative;overflow:hidden;margin-bottom:30px}
+    .wallet-hero::after{content:'';position:absolute;bottom:-40px;right:-40px;width:150px;height:150px;background:rgba(255,255,255,.1);border-radius:50%}
+    .wallet-label{font-size:.85rem;opacity:.8;font-weight:500;margin-bottom:6px}
+    .wallet-balance{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;margin-bottom:20px}
+    .wallet-actions{display:flex;gap:12px}
+    .wbtn{flex:1;padding:12px;border-radius:16px;border:none;font-weight:700;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;font-family:'DM Sans',sans-serif}
+    .wbtn.light{background:rgba(255,255,255,.15);color:#fff}
+    .wbtn.light:active{background:rgba(255,255,255,.25)}
+    .section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;margin-bottom:16px;color:var(--navy)}
+    .payment-methods{display:flex;flex-direction:column;gap:10px;margin-bottom:30px}
+    .payment-method{background:var(--white);border:1.5px solid var(--gray-light);border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+    .payment-method:active{transform:scale(.98);border-color:var(--primary)}
+    .pm-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+    .pm-name{font-weight:700;font-size:.95rem;color:var(--navy)}
+    .pm-desc{font-size:.75rem;color:var(--gray);margin-top:2px}
+    .pm-arrow{margin-left:auto;color:var(--gray-light);font-size:1.2rem}
+    .referral-box{background:var(--white);border-radius:24px;padding:24px;border:1px solid var(--gray-light);text-align:center;margin-bottom:30px}
+    .tab-btn-bar{position:fixed;bottom:0;left:0;right:0;height:90px;background:var(--white);display:flex;align-items:center;justify-content:space-around;padding:0 10px 20px;border-top:1px solid var(--gray-light);z-index:100}
+    .tab-btn{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--gray);cursor:pointer;transition:all .3s;position:relative;text-decoration:none;padding:8px 0}
+    .tab-btn.active{color:var(--primary)}
+    .tab-btn svg{width:24px;height:24px}
+    .tab-btn.active svg{transform:translateY(-2px)}
+    .tab-btn::after{content:'';position:absolute;top:-1px;left:50%;width:0%;height:3px;background:var(--primary);border-radius:0 0 4px 4px;transition:all .3s;transform:translateX(-50%)}
+    .tab-btn.active::after{width:40%}
+    .tab-txt{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+    .toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:14px 28px;border-radius:50px;font-size:.9rem;z-index:10000;opacity:0;transition:all .3s ease;pointer-events:none;font-weight:500;white-space:nowrap}
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+  <header class="app-header">
+    <h1 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800">Wallet</h1>
+  </header>
+  <div class="content">
+    <div class="wallet-hero">
+      <div class="wallet-label">Safarr Credits</div>
+      <div class="wallet-balance" id="wallet-balance">₹0</div>
+      <div class="wallet-actions">
+        <button class="wbtn light" onclick="showToast('Payment methods coming soon!')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+          Add Credits
+        </button>
+        <button class="wbtn light" onclick="copyRefer()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Refer
+        </button>
+      </div>
+    </div>
+
+    <div class="section-title">Top-up via</div>
+    <div class="payment-methods">
+      <div class="payment-method" onclick="showToast('Opening Google Pay...')">
+        <div class="pm-icon"><img src="gpay.png" style="width:100%;height:100%;object-fit:contain"></div>
+        <div><div class="pm-name">Google Pay</div><div class="pm-desc">Instant UPI Transfer</div></div>
+        <div class="pm-arrow">›</div>
+      </div>
+      <div class="payment-method" onclick="showToast('Opening PhonePe...')">
+        <div class="pm-icon"><img src="phonepe.png" style="width:100%;height:100%;object-fit:contain"></div>
+        <div><div class="pm-name">PhonePe</div><div class="pm-desc">Fast Checkout</div></div>
+        <div class="pm-arrow">›</div>
+      </div>
+      <div class="payment-method" onclick="showToast('Opening Paytm...')">
+        <div class="pm-icon"><img src="paytm.png" style="width:100%;height:100%;object-fit:contain"></div>
+        <div><div class="pm-name">Paytm Wallet</div><div class="pm-desc">Secure Payments</div></div>
+        <div class="pm-arrow">›</div>
+      </div>
+    </div>
+
+    <div class="section-title">Referral Rewards 🎁</div>
+    <div class="referral-box">
+      <div style="font-size:2.5rem;margin-bottom:16px">🎟️</div>
+      <p style="font-size:.9rem;color:var(--gray);margin-bottom:20px">Get <strong>₹50 credits</strong> for every friend who takes their first ride!</p>
+      <div style="background:var(--off-white);padding:16px;border-radius:16px;font-weight:800;color:var(--primary);letter-spacing:2px;cursor:pointer" onclick="copyRefer()">SAFARR-PUNE-24</div>
+      <p style="font-size:.7rem;color:var(--gray);margin-top:12px">Tap to copy your unique code</p>
+    </div>
+  </div>
+
+  <nav class="tab-btn-bar">
+    <a class="tab-btn" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="tab-txt">Book</span>
+    </a>
+    <a class="tab-btn" href="rides.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 3h15V19H1z"/><path d="M17 11V19h4V14L17 11z"/><circle cx="4" cy="19" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+      <span class="tab-txt">Rides</span>
+    </a>
+    <a class="tab-btn active" href="wallet.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+      <span class="tab-txt">Wallet</span>
+    </a>
+    <a class="tab-btn" href="profile.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="tab-txt">Profile</span>
+    </a>
+    <a class="tab-btn" href="support.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"/></svg>
+      <span class="tab-txt">Support</span>
+    </a>
+  </nav>
+
+  <script>
+    const APP = { user: JSON.parse(localStorage.getItem('sf_user') || 'null') };
+    window.onload = () => {
+      if (!APP.user) { window.location.href = 'index.html'; return; }
+      document.getElementById('wallet-balance').textContent = '₹' + (APP.user.credits || 0);
+    };
+    function copyRefer() { navigator.clipboard.writeText('SAFARR-PUNE-24'); showToast('Referral code copied! 📄'); }
+    function showToast(m) {
+      const t = document.getElementById('toast');
+      t.textContent = m; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(-10px)';
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(0)'; }, 3000);
+    }
+
+    // Handle Back Button
+    window.history.pushState({page: 1}, "", "");
+    window.onpopstate = function(event) {
+      window.location.href = 'index.html';
+    };
+  </script>
+</body>
+</html>

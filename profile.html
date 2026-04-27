@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0050ff">
+  <title>Safarr – My Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    :root{--primary:#0050ff;--primary-soft:rgba(0,80,255,.08);--navy:#0a1628;--white:#fff;--off-white:#f8f9fc;--gray:#8a9ab5;--gray-light:#eff2f6;--success:#00c853;--danger:#ff3d00;--radius:24px;--shadow:0 10px 30px rgba(10,22,40,.08);--shadow-lg:0 20px 50px rgba(0,80,255,.15)}
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none}
+    body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy)}
+    .content{padding:0 0 110px;overflow-y:auto}
+
+    /* Profile Hero */
+    .profile-hero{background:var(--navy);padding:80px 24px 40px;position:relative;overflow:hidden}
+    .profile-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(0,80,255,.5) 0%,transparent 70%);border-radius:50%}
+    .profile-hero::after{content:'';position:absolute;bottom:-30px;left:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,80,255,.3) 0%,transparent 70%);border-radius:50%}
+    .hero-inner{position:relative;z-index:2;display:flex;align-items:center;gap:20px}
+    .avatar-wrap{position:relative;cursor:pointer;flex-shrink:0}
+    .avatar-wrap input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .avatar-img{width:90px;height:90px;border-radius:28px;object-fit:cover;border:3px solid rgba(255,255,255,.3)}
+    .avatar-edit-badge{position:absolute;bottom:-6px;right:-6px;width:28px;height:28px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.85rem;border:2px solid var(--navy)}
+    .hero-text{flex:1}
+    .hero-name{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:4px}
+    .hero-mobile{font-size:.9rem;color:rgba(255,255,255,.6);margin-bottom:12px}
+    .hero-badges{display:flex;gap:8px;flex-wrap:wrap}
+    .badge{padding:4px 12px;border-radius:20px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+    .badge.verified{background:rgba(0,200,83,.2);color:#00c853}
+    .badge.pro{background:rgba(0,80,255,.3);color:#7ab4ff}
+
+    /* Edit Section */
+    .edit-section{background:var(--white);margin:20px;border-radius:28px;overflow:hidden;box-shadow:var(--shadow)}
+    .edit-section-title{padding:20px 24px 0;font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;color:var(--gray);text-transform:uppercase;letter-spacing:.5px}
+    .form-row{padding:0 24px 20px}
+    .field-group{margin-top:20px}
+    .field-label{font-size:.78rem;font-weight:700;color:var(--navy);opacity:.5;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:block}
+    .field-input{width:100%;padding:16px 20px;border-radius:18px;border:2px solid var(--gray-light);font-size:1rem;font-family:'DM Sans',sans-serif;background:var(--off-white);transition:all .3s;color:var(--navy)}
+    .field-input:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 4px var(--primary-soft)}
+    textarea.field-input{resize:none}
+    .save-btn{margin:0 20px 20px;background:var(--primary);color:#fff;border:none;padding:18px;border-radius:20px;font-size:1rem;font-weight:700;cursor:pointer;width:calc(100% - 40px);font-family:'DM Sans',sans-serif;box-shadow:0 8px 24px rgba(0,80,255,.3);transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .save-btn:active{transform:scale(.97)}
+
+    /* Menu items */
+    .menu-section{margin:0 20px 20px;background:var(--white);border-radius:28px;overflow:hidden;box-shadow:var(--shadow)}
+    .menu-item{display:flex;align-items:center;gap:16px;padding:18px 20px;border-bottom:1px solid var(--gray-light);cursor:pointer;transition:background .2s}
+    .menu-item:last-child{border:none}
+    .menu-item:active{background:var(--off-white)}
+    .menu-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .menu-content{flex:1}
+    .menu-title{font-weight:700;font-size:.95rem}
+    .menu-desc{font-size:.75rem;color:var(--gray);margin-top:2px}
+    .menu-arrow{color:var(--gray-light);font-size:1.2rem}
+
+    /* Tabbar */
+    .tab-btn-bar{position:fixed;bottom:0;left:0;right:0;height:90px;background:var(--white);display:flex;align-items:center;justify-content:space-around;padding:0 10px 20px;border-top:1px solid var(--gray-light);z-index:100}
+    .tab-btn{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--gray);cursor:pointer;transition:all .3s;position:relative;text-decoration:none;padding:8px 0}
+    .tab-btn.active{color:var(--primary)}
+    .tab-btn svg{width:24px;height:24px}
+    .tab-btn.active svg{transform:translateY(-2px)}
+    .tab-btn::after{content:'';position:absolute;top:-1px;left:50%;width:0%;height:3px;background:var(--primary);border-radius:0 0 4px 4px;transition:all .3s;transform:translateX(-50%)}
+    .tab-btn.active::after{width:40%}
+    .tab-txt{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+
+    /* Toast & Loader */
+    .toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:14px 28px;border-radius:50px;font-size:.9rem;z-index:10000;opacity:0;transition:all .3s ease;pointer-events:none;font-weight:500;white-space:nowrap}
+    .loader{position:fixed;inset:0;background:rgba(255,255,255,.9);z-index:9999;display:none;align-items:center;justify-content:center}
+    .spinner{width:50px;height:50px;border:4px solid var(--gray-light);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .content > *{animation:fadeIn .4s ease}
+  </style>
+</head>
+<body>
+  <div class="loader" id="loader"><div class="spinner"></div></div>
+  <div class="toast" id="toast"></div>
+
+  <div class="content">
+    <!-- Profile Hero -->
+    <div class="profile-hero">
+      <div class="hero-inner">
+        <div class="avatar-wrap" title="Tap to change photo">
+          <img id="ph-avatar" src="user.jpg" class="avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=U&background=0050ff&color=fff'">
+          <div class="avatar-edit-badge">📷</div>
+          <input type="file" id="avatar-input" accept="image/*" onchange="onAvatarChange(this)">
+        </div>
+        <div class="hero-text">
+          <div class="hero-name" id="ph-name">Loading...</div>
+          <div class="hero-mobile" id="ph-mobile">+91 --</div>
+          <div class="hero-badges">
+            <span class="badge verified">✓ Verified</span>
+            <span class="badge pro">Pro User</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editable Form -->
+    <div class="edit-section">
+      <div class="edit-section-title">Personal Info</div>
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label" for="ep-name">Full Name</label>
+          <input type="text" class="field-input" id="ep-name" placeholder="Your full name">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="ep-email">Email Address</label>
+          <input type="email" class="field-input" id="ep-email" placeholder="you@example.com">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="ep-addr">Home Address</label>
+          <textarea class="field-input" id="ep-addr" rows="3" placeholder="Flat, Area, Pune"></textarea>
+        </div>
+      </div>
+      <div class="edit-section-title" style="padding-top:0">Emergency Contacts</div>
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label" for="ep-emg1">Contact 1</label>
+          <input type="tel" class="field-input" id="ep-emg1" placeholder="+91 XXXXXXXXXX">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="ep-emg2">Contact 2</label>
+          <input type="tel" class="field-input" id="ep-emg2" placeholder="+91 XXXXXXXXXX">
+        </div>
+      </div>
+    </div>
+
+    <button class="save-btn" onclick="saveProfile()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save Changes
+    </button>
+
+    <!-- Quick Links -->
+    <div class="menu-section">
+      <div class="menu-item" onclick="window.location.href='rides.html'">
+        <div class="menu-icon" style="background:#eef4ff;color:var(--primary)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 3h15V19H1z"/><path d="M17 11V19h4V14L17 11z"/><circle cx="4" cy="19" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </div>
+        <div class="menu-content"><div class="menu-title">Ride History</div><div class="menu-desc">View all your past rides</div></div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="window.location.href='wallet.html'">
+        <div class="menu-icon" style="background:#fff9e6;color:#ffab00">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+        </div>
+        <div class="menu-content"><div class="menu-title">Wallet & Credits</div><div class="menu-desc" id="wallet-desc">₹0 available balance</div></div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="showToast('Help center coming soon!')">
+        <div class="menu-icon" style="background:#ede7f6;color:#6a1b9a">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="menu-content"><div class="menu-title">Help & Support</div><div class="menu-desc">24/7 support for Pune</div></div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="logout()">
+        <div class="menu-icon" style="background:#fff0f0;color:var(--danger)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
+        <div class="menu-content"><div class="menu-title" style="color:var(--danger)">Sign Out</div><div class="menu-desc">Logout from this device</div></div>
+        <div class="menu-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="tab-btn-bar">
+    <a class="tab-btn" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="tab-txt">Book</span>
+    </a>
+    <a class="tab-btn" href="rides.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 3h15V19H1z"/><path d="M17 11V19h4V14L17 11z"/><circle cx="4" cy="19" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+      <span class="tab-txt">Rides</span>
+    </a>
+    <a class="tab-btn" href="wallet.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+      <span class="tab-txt">Wallet</span>
+    </a>
+    <a class="tab-btn active" href="profile.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="tab-txt">Profile</span>
+    </a>
+    <a class="tab-btn" href="support.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"/></svg>
+      <span class="tab-txt">Support</span>
+    </a>
+  </nav>
+
+  <script>
+    const SUPABASE_URL = 'https://eouqjkvfbjefbyindqjp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvdXFqa3ZmYmplZmJ5aW5kcWpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTM2NjAsImV4cCI6MjA5MjY4OTY2MH0.yivlkQjKt4r6Lx507BsuM48t9aIM-7OBJOx91_6XEfw';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let APP = { user: JSON.parse(localStorage.getItem('sf_user') || 'null') };
+    let pendingAvatarFile = null;
+
+    window.onload = () => {
+      // Always get fresh data from localStorage
+      APP.user = JSON.parse(localStorage.getItem('sf_user') || 'null');
+      if (!APP.user) { window.location.href = 'index.html'; return; }
+      populateProfile();
+    };
+
+    function populateProfile() {
+      const u = APP.user;
+      document.getElementById('ph-name').textContent = u.full_name || 'No Name';
+      document.getElementById('ph-mobile').textContent = u.mobile || '--';
+      document.getElementById('ep-name').value = u.full_name || '';
+      document.getElementById('ep-email').value = u.email || '';
+      document.getElementById('ep-addr').value = u.address || '';
+      document.getElementById('ep-emg1').value = u.emergency_contact1 || '';
+      document.getElementById('ep-emg2').value = u.emergency_contact2 || '';
+      document.getElementById('wallet-desc').textContent = '₹' + (u.credits || 0) + ' available balance';
+      if (u.profile_image_url) {
+        document.getElementById('ph-avatar').src = u.profile_image_url + '?t=' + Date.now();
+      }
+    }
+
+    function onAvatarChange(input) {
+      if (!input.files[0]) return;
+      pendingAvatarFile = input.files[0];
+      document.getElementById('ph-avatar').src = URL.createObjectURL(pendingAvatarFile);
+      showToast('Photo selected — tap Save to apply');
+    }
+
+    async function saveProfile() {
+      const updates = {
+        full_name: document.getElementById('ep-name').value.trim(),
+        email: document.getElementById('ep-email').value.trim() || null,
+        address: document.getElementById('ep-addr').value.trim() || null,
+        emergency_contact1: document.getElementById('ep-emg1').value.trim() || null,
+        emergency_contact2: document.getElementById('ep-emg2').value.trim() || null,
+      };
+
+      if (!updates.full_name) { showToast('Name cannot be empty'); return; }
+      setLoading(true);
+
+      try {
+        if (pendingAvatarFile) {
+          const ext = pendingAvatarFile.name.split('.').pop();
+          const path = `${APP.user.id}/profile.${ext}`;
+          
+          // Try uploading to Storage
+          const { error: upErr } = await _supabase.storage.from('safarr-storage').upload(path, pendingAvatarFile, { upsert: true });
+          
+          if (upErr) {
+            console.error('Storage Error:', upErr);
+            showToast('⚠️ Image upload failed: ' + upErr.message);
+          } else {
+            // Success: get public URL
+            const { data: urlData } = _supabase.storage.from('safarr-storage').getPublicUrl(path);
+            updates.profile_image_url = urlData.publicUrl;
+            showToast('✅ Photo uploaded!');
+          }
+          pendingAvatarFile = null;
+        }
+
+        // Update DB
+        const { data, error } = await _supabase.from('safarr_users').update(updates).eq('id', APP.user.id).select().single();
+        if (error) throw error;
+
+        // Update Local State & Storage
+        APP.user = { ...APP.user, ...data };
+        localStorage.setItem('sf_user', JSON.stringify(APP.user));
+        
+        populateProfile();
+        showToast('🚀 Profile details updated!');
+      } catch(e) {
+        console.error('Save Error:', e);
+        showToast('Error: ' + e.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function logout() {
+      if (confirm('Sign out of Safarr?')) {
+        localStorage.removeItem('sf_user');
+        localStorage.removeItem('sf_pending_ride');
+        window.location.href = 'index.html';
+      }
+    }
+
+    function setLoading(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
+    function showToast(m) {
+      const t = document.getElementById('toast');
+      t.textContent = m; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(-10px)';
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(0)'; }, 3200);
+    }
+
+    // Handle Back Button
+    window.history.pushState({page: 1}, "", "");
+    window.onpopstate = function(event) {
+      window.location.href = 'index.html';
+    };
+  </script>
+</body>
+</html>

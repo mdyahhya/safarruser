@@ -1,996 +1,484 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0050ff">
-    <title>Safarr Passenger – Ride Pune</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="user.jpg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <style>
-        :root {
-            --primary: #0050ff;
-            --primary-mid: #0041d6;
-            --primary-soft: rgba(0, 80, 255, 0.08);
-            --navy: #0a1628;
-            --white: #ffffff;
-            --off-white: #f8f9fc;
-            --gray: #8a9ab5;
-            --gray-light: #eff2f6;
-            --success: #00c853;
-            --danger: #ff3d00;
-            --warning: #ffab00;
-            --radius: 24px;
-            --radius-sm: 12px;
-            --shadow: 0 10px 30px rgba(10, 22, 40, 0.08);
-            --shadow-lg: 0 20px 50px rgba(0, 80, 255, 0.15);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0050ff">
+  <title>Safarr Passenger – Ride Pune</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="user.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    :root {
+      --primary: #0050ff; --primary-soft: rgba(0,80,255,.08);
+      --navy: #0a1628; --white: #fff; --off-white: #f8f9fc;
+      --gray: #8a9ab5; --gray-light: #eff2f6;
+      --success: #00c853; --danger: #ff3d00;
+      --radius: 24px;
+      --shadow: 0 10px 30px rgba(10,22,40,.08);
+      --shadow-lg: 0 20px 50px rgba(0,80,255,.15);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none}
+    body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy);overflow:hidden;height:100vh}
+    .screen{position:fixed;inset:0;background:var(--off-white);overflow-y:auto;display:none;flex-direction:column;z-index:10}
+    .screen.active{display:flex}
+    #screen-auth{background:var(--white);justify-content:center;padding:40px 32px;text-align:center}
+    .auth-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:3rem;color:var(--primary);margin-bottom:8px;letter-spacing:-1px}
+    .auth-sub{font-size:1.1rem;color:var(--gray);margin-bottom:48px}
+    .form-group{text-align:left;margin-bottom:24px}
+    .label{font-size:.85rem;font-weight:700;margin-bottom:10px;display:block;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;opacity:.6}
+    .input{width:100%;padding:18px 24px;border-radius:var(--radius);border:2px solid var(--gray-light);font-size:1.05rem;transition:all .3s;background:var(--off-white);font-family:'DM Sans',sans-serif}
+    .input:focus{border-color:var(--primary);background:var(--white);box-shadow:var(--shadow)}
+    .btn-primary{background:var(--primary);color:#fff;border:none;padding:20px;border-radius:var(--radius);font-size:1.1rem;font-weight:700;cursor:pointer;width:100%;transition:all .3s;box-shadow:0 8px 24px rgba(0,80,255,.3);font-family:'DM Sans',sans-serif}
+    .btn-primary:active{transform:scale(.96)}
+    .toggle-auth{margin-top:32px;font-size:.95rem;color:var(--gray)}
+    .toggle-auth span{color:var(--primary);font-weight:700;cursor:pointer}
+    .app-header{padding:60px 24px 20px;background:var(--white);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.02)}
+    .app-user{display:flex;align-items:center;gap:14px}
+    .user-img-wrapper{position:relative;cursor:pointer}
+    .user-img{width:50px;height:50px;border-radius:16px;object-fit:cover;border:2px solid var(--primary-soft)}
+    .user-status-dot{position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;background:var(--success);border:3px solid var(--white);border-radius:50%}
+    .user-meta{display:flex;flex-direction:column}
+    .greeting{font-size:.85rem;color:var(--gray);font-weight:500}
+    .user-name{font-weight:800;font-size:1.1rem;font-family:'Syne',sans-serif}
+    .content{flex:1;padding:20px;padding-bottom:110px;overflow-y:auto}
+    .tab-btn-bar{position:fixed;bottom:0;left:0;right:0;height:90px;background:var(--white);display:flex;align-items:center;justify-content:space-around;padding:0 10px 20px;border-top:1px solid var(--gray-light);z-index:100}
+    .tab-btn{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--gray);cursor:pointer;transition:all .3s;position:relative;text-decoration:none;padding:8px 0}
+    .tab-btn.active{color:var(--primary)}
+    .tab-btn svg{width:24px;height:24px;transition:all .3s}
+    .tab-btn.active svg{transform:translateY(-2px)}
+    .tab-btn::after{content:'';position:absolute;top:-1px;left:50%;width:0%;height:3px;background:var(--primary);border-radius:0 0 4px 4px;transition:all .3s;transform:translateX(-50%)}
+    .tab-btn.active::after{width:40%}
+    .tab-txt{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+    .booking-card{background:var(--white);border-radius:30px;padding:28px;box-shadow:var(--shadow);margin-bottom:24px;position:relative;overflow:hidden;border:1px solid var(--gray-light)}
+    .booking-card::before{content:'';position:absolute;top:0;right:0;width:100px;height:100px;background:radial-gradient(circle,var(--primary-soft) 0%,transparent 70%);border-radius:50%}
+    .location-picker{position:relative;margin-top:10px}
+    .loc-line{position:absolute;left:11px;top:28px;bottom:28px;width:2px;background:repeating-linear-gradient(to bottom,var(--gray-light) 0,var(--gray-light) 4px,transparent 4px,transparent 8px)}
+    .loc-row{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+    .loc-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:2}
+    .loc-icon.pickup{color:var(--primary)} .loc-icon.drop{color:var(--danger)}
+    .loc-input{flex:1;background:var(--off-white);border:1px solid var(--gray-light);padding:14px 18px;border-radius:16px;font-size:.95rem;font-weight:500;font-family:'DM Sans',sans-serif}
+    .motto-bar{background:#fffcf0;border:1px dashed #ffd600;padding:12px;border-radius:16px;display:flex;align-items:center;gap:10px;margin:20px 0}
+    .motto-txt{font-size:.75rem;font-weight:700;color:#856404;text-transform:uppercase;letter-spacing:.5px}
+    .suggestions{display:flex;gap:14px;overflow-x:auto;padding:4px 4px 20px;scrollbar-width:none}
+    .suggestions::-webkit-scrollbar{display:none}
+    .suggest-item{background:var(--white);padding:18px;border-radius:22px;min-width:140px;border:1px solid var(--gray-light);display:flex;flex-direction:column;align-items:center;gap:10px;transition:all .3s;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.02)}
+    .suggest-item:active{transform:scale(.94);background:var(--primary-soft);border-color:var(--primary)}
+    .suggest-icon{width:44px;height:44px;background:var(--off-white);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+    .suggest-label{font-weight:700;font-size:.9rem}
+    .loader{position:fixed;inset:0;background:rgba(255,255,255,.9);z-index:9999;display:none;align-items:center;justify-content:center}
+    .spinner{width:50px;height:50px;border:4px solid var(--gray-light);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:14px 28px;border-radius:50px;font-size:.9rem;z-index:10000;opacity:0;transition:all .3s ease;pointer-events:none;font-weight:500;box-shadow:var(--shadow-lg);white-space:nowrap}
+    .skeleton{background:linear-gradient(90deg,#eff2f6 25%,#f7f8fa 50%,#eff2f6 75%);background-size:200% 100%;animation:loading 1.5s infinite;border-radius:12px}
+    @keyframes loading{from{background-position:200% 0}to{background-position:-200% 0}}
+    .ob-step{display:none} .ob-step.active{display:block}
 
-        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--navy); overflow: hidden; height: 100vh; }
-
-        .screen { position: fixed; inset: 0; background: var(--off-white); overflow-y: auto; display: none; flex-direction: column; z-index: 10; }
-        .screen.active { display: flex; }
-
-        /* Auth Aesthetic */
-        #screen-auth { background: var(--white); justify-content: center; padding: 40px 32px; text-align: center; }
-        .auth-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3rem; color: var(--primary); margin-bottom: 8px; letter-spacing: -1px; }
-        .auth-sub { font-size: 1.1rem; color: var(--gray); margin-bottom: 48px; }
-        .form-group { text-align: left; margin-bottom: 24px; }
-        .label { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; display: block; color: var(--navy); text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.6; }
-        .input { width: 100%; padding: 18px 24px; border-radius: var(--radius); border: 2px solid var(--gray-light); font-size: 1.05rem; transition: all 0.3s; background: var(--off-white); }
-        .input:focus { border-color: var(--primary); background: var(--white); box-shadow: var(--shadow); }
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 20px; border-radius: var(--radius); font-size: 1.1rem; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.3s; box-shadow: 0 8px 24px rgba(0, 80, 255, 0.3); }
-        .btn-primary:active { transform: scale(0.96); box-shadow: 0 4px 12px rgba(0, 80, 255, 0.2); }
-        .toggle-auth { margin-top: 32px; font-size: 0.95rem; color: var(--gray); }
-        .toggle-auth span { color: var(--primary); font-weight: 700; cursor: pointer; }
-
-        /* App Layout */
-        .app-header { padding: 60px 24px 20px; background: var(--white); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
-        .app-user { display: flex; align-items: center; gap: 14px; }
-        .user-img-wrapper { position: relative; }
-        .user-img { width: 50px; height: 50px; border-radius: 16px; object-fit: cover; border: 2px solid var(--primary-soft); }
-        .user-status-dot { position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; background: var(--success); border: 3px solid var(--white); border-radius: 50%; }
-        .user-meta { display: flex; flex-direction: column; }
-        .greeting { font-size: 0.85rem; color: var(--gray); font-weight: 500; }
-        .user-name { font-weight: 800; font-size: 1.1rem; font-family: 'Syne', sans-serif; }
-
-        .content { flex: 1; padding: 20px; padding-bottom: 110px; position: relative; }
-        .tab-content { display: none; animation: fadeIn 0.4s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Booking Card */
-        .booking-card { background: var(--white); border-radius: 30px; padding: 28px; box-shadow: var(--shadow); margin-bottom: 24px; position: relative; overflow: hidden; border: 1px solid var(--gray-light); }
-        .booking-card::before { content:''; position:absolute; top:0; right:0; width:100px; height:100px; background: radial-gradient(circle, var(--primary-soft) 0%, transparent 70%); border-radius: 50%; }
-        
-        .location-picker { position: relative; margin-top: 10px; }
-        .loc-line { position: absolute; left: 11px; top: 28px; bottom: 28px; width: 2px; background: repeating-linear-gradient(to bottom, var(--gray-light) 0, var(--gray-light) 4px, transparent 4px, transparent 8px); }
-        .loc-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
-        .loc-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 2; }
-        .loc-icon.pickup { color: var(--primary); }
-        .loc-icon.drop { color: var(--danger); }
-        .loc-input { flex: 1; background: var(--off-white); border: 1px solid var(--gray-light); padding: 14px 18px; border-radius: 16px; font-size: 0.95rem; font-weight: 500; }
-        .loc-input::placeholder { color: var(--gray); opacity: 0.6; }
-
-        .motto-bar { background: #fffcf0; border: 1px dashed #ffd600; padding: 12px; border-radius: 16px; display: flex; align-items: center; gap: 10px; margin: 20px 0; }
-        .motto-txt { font-size: 0.75rem; font-weight: 700; color: #856404; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* Quick Suggestions */
-        .suggestions { display: flex; gap: 14px; overflow-x: auto; padding: 4px 4px 20px; scrollbar-width: none; }
-        .suggestions::-webkit-scrollbar { display: none; }
-        .suggest-item { background: var(--white); padding: 18px; border-radius: 22px; min-width: 140px; border: 1px solid var(--gray-light); display: flex; flex-direction: column; align-items: center; gap: 10px; transition: all 0.3s; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .suggest-item:active { transform: scale(0.94); background: var(--primary-soft); border-color: var(--primary); }
-        .suggest-icon { width: 44px; height: 44px; background: var(--off-white); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
-        .suggest-label { font-weight: 700; font-size: 0.9rem; }
-
-        /* Notification Pill */
-        .notif-pill { position: fixed; top: 120px; left: 20px; right: 20px; background: var(--navy); color: white; padding: 16px 20px; border-radius: 20px; display: none; align-items: center; gap: 14px; box-shadow: var(--shadow-lg); z-index: 1000; animation: slideDown 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
-        @keyframes slideDown { from { transform: translateY(-40px); opacity: 0; } to { transform: translateY(0); opacity:1; } }
-
-        /* Tabbar */
-        .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: 90px; background: var(--white); display: flex; align-items: center; justify-content: space-around; padding: 0 10px 20px; border-top: 1px solid var(--gray-light); z-index: 100; }
-        .tab-btn { flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--gray); cursor: pointer; transition: all 0.3s; position: relative; }
-        .tab-btn.active { color: var(--primary); }
-        .tab-btn svg { width: 24px; height: 24px; transition: all 0.3s; }
-        .tab-btn.active svg { transform: translateY(-2px); }
-        .tab-btn::after { content:''; position:absolute; top:-1px; left:50%; width:0%; height:3px; background: var(--primary); border-radius: 0 0 4px 4px; transition: all 0.3s; transform: translateX(-50%); }
-        .tab-btn.active::after { width: 40%; }
-        .tab-txt { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
-
-        /* List Cards */
-        .history-card { background: var(--white); border-radius: 22px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--gray-light); transition: all 0.3s; }
-        .history-card:active { transform: scale(0.98); background: var(--off-white); }
-        .hist-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-        .hist-fare { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; }
-        .hist-status { font-size: 0.7rem; font-weight: 800; padding: 5px 12px; border-radius: 20px; text-transform: uppercase; }
-        .hist-status.completed { background: var(--success); color: white; }
-        .hist-status.pending { background: var(--warning); color: var(--navy); }
-        .hist-status.cancelled { background: var(--danger); color: white; }
-        .hist-route { font-size: 0.85rem; font-weight: 500; color: var(--navy); line-height: 1.5; }
-        .hist-time { font-size: 0.72rem; color: var(--gray); margin-top: 10px; font-weight: 500; }
-
-        /* Wallet Section */
-        .wallet-hero { background: var(--primary); padding: 32px 24px; border-radius: 30px; color: white; position: relative; overflow: hidden; margin-bottom: 30px; }
-        .wallet-hero::after { content:''; position:absolute; bottom:-40px; right:-40px; width:150px; height:150px; background: rgba(255,255,255,0.1); border-radius: 50%; }
-        .wallet-label { font-size: 0.85rem; opacity: 0.8; font-weight: 500; margin-bottom: 6px; }
-        .wallet-balance { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; margin-bottom: 20px; }
-        .wallet-actions { display: flex; gap: 12px; }
-        .wbtn { flex: 1; padding: 12px; border-radius: 16px; border: none; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
-        .wbtn.light { background: rgba(255,255,255,0.15); color: white; backdrop-filter: blur(5px); }
-        .wbtn.light:active { background: rgba(255,255,255,0.25); }
-
-        /* Profile Menu */
-        .menu-list { background: var(--white); border-radius: 26px; overflow: hidden; border: 1px solid var(--gray-light); margin-bottom: 20px; }
-        .menu-item { display: flex; align-items: center; gap: 16px; padding: 20px; border-bottom: 1px solid var(--gray-light); cursor: pointer; }
-        .menu-item:last-child { border: none; }
-        .menu-item:active { background: var(--off-white); }
-        .menu-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .menu-content { flex: 1; }
-        .menu-title { font-weight: 700; font-size: 0.95rem; }
-        .menu-desc { font-size: 0.75rem; color: var(--gray); margin-top: 2px; }
-        .menu-arrow { color: var(--gray-light); font-size: 1.2rem; }
-
-        /* Modals */
-        .modal { position: fixed; inset: 0; background: rgba(10, 22, 40, 0.4); backdrop-filter: blur(5px); z-index: 2000; display: none; align-items: flex-end; }
-        .modal.active { display: flex; }
-        .modal-sheet { width: 100%; background: var(--white); border-radius: 30px 30px 0 0; padding: 32px 24px 60px; animation: slideUp 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .modal-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; }
-        .modal-close { width: 36px; height: 36px; border-radius: 50%; background: var(--off-white); border: none; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-        /* Utils */
-        .loader { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; }
-        .spinner { width: 50px; height: 50px; border: 4px solid var(--gray-light); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: var(--navy); color: white; padding: 14px 28px; border-radius: 50px; font-size: 0.9rem; z-index: 10000; opacity: 0; transition: all 0.3s ease; pointer-events: none; font-weight: 500; box-shadow: var(--shadow-lg); text-align: center; width: auto; white-space: nowrap; }
-        .skeleton { background: linear-gradient(90deg, #eff2f6 25%, #f7f8fa 50%, #eff2f6 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 12px; }
-        @keyframes loading { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-
-        /* Payment Methods */
-        .payment-methods { display: flex; flex-direction: column; gap: 10px; margin: 24px 0; text-align: left; }
-        .payment-method { background: var(--white); border: 1.5px solid var(--gray-light); border-radius: 18px; padding: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all .2s ease; box-shadow: var(--shadow); }
-        .payment-method:active { transform: scale(0.98); border-color: var(--primary); }
-        .pm-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
-        .pm-name { font-weight: 700; font-size: 0.95rem; color: var(--navy); }
-        .pm-desc { font-size: 0.75rem; color: var(--gray); margin-top: 2px; }
-        .pm-arrow { margin-left: auto; color: var(--gray-light); font-size: 1.2rem; }
-    </style>
+    /* Active Ride Card */
+    .active-ride-card{background:var(--white);border-radius:30px;padding:24px;box-shadow:var(--shadow-lg);margin-bottom:24px;border:2px solid var(--primary);display:none}
+    .driver-info-box{background:var(--off-white);border-radius:20px;padding:16px;display:flex;align-items:center;gap:16px;margin:16px 0}
+    .driver-photo{width:64px;height:64px;border-radius:20px;object-fit:cover;border:2px solid var(--primary);flex-shrink:0}
+  </style>
 </head>
 <body>
-    <div class="loader" id="loader"><div class="spinner"></div></div>
-    <div class="toast" id="toast">Message here</div>
+  <div class="loader" id="loader"><div class="spinner"></div></div>
+  <div class="toast" id="toast"></div>
 
-    <!-- ─── AUTH SCREEN ─────────────────────────────────────────── -->
-    <div class="screen active" id="screen-auth">
-        <div class="auth-logo">Safarr</div>
-        <p class="auth-sub" id="auth-sub">Pune's Metered Auto Network</p>
-        
-        <div id="auth-login-box">
-            <div class="form-group">
-                <label class="label">Mobile Number</label>
-                <input type="tel" class="input" id="login-mobile" placeholder="+91 XXXXX XXXXX">
-            </div>
-            <div class="form-group">
-                <label class="label">Password</label>
-                <input type="password" class="input" id="login-pass" placeholder="Enter your password">
-            </div>
-            <button class="btn-primary" onclick="handleLogin()">Sign In 🚗</button>
-            <p class="toggle-auth">New to Safarr? <span onclick="toggleAuth(false)">Create Account</span></p>
+  <!-- AUTH SCREEN -->
+  <div class="screen" id="screen-auth">
+    <div class="auth-logo">Safarr</div>
+    <p class="auth-sub" id="auth-sub">Pune's Metered Auto Network</p>
+    <div id="auth-login-box">
+      <div class="form-group"><label class="label">Mobile Number</label><input type="tel" class="input" id="login-mobile" placeholder="+91 XXXXX XXXXX"></div>
+      <div class="form-group"><label class="label">Password</label><input type="password" class="input" id="login-pass" placeholder="Enter your password"></div>
+      <button class="btn-primary" onclick="handleLogin()">Sign In 🚗</button>
+      <p class="toggle-auth">New to Safarr? <span onclick="toggleAuth(false)">Create Account</span></p>
+    </div>
+    <div id="auth-signup-box" style="display:none">
+      <div class="form-group"><label class="label">Full Name</label><input type="text" class="input" id="reg-name" placeholder="John Doe"></div>
+      <div class="form-group"><label class="label">Mobile Number</label><input type="tel" class="input" id="reg-mobile" placeholder="+91 XXXXX XXXXX"></div>
+      <div class="form-group"><label class="label">Password</label><input type="password" class="input" id="reg-pass" placeholder="Create a strong password"></div>
+      <button class="btn-primary" onclick="startSignup()">Next Step 🚀</button>
+      <p class="toggle-auth">Already have an account? <span onclick="toggleAuth(true)">Sign In</span></p>
+    </div>
+  </div>
+
+  <!-- OTP SCREEN -->
+  <div class="screen" id="screen-otp">
+    <div style="padding:100px 32px 32px;text-align:center">
+      <div style="font-size:4rem;margin-bottom:24px">🛡️</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:2rem;margin-bottom:12px">Verify OTP</h2>
+      <p style="color:var(--gray);margin-bottom:40px">Code sent to your mobile</p>
+      <div class="form-group" style="text-align:center">
+        <input type="number" class="input" id="otp-input" placeholder="0 0 0 0" style="text-align:center;letter-spacing:20px;font-weight:800;font-size:1.5rem">
+      </div>
+      <button class="btn-primary" onclick="verifyOTP()">Verify Code</button>
+      <button style="margin-top:16px;color:var(--primary);background:none;border:none;font-size:1rem;cursor:pointer;width:100%" onclick="showScreen('screen-auth')">Go Back</button>
+    </div>
+  </div>
+
+  <!-- ONBOARDING SCREEN -->
+  <div class="screen" id="screen-onboard">
+    <div style="padding:60px 24px 30px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h2 style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800" id="ob-step-title">Profile Setup</h2>
+        <div style="font-weight:700;color:var(--primary)" id="ob-step-num">Step 1/2</div>
+      </div>
+      <div style="height:6px;background:var(--gray-light);border-radius:10px;margin-bottom:30px">
+        <div id="ob-bar" style="height:100%;width:50%;background:var(--primary);border-radius:10px;transition:.3s"></div>
+      </div>
+      <div id="ob-step-1">
+        <div class="form-group"><label class="label">Residential Address</label><textarea class="input" id="inp-address" rows="4" placeholder="Flat No, Building Name, Area, Pincode, Pune"></textarea></div>
+        <button class="btn-primary" onclick="nextObStep(2)">Continue ➔</button>
+      </div>
+      <div id="ob-step-2" style="display:none">
+        <div class="form-group"><label class="label">Emergency Contact 1</label><input type="text" class="input" id="inp-ec1" placeholder="Father: 98XXXXXXXX"></div>
+        <div class="form-group"><label class="label">Emergency Contact 2</label><input type="text" class="input" id="inp-ec2" placeholder="Friend: 91XXXXXXXX"></div>
+        <button class="btn-primary" onclick="submitOnboarding()">Complete Setup 🎉</button>
+        <button style="margin-top:16px;color:var(--gray);background:none;border:none;font-size:1rem;cursor:pointer;width:100%" onclick="nextObStep(1)">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP SCREEN -->
+  <div class="screen" id="screen-app">
+    <header class="app-header">
+      <div class="app-user">
+        <div class="user-img-wrapper" onclick="window.location='profile.html'">
+          <img src="user.jpg" class="user-img" id="app-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=U&background=0050ff&color=fff'">
+          <div class="user-status-dot"></div>
+        </div>
+        <div class="user-meta">
+          <span class="greeting" id="greeting-txt">Good Morning 👋</span>
+          <span class="user-name" id="app-user-name">Passenger</span>
+        </div>
+      </div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--primary)">Safarr</div>
+    </header>
+
+    <div class="content">
+      <!-- Active Ride Card (shown after booking) -->
+      <div class="active-ride-card" id="active-ride-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="font-family:'Syne',sans-serif;font-size:1.1rem" id="ar-status-title">🔍 Searching for Auto...</h3>
+          <div style="background:var(--primary);color:#fff;padding:4px 12px;border-radius:12px;font-size:.8rem;font-weight:700" id="ar-eta">-- min</div>
         </div>
 
-        <div id="auth-signup-box" style="display:none">
-            <div class="form-group">
-                <label class="label">Full Name</label>
-                <input type="text" class="input" id="reg-name" placeholder="John Doe">
-            </div>
-            <div class="form-group">
-                <label class="label">Mobile Number</label>
-                <input type="tel" class="input" id="reg-mobile" placeholder="+91 XXXXX XXXXX">
-            </div>
-            <div class="form-group">
-                <label class="label">Password</label>
-                <input type="password" class="input" id="reg-pass" placeholder="Create a strong password">
-            </div>
-            <button class="btn-primary" onclick="startSignup()">Next Step 🚀</button>
-            <p class="toggle-auth">Already have an account? <span onclick="toggleAuth(true)">Sign In</span></p>
+        <div class="driver-info-box" id="ar-driver-box" style="display:none">
+          <img id="ar-driver-img" src="auto.jpg" class="driver-photo" onerror="this.src='auto.jpg'">
+          <div style="flex:1">
+            <div style="font-weight:800;font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--navy)" id="ar-driver-name">Driver</div>
+            <div style="font-size:.8rem;color:var(--gray);margin-top:4px">Auto No: <strong id="ar-auto-no" style="color:var(--navy)">--</strong></div>
+            <div style="font-size:.8rem;color:var(--gray);margin-top:2px" id="ar-driver-mobile"></div>
+          </div>
+          <a id="ar-call-btn" href="tel:" style="background:var(--primary);color:#fff;width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:1.3rem">📞</a>
         </div>
+
+        <div style="font-size:.85rem;color:var(--gray);border-left:3px solid var(--primary);padding-left:12px;margin-top:8px">
+          <div id="ar-pickup" style="font-weight:600;color:var(--navy)">Pickup</div>
+          <div style="height:6px"></div>
+          <div id="ar-drop" style="font-weight:600;color:var(--navy)">Drop</div>
+        </div>
+
+        <button class="btn-primary" style="margin-top:16px;padding:14px;font-size:.95rem" onclick="cancelRide()">Cancel Ride</button>
+      </div>
+
+      <!-- Booking Card -->
+      <div class="booking-card" id="booking-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Where to?
+        </div>
+        <div class="location-picker">
+          <div class="loc-line"></div>
+          <div class="loc-row">
+            <div class="loc-icon pickup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>
+            <input type="text" class="loc-input" id="inp-from" placeholder="Enter Pickup Location">
+          </div>
+          <div class="loc-row">
+            <div class="loc-icon drop"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg></div>
+            <input type="text" class="loc-input" id="inp-to" placeholder="Enter Destination">
+          </div>
+        </div>
+        <div class="motto-bar"><div style="font-size:1.2rem">⏱️</div><div class="motto-txt">Only Meter Rates • No Hidden Fees</div></div>
+        <button class="btn-primary" onclick="bookRide()">Order Auto Now ➔</button>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding:0 4px">
+        <h3 style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800">Saved Places</h3>
+        <span style="font-size:.85rem;color:var(--primary);font-weight:700">Edit</span>
+      </div>
+      <div class="suggestions">
+        <div class="suggest-item" onclick="quickBook('Swargate')"><div class="suggest-icon" style="background:#e8f5e9;color:#2e7d32">🏠</div><div class="suggest-label">Home</div><div style="font-size:.65rem;color:var(--gray)">Set Home</div></div>
+        <div class="suggest-item" onclick="quickBook('Pune Station')"><div class="suggest-icon" style="background:#e3f2fd;color:#1565c0">🏢</div><div class="suggest-label">Work</div><div style="font-size:.65rem;color:var(--gray)">Set Work</div></div>
+        <div class="suggest-item" onclick="quickBook('Phoenix Mall')"><div class="suggest-icon" style="background:#fff3e0;color:#ef6c00">🍿</div><div class="suggest-label">Mall</div><div style="font-size:.65rem;color:var(--gray)">Pune East</div></div>
+      </div>
     </div>
 
-    <!-- ─── OTP SCREEN ───────────────────────────────────────────── -->
-    <div class="screen" id="screen-otp">
-        <div style="padding: 100px 32px 32px; text-align: center;">
-            <div style="font-size: 4rem; margin-bottom: 24px;">🛡️</div>
-            <h2 style="font-family: 'Syne', sans-serif; font-size: 2rem; margin-bottom: 12px;">Verify OTP</h2>
-            <p style="color: var(--gray); margin-bottom: 40px;">Code sent to your mobile</p>
-            <div class="form-group" style="text-align: center;">
-                <input type="number" class="input" id="otp-input" placeholder="0 0 0 0" style="text-align:center; letter-spacing: 20px; font-weight:800; font-size: 1.5rem;">
-            </div>
-            <button class="btn-primary" onclick="verifyOTP()">Verify Code</button>
-            <button class="wbtn" style="margin-top: 16px; color: var(--primary)" onclick="showScreen('screen-auth')">Wait, I made a mistake</button>
-        </div>
-    </div>
+    <!-- Tab Bar -->
+    <nav class="tab-btn-bar">
+      <a class="tab-btn active" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="tab-txt">Book</span>
+      </a>
+      <a class="tab-btn" href="rides.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 3h15V19H1z"/><path d="M17 11V19h4V14L17 11z"/><circle cx="4" cy="19" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        <span class="tab-txt">Rides</span>
+      </a>
+      <a class="tab-btn" href="wallet.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+        <span class="tab-txt">Wallet</span>
+      </a>
+      <a class="tab-btn" href="profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="tab-txt">Profile</span>
+      </a>
+      <a class="tab-btn" href="support.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"/></svg>
+        <span class="tab-txt">Support</span>
+      </a>
+    </nav>
+  </div>
 
-    <!-- ─── ONBOARDING SCREEN ────────────────────────────────────── -->
-    <div class="screen" id="screen-onboard">
-        <div style="padding: 60px 24px 30px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                <h2 class="modal-title" id="ob-step-title">Profile Setup</h2>
-                <div style="font-weight:700; color: var(--primary)" id="ob-step-num">Step 1/2</div>
-            </div>
-            <div style="height: 6px; background: var(--gray-light); border-radius: 10px; margin-bottom: 30px;">
-                <div id="ob-bar" style="height:100%; width: 50%; background: var(--primary); border-radius: 10px; transition: 0.3s;"></div>
-            </div>
+  <script>
+    const SUPABASE_URL = 'https://eouqjkvfbjefbyindqjp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvdXFqa3ZmYmplZmJ5aW5kcWpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTM2NjAsImV4cCI6MjA5MjY4OTY2MH0.yivlkQjKt4r6Lx507BsuM48t9aIM-7OBJOx91_6XEfw';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let APP = { user: JSON.parse(localStorage.getItem('sf_user') || 'null'), pendingRide: JSON.parse(localStorage.getItem('sf_pending_ride') || 'null') };
 
-            <!-- Step 1: Address -->
-            <div class="ob-step" id="ob-step-1">
-                <div class="form-group">
-                    <label class="label">Residential Address</label>
-                    <textarea class="input" id="inp-address" rows="4" placeholder="Flat No, Building Name, Area, Pincode, Pune"></textarea>
-                </div>
-                <button class="btn-primary" onclick="nextObStep(2)">Continue ➔</button>
-            </div>
+    const DEMO_DRIVERS = [
+      { name: 'Ramesh Patil', mobile: '9876543210', auto_number: 'MH12AB1234', img: 'auto.jpg' },
+      { name: 'Suresh More',  mobile: '9123456780', auto_number: 'MH15CD5678', img: 'auto.jpg' },
+      { name: 'Vijay Desai',  mobile: '9988776655', auto_number: 'MH14EF9999', img: 'auto.jpg' },
+    ];
 
-            <!-- Step 2: Emergency -->
-            <div class="ob-step" id="ob-step-2" style="display:none">
-                <div class="form-group">
-                    <label class="label">Emergency Contact 1</label>
-                    <input type="text" class="input" id="inp-ec1" placeholder="Father: 98XXXXXXXX">
-                </div>
-                <div class="form-group">
-                    <label class="label">Emergency Contact 2</label>
-                    <input type="text" class="input" id="inp-ec2" placeholder="Friend: 91XXXXXXXX">
-                </div>
-                <button class="btn-primary" onclick="submitOnboarding()">Complete Setup 🎉</button>
-                <button class="wbtn" style="margin-top: 16px; color: var(--gray)" onclick="nextObStep(1)">Back to Address</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ─── MAIN APP SCREEN ──────────────────────────────────────── -->
-    <div class="screen" id="screen-app">
-        <header class="app-header">
-            <div class="app-user">
-                <div class="user-img-wrapper" onclick="switchTab('profile')">
-                    <img src="user.jpg" class="user-img" id="app-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=U&background=0050ff&color=fff'">
-                    <div class="user-status-dot"></div>
-                </div>
-                <div class="user-meta">
-                    <span class="greeting" id="greeting-txt">Good Morning 👋</span>
-                    <span class="user-name" id="app-user-name">Passenger</span>
-                </div>
-            </div>
-            <div style="font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--primary); letter-spacing: -0.5px;">Safarr</div>
-        </header>
-
-        <!-- Global Active Ride Overlay (Floating) -->
-        <div id="active-ride-overlay" style="display:none; position:fixed; top:env(safe-area-inset-top, 20px); left:16px; right:16px; z-index:2000; perspective: 1000px;">
-            <div style="background: var(--navy); color:white; border-radius:24px; padding:20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); animation: bounceIn 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <span style="font-family:'Syne',sans-serif; font-weight:800; color:var(--primary); font-size:0.85rem;" id="overlay-status">🛺 Auto is on the way!</span>
-                    <span style="background:rgba(255,255,255,0.1); padding:4px 10px; border-radius:12px; font-size:0.75rem; font-weight:bold;" id="overlay-eta">-- min</span>
-                </div>
-                
-                <div style="display:flex; align-items:center; gap:16px; background:rgba(255,255,255,0.05); padding:12px; border-radius:18px;">
-                    <img id="overlay-driver-img" src="auto.jpg" style="width:50px; height:50px; border-radius:16px; object-fit:cover; border: 2px solid var(--primary);">
-                    <div style="flex:1">
-                        <div style="font-weight:800; font-family:'Syne',sans-serif; font-size:1rem;" id="overlay-driver-name">Verified Driver</div>
-                        <div style="font-size:0.75rem; opacity:0.6; margin-top:2px;">Auto No: <span id="overlay-auto-no" style="font-weight:bold; color:white;">--</span></div>
-                    </div>
-                    <a id="overlay-driver-call" href="tel:" style="background:var(--primary); color:white; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:1.2rem;">📞</a>
-                </div>
-                
-                <div style="display:flex; gap:8px; margin-top:15px;">
-                    <div style="flex:1; font-size:0.75rem; opacity:0.7; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" id="overlay-pickup">Loading pickup...</div>
-                    <button onclick="document.getElementById('active-ride-overlay').style.display='none'" style="background:none; border:none; color:white; font-size:0.8rem; cursor:pointer; opacity:0.5;">Dismiss</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="notif-pill" id="notif-pill">
-            <div style="font-size: 1.5rem;">🚨</div>
-            <div style="flex: 1;">
-                <div style="font-weight: 800; font-size: 0.95rem;">Ride Accepted!</div>
-                <div style="font-size: 0.8rem; opacity: 0.8;" id="notif-body">A driver is heading to you.</div>
-            </div>
-            <div style="font-size: 1.2rem; cursor: pointer;" onclick="document.getElementById('notif-pill').style.display='none'">✕</div>
-        </div>
-
-        <div class="content">
-            <!-- TAB: HOME / BOOK -->
-            <div class="tab-content active" id="tab-home">
-                
-                <!-- PWA Install Banner (Sleek Inline) -->
-                <div id="install-pwa-banner" style="display:none; background: var(--navy); color: white; padding: 20px; border-radius: 24px; margin-bottom: 24px; align-items: center; gap: 16px;">
-                    <div style="font-size: 2rem;">📲</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; font-size: 0.95rem;">Get Safarr App</div>
-                        <div style="font-size: 0.75rem; opacity: 0.7;">Install for faster booking</div>
-                    </div>
-                    <button id="btn-install-pwa" style="background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 14px; font-weight: 700; font-size: 0.85rem;">Install</button>
-                </div>
-
-                <!-- Active Ride Tracking Card -->
-                <div id="active-ride-card" style="display:none; background: var(--white); border-radius: 24px; padding: 24px; box-shadow: var(--shadow-lg); margin-bottom: 24px; border: 2px solid var(--primary);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                        <h3 style="font-family:'Syne',sans-serif; color:var(--navy);" id="ar-status-title">Searching for Auto... 🔍</h3>
-                        <div style="background:var(--primary); color:white; padding:4px 10px; border-radius:12px; font-size:0.75rem; font-weight:bold;" id="ar-eta">-- min</div>
-                    </div>
-                    
-                    <div id="ar-driver-details" style="display:none; background:var(--off-white); padding:16px; border-radius:16px; margin-bottom:16px; align-items:center; gap:16px;">
-                        <img id="ar-driver-img" src="auto.jpg" style="width:60px; height:60px; border-radius:30px; object-fit:cover; border:2px solid var(--primary);">
-                        <div style="flex:1;">
-                            <div style="font-weight:800; font-family:'Syne',sans-serif; font-size:1.1rem; color:var(--navy);" id="ar-driver-name">Driver Name</div>
-                            <div style="font-size:0.8rem; color:var(--gray); margin-top:2px;">Auto No: <span id="ar-auto-no" style="font-weight:bold; color:var(--navy);">--</span></div>
-                            <div style="font-size:0.8rem; color:var(--gray); margin-top:2px;" id="ar-driver-mobile">+91 --</div>
-                        </div>
-                    </div>
-
-                    <div style="font-size:0.85rem; color:var(--gray); margin-bottom:16px; border-left:2px solid var(--primary); padding-left:12px;">
-                        <div id="ar-pickup" style="font-weight:600; color:var(--navy);">Pickup</div>
-                        <div style="height:6px;"></div>
-                        <div id="ar-drop" style="font-weight:600; color:var(--navy);">Drop</div>
-                    </div>
-                    
-                    <div style="display:flex; gap:12px;">
-                        <button class="btn-primary" style="flex:1; padding:12px;" onclick="location.reload()">Refresh Status</button>
-                    </div>
-                </div>
-
-                <div class="booking-card" id="booking-card">
-                    <div class="ride-title" style="margin-bottom: 24px;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        Where to?
-                    </div>
-                    
-                    <div class="location-picker">
-                        <div class="loc-line"></div>
-                        <div class="loc-row">
-                            <div class="loc-icon pickup">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-                            </div>
-                            <input type="text" class="loc-input" id="inp-from" placeholder="Enter Pickup Location">
-                        </div>
-                        <div class="loc-row">
-                            <div class="loc-icon drop">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
-                            </div>
-                            <input type="text" class="loc-input" id="inp-to" placeholder="Enter Destination">
-                        </div>
-                    </div>
-
-                    <div class="motto-bar">
-                        <div style="font-size: 1.2rem;">⏱️</div>
-                        <div class="motto-txt">Only Meter Rates • No Hidden Fees</div>
-                    </div>
-
-                    <button class="btn-primary" onclick="bookRide()">Order Auto Now ➔</button>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 4px;">
-                    <h3 style="font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800;">Saved Places</h3>
-                    <span style="font-size: 0.85rem; color: var(--primary); font-weight: 700;">Edit</span>
-                </div>
-
-                <div class="suggestions">
-                    <div class="suggest-item" onclick="quickBook('Swargate')">
-                        <div class="suggest-icon" style="background: #e8f5e9; color: #2e7d32;">🏠</div>
-                        <div class="suggest-label">Home</div>
-                        <div style="font-size: 0.65rem; color: var(--gray);">Set Home</div>
-                    </div>
-                    <div class="suggest-item" onclick="quickBook('Pune Station')">
-                        <div class="suggest-icon" style="background: #e3f2fd; color: #1565c0;">🏢</div>
-                        <div class="suggest-label">Work</div>
-                        <div style="font-size: 0.65rem; color: var(--gray);">Set Work</div>
-                    </div>
-                    <div class="suggest-item" onclick="quickBook('Phoenix Mall')">
-                        <div class="suggest-icon" style="background: #fff3e0; color: #ef6c00;">🍿</div>
-                        <div class="suggest-label">Mall</div>
-                        <div style="font-size: 0.65rem; color: var(--gray);">Pune East</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: RIDES -->
-            <div class="tab-content" id="tab-rides">
-                <h2 style="font-family:'Syne', sans-serif; font-size: 1.8rem; margin-bottom: 24px;">Your Activity</h2>
-                <div id="rides-list">
-                    <!-- Skeletons -->
-                    <div class="skeleton" style="height: 100px; margin-bottom: 16px;"></div>
-                    <div class="skeleton" style="height: 100px; margin-bottom: 16px;"></div>
-                </div>
-            </div>
-
-            <!-- TAB: WALLET -->
-            <div class="tab-content" id="tab-wallet">
-                <div class="wallet-hero">
-                    <div class="wallet-label">Safarr Credits</div>
-                    <div class="wallet-balance" id="wallet-balance">₹0</div>
-                    <div class="wallet-actions">
-                        <button class="wbtn light" onclick="showToast('Payment methods coming soon!')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
-                            Add Credits
-                        </button>
-                        <button class="wbtn light" onclick="copyRefer()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                            Refer Friend
-                        </button>
-                    </div>
-                <div class="payment-methods">
-                    <h3 style="font-family:'Syne',sans-serif; margin-bottom: 4px;">Top-up via</h3>
-                    <div class="payment-method" onclick="showToast('Opening Google Pay...')">
-                        <div class="pm-icon"><img src="gpay.png" style="width:100%;height:100%;object-fit:contain;"></div>
-                        <div class="pm-info"><div class="pm-name">Google Pay</div><div class="pm-desc">Instant UPI Transfer</div></div>
-                        <div class="pm-arrow">›</div>
-                    </div>
-                    <div class="payment-method" onclick="showToast('Opening PhonePe...')">
-                        <div class="pm-icon"><img src="phonepe.png" style="width:100%;height:100%;object-fit:contain;"></div>
-                        <div class="pm-info"><div class="pm-name">PhonePe</div><div class="pm-desc">Fast Checkout</div></div>
-                        <div class="pm-arrow">›</div>
-                    </div>
-                    <div class="payment-method" onclick="showToast('Opening Paytm...')">
-                        <div class="pm-icon"><img src="paytm.png" style="width:100%;height:100%;object-fit:contain;"></div>
-                        <div class="pm-info"><div class="pm-name">Paytm Wallet</div><div class="pm-desc">Secure Payments</div></div>
-                        <div class="pm-arrow">›</div>
-                    </div>
-                </div>
-
-                <h3 style="font-family:'Syne',sans-serif; margin-bottom: 16px;">Referral Rewards 🎁</h3>
-                <div style="background: var(--white); border-radius: 24px; padding: 24px; border: 1px solid var(--gray-light); text-align: center;">
-                    <div style="font-size: 2.5rem; margin-bottom: 16px;">🎟️</div>
-                    <p style="font-size: 0.9rem; color: var(--gray); margin-bottom: 20px;">Get <strong>₹50 credits</strong> for every friend who takes their first ride!</p>
-                    <div style="background: var(--off-white); padding: 16px; border-radius: 16px; font-weight: 800; color: var(--primary); letter-spacing: 2px;" onclick="copyRefer()">
-                        SAFARR-PUNE-24
-                    </div>
-                    <p style="font-size: 0.7rem; color: var(--gray); margin-top: 12px;">Click to copy your unique code</p>
-                </div>
-            </div>
-
-            <!-- TAB: PROFILE -->
-            <div class="tab-content" id="tab-profile">
-                <!-- User Profile Header -->
-                <div class="profile-card" style="background: var(--navy); color: white; border-radius: 30px; padding: 30px; margin-bottom: 24px; position: relative; overflow: hidden; box-shadow: var(--shadow-lg);">
-                    <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; background: radial-gradient(circle, var(--primary) 0%, transparent 70%); opacity: 0.4;"></div>
-                    <div style="display:flex; align-items:center; gap:20px; position: relative; z-index: 2;">
-                        <div style="position: relative;">
-                            <img src="user.jpg" id="ph-avatar-img" style="width: 80px; height: 80px; border-radius: 24px; border: 3px solid var(--white); object-fit: cover;">
-                            <div style="position: absolute; bottom: -4px; right: -4px; width: 18px; height: 18px; background: var(--success); border: 3px solid var(--navy); border-radius: 50%;"></div>
-                        </div>
-                        <div style="flex: 1;">
-                            <h2 style="font-family: 'Syne', sans-serif; font-size: 1.4rem;" id="ph-name-txt">Passenger</h2>
-                            <p style="opacity: 0.7; font-size: 0.85rem;" id="ph-mobile-txt">+91 XXXXXXXXXX</p>
-                            <div style="display: flex; gap: 8px; margin-top: 10px;">
-                                <span style="background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 700;">PRO USER</span>
-                                <span style="background: rgba(0,80,255,0.2); padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; color: #4db8ff;">VERIFIED</span>
-                            </div>
-                        </div>
-                        <button onclick="showEditProfile()" style="background: rgba(255,255,255,0.1); color: white; border: none; width: 44px; height: 44px; border-radius: 14px; font-size: 1.2rem; cursor: pointer;">✏️</button>
-                    </div>
-                </div>
-
-                <!-- Profile Menu -->
-                <div class="menu-list">
-                    <div class="menu-item" onclick="showEditProfile()">
-                        <div class="menu-icon" style="background: #eef4ff; color: var(--primary);">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        </div>
-                        <div class="menu-content">
-                            <div class="menu-title">Personal Details</div>
-                            <div class="menu-desc">Manage your profile and name</div>
-                        </div>
-                        <div class="menu-arrow">›</div>
-                    </div>
-                    <div class="menu-item" onclick="switchTab('wallet')">
-                        <div class="menu-icon" style="background: #fff9e6; color: #ffab00;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
-                        </div>
-                        <div class="menu-content">
-                            <div class="menu-title">Wallet & Credits</div>
-                            <div class="menu-desc">₹0 available balance</div>
-                        </div>
-                        <div class="menu-arrow">›</div>
-                    </div>
-                    <div class="menu-item" onclick="showToast('Feature coming soon!')">
-                        <div class="menu-icon" style="background: #fdf2f2; color: var(--danger);">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        </div>
-                        <div class="menu-content">
-                            <div class="menu-title">Saved Addresses</div>
-                            <div class="menu-desc">Home, Work and more</div>
-                        </div>
-                        <div class="menu-arrow">›</div>
-                    </div>
-                    <div class="menu-item" onclick="logout()">
-                        <div class="menu-icon" style="background: #f5f5f5; color: var(--gray);">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                        </div>
-                        <div class="menu-title" style="color: var(--danger);">Sign Out</div>
-                        <div class="menu-arrow">›</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <nav class="tabbar">
-            <button class="tab-btn active" id="btn-tab-home" onclick="switchTab('home')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                <div class="tab-txt">Book</div>
-            </button>
-            <button class="tab-btn" id="btn-tab-rides" onclick="switchTab('rides')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 3h15V19H1z"/><path d="M17 11V19h4V14L17 11z"/><circle cx="4" cy="19" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-                <div class="tab-txt">Rides</div>
-            </button>
-            <button class="tab-btn" id="btn-tab-wallet" onclick="switchTab('wallet')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
-                <div class="tab-txt">Wallet</div>
-            </button>
-            <button class="tab-btn" id="btn-tab-profile" onclick="switchTab('profile')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <div class="tab-txt">Profile</div>
-            </button>
-        </nav>
-    </div>
-
-    <!-- Edit Profile Modal Sheet -->
-    <div class="modal" id="modal-edit-profile">
-        <div class="modal-sheet">
-            <div class="modal-header">
-                <h3 class="modal-title">Edit Profile</h3>
-                <button class="modal-close" onclick="hideEditProfile()">✕</button>
-            </div>
-            <div class="form-group" style="text-align:center;">
-                <img id="ep-img" src="" style="width:80px;height:80px;border-radius:40px;display:none;margin:0 auto 10px;object-fit:cover;">
-                <input type="file" id="ep-input" accept="image/*" class="input" style="font-size:0.8rem; margin:auto;" onchange="if(this.files[0]){document.getElementById('ep-img').src=URL.createObjectURL(this.files[0]);document.getElementById('ep-img').style.display='block';}">
-            </div>
-            <div class="form-group">
-                <label class="label">Full Name</label>
-                <input type="text" class="input" id="ep-name">
-            </div>
-            <div class="form-group">
-                <label class="label">Email Address</label>
-                <input type="email" class="input" id="ep-email">
-            </div>
-            <div class="form-group">
-                <label class="label">Address</label>
-                <textarea class="input" id="ep-addr" rows="2"></textarea>
-            </div>
-            <div class="form-group">
-                <label class="label">Emergency Contact 1</label>
-                <input type="tel" class="input" id="ep-emg1" placeholder="+91">
-            </div>
-            <div class="form-group">
-                <label class="label">Emergency Contact 2</label>
-                <input type="tel" class="input" id="ep-emg2" placeholder="+91">
-            </div>
-            <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
-        </div>
-    </div>
-
-    <script>
-        const SUPABASE_URL = 'https://eouqjkvfbjefbyindqjp.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvdXFqa3ZmYmplZmJ5aW5kcWpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTM2NjAsImV4cCI6MjA5MjY4OTY2MH0.yivlkQjKt4r6Lx507BsuM48t9aIM-7OBJOx91_6XEfw';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let APP = {
-            user: JSON.parse(localStorage.getItem('sf_user') || 'null'),
-            currentTab: 'home',
-            pendingRide: null
-        };
-
-        window.onload = () => {
-            updateGreeting();
-            if (APP.user) {
-                showScreen('screen-app');
-                populateProfile();
-                subscribeToRideUpdates();
-                loadRideHistory();
-            }
-        };
-
-        function updateGreeting() {
-            const h = new Date().getHours();
-            const g = h < 12 ? 'Good Morning 👋' : h < 17 ? 'Good Afternoon ☀️' : 'Good Evening 🌙';
-            const el = document.getElementById('greeting-txt');
-            if(el) el.textContent = g;
+    window.onload = () => {
+      // Re-read storage to get most recent profile data
+      APP.user = JSON.parse(localStorage.getItem('sf_user') || 'null');
+      updateGreeting();
+      
+      if (APP.user) {
+        showScreen('screen-app');
+        document.getElementById('app-user-name').textContent = APP.user.full_name?.split(' ')[0] || 'User';
+        if (APP.user.profile_image_url) {
+          document.getElementById('app-avatar-img').src = APP.user.profile_image_url + '?t=' + Date.now();
         }
+        restoreRideState();
+        subscribeToRideUpdates();
+      } else {
+        showScreen('screen-auth');
+      }
+    };
 
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+    function updateGreeting() {
+      const h = new Date().getHours();
+      const g = h < 12 ? 'Good Morning 👋' : h < 17 ? 'Good Afternoon ☀️' : 'Good Evening 🌙';
+      const el = document.getElementById('greeting-txt');
+      if (el) el.textContent = g;
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function toggleAuth(showLogin) {
+      document.getElementById('auth-login-box').style.display = showLogin ? 'block' : 'none';
+      document.getElementById('auth-signup-box').style.display = showLogin ? 'none' : 'block';
+      document.getElementById('auth-sub').textContent = showLogin ? "Pune's Metered Auto Network" : 'Create your secure account';
+    }
+
+    async function startSignup() {
+      const name = document.getElementById('reg-name').value.trim();
+      const mobile = document.getElementById('reg-mobile').value.trim();
+      const pass = document.getElementById('reg-pass').value.trim();
+      if (!name || !mobile || !pass) { showToast('Please fill all fields'); return; }
+      setLoading(true);
+      setTimeout(() => { setLoading(false); showScreen('screen-otp'); showToast('OTP code is 1234'); }, 1000);
+    }
+
+    async function verifyOTP() {
+      if (document.getElementById('otp-input').value !== '1234') { showToast('Incorrect OTP code'); return; }
+      showScreen('screen-onboard');
+    }
+
+    async function submitOnboarding() {
+      const addr = document.getElementById('inp-address').value.trim();
+      if (!addr) { showToast('Home address is required'); return; }
+      setLoading(true);
+      const userPayload = {
+        full_name: document.getElementById('reg-name').value.trim(),
+        mobile: document.getElementById('reg-mobile').value.trim(),
+        password: document.getElementById('reg-pass').value.trim(),
+        address: addr,
+        emergency_contact1: document.getElementById('inp-ec1').value.trim(),
+        emergency_contact2: document.getElementById('inp-ec2').value.trim()
+      };
+      const { data, error } = await _supabase.from('safarr_users').insert(userPayload).select().single();
+      setLoading(false);
+      if (error) { showToast('Error: ' + error.message); return; }
+      APP.user = data;
+      localStorage.setItem('sf_user', JSON.stringify(data));
+      showScreen('screen-app');
+      document.getElementById('app-user-name').textContent = data.full_name?.split(' ')[0] || 'User';
+      showToast('Welcome to Safarr! 🚀');
+    }
+
+    async function handleLogin() {
+      const mobile = document.getElementById('login-mobile').value.trim();
+      const pass = document.getElementById('login-pass').value.trim();
+      setLoading(true);
+      const { data, error } = await _supabase.from('safarr_users').select('*').eq('mobile', mobile).eq('password', pass).single();
+      setLoading(false);
+      if (error || !data) { showToast('Wrong mobile or password'); return; }
+      APP.user = data;
+      localStorage.setItem('sf_user', JSON.stringify(data));
+      showScreen('screen-app');
+      document.getElementById('app-user-name').textContent = data.full_name?.split(' ')[0] || 'User';
+      if (data.profile_image_url) document.getElementById('app-avatar-img').src = data.profile_image_url;
+      restoreRideState();
+      subscribeToRideUpdates();
+      showToast('Welcome back! 👋');
+    }
+
+    async function bookRide() {
+      const from = document.getElementById('inp-from').value.trim();
+      const to = document.getElementById('inp-to').value.trim();
+      if (!from || !to) { showToast('Enter pickup and destination'); return; }
+      setLoading(true);
+      const ridePayload = {
+        customer_id: APP.user.id,
+        customer_name: APP.user.full_name,
+        customer_mobile: APP.user.mobile,
+        pickup_address: from,
+        dropoff_address: to,
+        estimated_fare: 40 + Math.floor(Math.random() * 80),
+        status: 'pending',
+        customer_profile_image: APP.user.profile_image_url || null
+      };
+      const { data, error } = await _supabase.from('ride_bookings').insert(ridePayload).select().single();
+      setLoading(false);
+      if (error) { showToast('Booking failed. Try again.'); return; }
+      APP.pendingRide = data;
+      localStorage.setItem('sf_pending_ride', JSON.stringify(data));
+      showActiveRideUI(data);
+      showToast('Searching for verified autos... 🔍');
+      triggerDriverNotification(ridePayload);
+
+      // --- DEMO: Simulate driver acceptance after 5 seconds ---
+      setTimeout(() => simulateDriverAcceptance(data), 5000);
+    }
+
+    async function simulateDriverAcceptance(ride) {
+      const demo = DEMO_DRIVERS[Math.floor(Math.random() * DEMO_DRIVERS.length)];
+      const minutes = 3 + Math.floor(Math.random() * 10);
+      const updates = {
+        status: 'accepted',
+        driver_name: demo.name,
+        driver_mobile: demo.mobile,
+        auto_number: demo.auto_number,
+        driver_profile_image: null,
+        accepted_at: new Date().toISOString()
+      };
+      await _supabase.from('ride_bookings').update(updates).eq('id', ride.id);
+      const updated = { ...ride, ...updates };
+      APP.pendingRide = updated;
+      localStorage.setItem('sf_pending_ride', JSON.stringify(updated));
+      showActiveRideUI(updated, minutes);
+      showToast(`🛺 ${demo.name} is heading to you!`);
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    }
+
+    function showActiveRideUI(ride, eta) {
+      document.getElementById('booking-card').style.display = 'none';
+      document.getElementById('active-ride-card').style.display = 'block';
+
+      document.getElementById('ar-pickup').textContent = '📍 ' + (ride.pickup_address || '');
+      document.getElementById('ar-drop').textContent = '➜ ' + (ride.dropoff_address || '');
+
+      if (ride.status === 'accepted') {
+        const minutes = eta || estimateETA();
+        document.getElementById('ar-status-title').textContent = `🛺 ${ride.driver_name || 'Auto'} is on the way!`;
+        document.getElementById('ar-eta').textContent = minutes + ' min';
+        document.getElementById('ar-driver-name').textContent = ride.driver_name || 'Verified Driver';
+        document.getElementById('ar-auto-no').textContent = ride.auto_number || '--';
+        const mob = ride.driver_mobile || '';
+        document.getElementById('ar-driver-mobile').textContent = mob ? '📱 ' + mob : '';
+        if (mob) document.getElementById('ar-call-btn').href = 'tel:' + mob;
+        if (ride.driver_profile_image) document.getElementById('ar-driver-img').src = ride.driver_profile_image;
+        document.getElementById('ar-driver-box').style.display = 'flex';
+      } else {
+        document.getElementById('ar-status-title').textContent = '🔍 Searching for Auto...';
+        document.getElementById('ar-eta').textContent = '-- min';
+        document.getElementById('ar-driver-box').style.display = 'none';
+      }
+    }
+
+    function estimateETA() { return 3 + Math.floor(Math.random() * 8); }
+
+    function restoreRideState() {
+      const ride = APP.pendingRide;
+      if (ride && (ride.status === 'pending' || ride.status === 'accepted')) {
+        showActiveRideUI(ride);
+      }
+    }
+
+    function subscribeToRideUpdates() {
+      if (!APP.user) return;
+      _supabase.channel('ride-updates-home')
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ride_bookings', filter: `customer_id=eq.${APP.user.id}` }, p => {
+          if (p.new.status === 'accepted') {
+            APP.pendingRide = p.new;
+            localStorage.setItem('sf_pending_ride', JSON.stringify(p.new));
+            showActiveRideUI(p.new);
+            showToast(`🛺 ${p.new.driver_name || 'Auto'} is on the way!`);
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+          }
+        }).subscribe();
+    }
+
+    async function cancelRide() {
+      if (!confirm('Cancel this ride?')) return;
+      if (APP.pendingRide?.id) {
+        await _supabase.from('ride_bookings').update({ status: 'cancelled' }).eq('id', APP.pendingRide.id);
+      }
+      APP.pendingRide = null;
+      localStorage.removeItem('sf_pending_ride');
+      document.getElementById('active-ride-card').style.display = 'none';
+      document.getElementById('booking-card').style.display = 'block';
+      showToast('Ride cancelled.');
+    }
+
+    async function triggerDriverNotification(ride) {
+      try {
+        const { data: drivers } = await _supabase.from('auto_drivers').select('push_sub').eq('is_online', true).not('push_sub', 'is', null);
+        if (drivers?.length > 0) {
+          const subscriptions = drivers.map(d => JSON.parse(d.push_sub));
+          await fetch('/.netlify/functions/notify-drivers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscriptions, payload: { title: 'Safarr: New Ride!', body: `${ride.pickup_address} ➜ ${ride.dropoff_address}` } }) });
         }
+      } catch(e) {}
+    }
 
-        function toggleAuth(showLogin) {
-            document.getElementById('auth-login-box').style.display = showLogin ? 'block' : 'none';
-            document.getElementById('auth-signup-box').style.display = showLogin ? 'none' : 'block';
-            document.getElementById('auth-sub').textContent = showLogin ? "Pune's Metered Auto Network" : 'Create your secure account';
-        }
+    function nextObStep(n) {
+      document.getElementById('ob-step-1').style.display = n === 1 ? 'block' : 'none';
+      document.getElementById('ob-step-2').style.display = n === 2 ? 'block' : 'none';
+      document.getElementById('ob-bar').style.width = (n === 2 ? 100 : 50) + '%';
+      document.getElementById('ob-step-num').textContent = `Step ${n}/2`;
+      document.getElementById('ob-step-title').textContent = n === 2 ? 'Emergency Contacts' : 'Your Address';
+    }
 
-        // ─── SIGNUP FLOW ───────────────────────────────────────────
-        async function startSignup() {
-            const name = document.getElementById('reg-name').value.trim();
-            const mobile = document.getElementById('reg-mobile').value.trim();
-            const pass = document.getElementById('reg-pass').value.trim();
+    function quickBook(loc) { document.getElementById('inp-to').value = loc; showToast('Destination: ' + loc); }
+    function setLoading(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
+    function showToast(m) {
+      const t = document.getElementById('toast');
+      t.textContent = m; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(-10px)';
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(0)'; }, 3000);
+    }
 
-            if (!name || !mobile || !pass) { showToast('Please fill all fields'); return; }
-            
-            setLoading(true);
-            setTimeout(() => {
-                setLoading(false);
-                showScreen('screen-otp');
-                showToast('OTP code is 1234');
-            }, 1000);
-        }
-
-        async function verifyOTP() {
-            const otp = document.getElementById('otp-input').value;
-            if (otp !== '1234') { showToast('Incorrect OTP code'); return; }
-            showScreen('screen-onboard');
-        }
-
-        async function submitOnboarding() {
-            const addr = document.getElementById('inp-address').value.trim();
-            const ec1 = document.getElementById('inp-ec1').value.trim();
-            const ec2 = document.getElementById('inp-ec2').value.trim();
-            
-            if (!addr) { showToast('Home address is required'); return; }
-
-            setLoading(true);
-            const userPayload = {
-                full_name: document.getElementById('reg-name').value.trim(),
-                mobile: document.getElementById('reg-mobile').value.trim(),
-                password: document.getElementById('reg-pass').value.trim(),
-                address: addr,
-                emergency_contact1: ec1,
-                emergency_contact2: ec2
-            };
-
-            const { data, error } = await _supabase.from('safarr_users').insert(userPayload).select().single();
-            setLoading(false);
-
-            if (error) { showToast('Error: ' + error.message); return; }
-
-            APP.user = data;
-            localStorage.setItem('sf_user', JSON.stringify(data));
-            showScreen('screen-app');
-            populateProfile();
-            showToast('Welcome to Safarr! 🚀');
-        }
-
-        // ─── LOGIN ─────────────────────────────────────────────────
-        async function handleLogin() {
-            const mobile = document.getElementById('login-mobile').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
-
-            setLoading(true);
-            const { data, error } = await _supabase.from('safarr_users')
-                .select('*').eq('mobile', mobile).eq('password', pass).single();
-            setLoading(false);
-
-            if (error || !data) { showToast('Wrong mobile or password'); return; }
-
-            APP.user = data;
-            localStorage.setItem('sf_user', JSON.stringify(data));
-            showScreen('screen-app');
-            populateProfile();
-            loadRideHistory();
-            subscribeToRideUpdates();
-            showToast('Successfully signed in');
-        }
-
-        async function bookRide() {
-            const from = document.getElementById('inp-from').value.trim();
-            const to = document.getElementById('inp-to').value.trim();
-
-            if (!from || !to) { showToast('Enter pickup and destination'); return; }
-
-            setLoading(true);
-            const ridePayload = {
-                customer_id: APP.user.id,
-                customer_name: APP.user.full_name,
-                customer_mobile: APP.user.mobile,
-                pickup_address: from,
-                dropoff_address: to,
-                estimated_fare: 40 + Math.floor(Math.random() * 80),
-                status: 'pending',
-                customer_profile_image: APP.user.profile_image_url
-            };
-
-            const { data, error } = await _supabase.from('ride_bookings').insert(ridePayload).select().single();
-            setLoading(false);
-
-            if (error) { showToast('Booking failed. Try again.'); return; }
-
-            APP.pendingRide = data;
-            
-            // Show Active Ride UI immediately
-            document.getElementById('booking-card').style.display = 'none';
-            document.getElementById('active-ride-card').style.display = 'block';
-            updateActiveRideUI(data);
-
-            showToast('Searching for verified autos... 🔍');
-            triggerDriverNotification(ridePayload);
-        }
-
-        async function triggerDriverNotification(ride) {
-            try {
-                const { data: drivers } = await _supabase.from('auto_drivers').select('push_sub').eq('is_online', true).not('push_sub', 'is', null);
-                if (drivers && drivers.length > 0) {
-                    const subscriptions = drivers.map(d => JSON.parse(d.push_sub));
-                    const payload = {
-                        title: 'Safarr: New Ride Request!',
-                        body: `${ride.pickup_address} ➜ ${ride.dropoff_address}`
-                    };
-
-                    await fetch('/.netlify/functions/notify-drivers', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ subscriptions, payload })
-                    });
-                }
-            } catch(e) {}
-        }
-
-        function subscribeToRideUpdates() {
-            _supabase.channel('ride-updates')
-                .on('postgres_changes', { event:'UPDATE', schema:'public', table:'ride_bookings', filter:`customer_id=eq.${APP.user.id}` }, 
-                p => {
-                    if (p.new.status === 'accepted') {
-                        APP.pendingRide = p.new;
-                        updateActiveRideUI(p.new);
-                        
-                        document.getElementById('notif-body').textContent = `Auto ${p.new.auto_number} is arriving!`;
-                        document.getElementById('notif-pill').style.display = 'flex';
-                        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-                        loadRideHistory();
-                    }
-                }).subscribe();
-        }
-
-        function updateActiveRideUI(ride) {
-            if (!ride) return;
-            
-            const card = document.getElementById('active-ride-card');
-            const bookingCard = document.getElementById('booking-card');
-            const overlay = document.getElementById('active-ride-overlay');
-            
-            // Sync both Card and Overlay
-            const syncUI = (prefix) => {
-                const title = document.getElementById(`${prefix}-status-title`) || document.getElementById('overlay-status');
-                const eta = document.getElementById(`${prefix}-eta`) || document.getElementById('overlay-eta');
-                const name = document.getElementById(`${prefix}-driver-name`) || document.getElementById('overlay-driver-name');
-                const auto = document.getElementById(`${prefix}-auto-no`) || document.getElementById('overlay-auto-no');
-                const mobile = document.getElementById(`${prefix}-driver-mobile`) || document.getElementById('overlay-driver-mobile');
-                const image = document.getElementById(`${prefix}-driver-img`) || document.getElementById('overlay-driver-img');
-                const callBtn = document.getElementById('overlay-driver-call');
-
-                if (ride.pickup_address) {
-                    const pk = document.getElementById(`${prefix}-pickup`) || document.getElementById('overlay-pickup');
-                    if (pk) pk.textContent = '📍 ' + ride.pickup_address;
-                }
-
-                if (ride.status === 'accepted') {
-                    if (title) title.textContent = '🛺 Auto is on the way!';
-                    if (eta) eta.textContent = '5 min';
-                    if (name) name.textContent = ride.driver_name || 'Verified Driver';
-                    if (auto) auto.textContent = ride.auto_number || '--';
-                    if (mobile) mobile.textContent = ride.driver_mobile || '';
-                    if (image && ride.driver_profile_image) image.src = ride.driver_profile_image;
-                    if (callBtn && ride.driver_mobile) callBtn.href = 'tel:' + ride.driver_mobile;
-                    
-                    overlay.style.display = 'block';
-                    if (document.getElementById('ar-driver-details')) document.getElementById('ar-driver-details').style.display = 'flex';
-                } else {
-                    if (title) title.textContent = 'Searching for Auto... 🔍';
-                    if (eta) eta.textContent = '-- min';
-                    overlay.style.display = 'none';
-                    if (document.getElementById('ar-driver-details')) document.getElementById('ar-driver-details').style.display = 'none';
-                }
-            };
-
-            bookingCard.style.display = (ride.status === 'pending' || ride.status === 'accepted') ? 'none' : 'block';
-            card.style.display = (ride.status === 'pending' || ride.status === 'accepted') ? 'block' : 'none';
-            
-            syncUI('ar');
-        }
-
-        function switchTab(t) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
-            const tab = document.getElementById('tab-' + t);
-            const btn = document.getElementById('btn-tab-' + t);
-            
-            if (tab) tab.classList.add('active');
-            if (btn) btn.classList.add('active');
-            
-            APP.currentTab = t;
-
-            if (t === 'rides') loadRideHistory();
-            if (t === 'wallet') updateWalletUI();
-
-            // Refresh greeting on home
-            if (t === 'home') updateGreeting();
-        }
-
-        function updateWalletUI() {
-            // Simulated wallet data logic
-            const bal = APP.user?.credits || 0;
-            document.getElementById('wallet-balance').textContent = '₹' + bal;
-        }
-
-        function populateProfile() {
-            const nameShort = APP.user.full_name?.split(' ')[0] || 'User';
-            document.getElementById('app-user-name').textContent = nameShort;
-            document.getElementById('ph-name-txt').textContent = APP.user.full_name || '';
-            document.getElementById('ph-mobile-txt').textContent = APP.user.mobile || '';
-            document.getElementById('ep-name').value = APP.user.full_name || '';
-            document.getElementById('ep-email').value = APP.user.email || '';
-            document.getElementById('ep-addr').value = APP.user.address || '';
-            document.getElementById('ep-emg1').value = APP.user.emergency_contact1 || '';
-            document.getElementById('ep-emg2').value = APP.user.emergency_contact2 || '';
-            
-            const imgEl = document.getElementById('ph-avatar-img');
-            if (APP.user.profile_image_url) {
-                imgEl.src = APP.user.profile_image_url + '?t=' + Date.now();
-                document.getElementById('ep-img').src = APP.user.profile_image_url + '?t=' + Date.now();
-                document.getElementById('ep-img').style.display = 'block';
-            } else {
-                imgEl.src = 'user.jpg'; /* Fallback */
-            }
-        }
-
-        function showEditProfile() { document.getElementById('modal-edit-profile').classList.add('active'); }
-        function hideEditProfile() { document.getElementById('modal-edit-profile').classList.remove('active'); }
-
-        async function saveProfile() {
-            const updates = {
-                full_name: document.getElementById('ep-name').value.trim(),
-                email: document.getElementById('ep-email').value.trim() || null,
-                address: document.getElementById('ep-addr').value.trim() || null,
-                emergency_contact1: document.getElementById('ep-emg1').value.trim() || null,
-                emergency_contact2: document.getElementById('ep-emg2').value.trim() || null,
-            };
-            setLoading(true);
-
-            try {
-                const epFile = document.getElementById('ep-input').files[0];
-                if (epFile) {
-                    const ext = epFile.name.split('.').pop();
-                    const path = `${APP.user.id}/profile.${ext}`;
-                    await _supabase.storage.from('passenger-profiles').upload(path, epFile, { upsert: true });
-                    const { data: urlData } = _supabase.storage.from('passenger-profiles').getPublicUrl(path);
-                    updates.profile_image_url = urlData.publicUrl;
-                }
-
-                const { data, error } = await _supabase.from('safarr_users')
-                    .update(updates).eq('id', APP.user.id).select().single();
-                    
-                if (error) throw error;
-                
-                APP.user = { ...APP.user, ...data };
-                localStorage.setItem('sf_user', JSON.stringify(APP.user));
-                populateProfile();
-                hideEditProfile();
-                showToast('Profile updated successfully!');
-            } catch (e) {
-                showToast('Error saving profile: ' + e.message);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        async function loadRideHistory() {
-            const { data } = await _supabase.from('ride_bookings')
-                .select('*').eq('customer_id', APP.user.id).order('created_at', {ascending: false});
-            
-            const list = document.getElementById('rides-list');
-            if (!data?.length) { 
-                list.innerHTML = '<div style="text-align:center; padding-top:40px;"><div style="font-size:3rem; margin-bottom:12px;">📭</div><p style="color:var(--gray); font-weight:500;">No rides yet.</p></div>';
-                return;
-            }
-
-            list.innerHTML = data.map(r => `
-                <div class="history-card">
-                    <div class="hist-top">
-                        <span class="hist-fare">₹${r.estimated_fare}</span>
-                        <span class="hist-status ${r.status}">${r.status}</span>
-                    </div>
-                    <div class="hist-route">📍 ${r.pickup_address} <br> ➜ ${r.dropoff_address}</div>
-                    <div class="hist-time">${new Date(r.created_at).toLocaleString('en-IN', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'})}</div>
-                </div>
-            `).join('');
-        }
-
-        function setLoading(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
-        function showToast(m) {
-            const t = document.getElementById('toast');
-            t.textContent = m;
-            t.style.opacity = '1';
-            t.style.transform = 'translateX(-50%) translateY(-10px)';
-            setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(0)'; }, 3000);
-        }
-
-        function logout() {
-            if(confirm('Are you sure you want to sign out?')) {
-                localStorage.removeItem('sf_user');
-                window.location.reload();
-            }
-        }
-
-        function copyRefer() {
-            navigator.clipboard.writeText('SAFARR-PUNE-24');
-            showToast('Referral code copied! 📄');
-        }
-
-        function nextObStep(n) {
-            document.querySelectorAll('.ob-step').forEach(s => s.style.display = 'none');
-            document.getElementById('ob-step-' + n).style.display = 'block';
-            document.getElementById('ob-bar').style.width = (n === 2 ? 100 : 50) + '%';
-            document.getElementById('ob-step-num').textContent = `Step ${n}/2`;
-            document.getElementById('ob-step-title').textContent = n === 2 ? 'Emergency' : 'Address';
-        }
-
-        function quickBook(loc) {
-            document.getElementById('inp-to').value = loc;
-            showToast('Destination set to ' + loc);
-        }
-
-        // PWA Install Logic
-        let deferredPrompt = null;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            if(!window.matchMedia('(display-mode: standalone)').matches) {
-                document.getElementById('install-pwa-banner').style.display = 'flex';
-            }
-        });
-
-        document.getElementById('btn-install-pwa').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt = null;
-            }
-        });
-
-        // ─── PUSH NOTIFICATIONS ──────────────────────────────────────────
-        async function requestPushPermission() {
-            if (!('serviceWorker' in navigator) || !window.PushManager) return;
-            if (Notification.permission === 'granted') {
-                try {
-                    const reg = await navigator.serviceWorker.ready;
-                    const sub = await reg.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: urlB64ToUint8Array('BKWUx27yPtwTWcQBYo_O9Rjv-z_q2cZ_f_r3Nc8SOl6EFEN3gamdkYviA4RfZSjXpnwzGPI-3O9BoMO_dIjMUU8')
-                    });
-                    if(APP.user && APP.user.id) {
-                        await _supabase.from('safarr_users').update({ push_sub: JSON.stringify(sub) }).eq('id', APP.user.id);
-                    }
-                } catch (err) { console.error('Push error:', err); }
-            } else if (Notification.permission === 'default') {
-                const perm = await Notification.requestPermission();
-                if (perm === 'granted') requestPushPermission();
-            }
-        }
-
-        function urlB64ToUint8Array(base64String) {
-            const padding = '='.repeat((4 - base64String.length % 4) % 4);
-            const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-            const rawData = window.atob(base64);
-            const outputArray = new Uint8Array(rawData.length);
-            for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }
-            return outputArray;
-        }
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js').then(() => console.log('Passenger SW Registered'));
-        }
-
-        setTimeout(requestPushPermission, 5000);
-    </script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+  </script>
 </body>
 </html>

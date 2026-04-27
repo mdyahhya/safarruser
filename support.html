@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0050ff">
+  <title>Safarr – Support</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    :root{--primary:#0050ff;--primary-soft:rgba(0,80,255,.08);--navy:#0a1628;--white:#fff;--off-white:#f8f9fc;--gray:#8a9ab5;--gray-light:#eff2f6;--success:#00c853;--radius:24px;--shadow:0 10px 30px rgba(10,22,40,.08)}
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy)}
+    .app-header{padding:60px 24px 20px;background:var(--white);display:flex;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.02)}
+    .content{padding:24px;padding-bottom:110px}
+    
+    .chat-card{background:var(--white);border-radius:28px;padding:24px;box-shadow:var(--shadow);border:1px solid var(--gray-light);margin-bottom:20px}
+    .chat-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:8px}
+    .chat-sub{font-size:.85rem;color:var(--gray);margin-bottom:20px;line-height:1.5}
+    
+    .field-group{margin-bottom:20px}
+    .field-label{font-size:.75rem;font-weight:700;color:var(--navy);opacity:.5;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:block}
+    .field-input{width:100%;padding:16px 20px;border-radius:18px;border:2px solid var(--gray-light);font-size:1rem;font-family:'DM Sans',sans-serif;background:var(--off-white);transition:all .3s}
+    .field-input:focus{border-color:var(--primary);background:var(--white)}
+    
+    .file-upload-box{border:2px dashed var(--gray-light);border-radius:20px;padding:30px 20px;text-align:center;position:relative;cursor:pointer;transition:all .2s;background:var(--white)}
+    .file-upload-box:active{background:var(--primary-soft);border-color:var(--primary)}
+    .file-upload-box input{position:absolute;inset:0;opacity:0;cursor:pointer}
+    .preview-img{width:100%;max-height:200px;object-fit:cover;border-radius:14px;margin-top:15px;display:none}
+    
+    .btn-submit{background:var(--primary);color:#fff;border:none;padding:18px;border-radius:20px;font-size:1rem;font-weight:700;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;box-shadow:0 8px 24px rgba(0,80,255,.3);display:flex;align-items:center;justify-content:center;gap:10px}
+    
+    /* Navigation Bar */
+    .tab-btn-bar{position:fixed;bottom:0;left:0;right:0;height:90px;background:var(--white);display:flex;align-items:center;justify-content:space-around;padding:0 10px 20px;border-top:1px solid var(--gray-light);z-index:100}
+    .tab-btn{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--gray);cursor:pointer;transition:all .3s;position:relative;text-decoration:none;padding:8px 0}
+    .tab-btn.active{color:var(--primary)}
+    .tab-btn svg{width:24px;height:24px}
+    .tab-btn.active svg{transform:translateY(-2px)}
+    .tab-btn::after{content:'';position:absolute;top:-1px;left:50%;width:0%;height:3px;background:var(--primary);border-radius:0 0 4px 4px;transition:all .3s;transform:translateX(-50%)}
+    .tab-btn.active::after{width:40%}
+    .tab-txt{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+
+    .toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:14px 28px;border-radius:50px;font-size:.9rem;z-index:10000;opacity:0;transition:all .3s;pointer-events:none}
+    .loader{position:fixed;inset:0;background:rgba(255,255,255,.9);z-index:9999;display:none;align-items:center;justify-content:center}
+    .spinner{width:40px;height:40px;border:3px solid var(--gray-light);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+  <div class="loader" id="loader"><div class="spinner"></div></div>
+  <div class="toast" id="toast"></div>
+
+  <header class="app-header">
+    <h1 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800">Support Center</h1>
+  </header>
+
+  <div class="content">
+    <div class="chat-card">
+      <div class="chat-title">Need Help? 👋</div>
+      <p class="chat-sub">Describe your issue or complaint. You can also attach a screenshot if needed. Our team will get back to you within 24 hours.</p>
+      
+      <div class="field-group">
+        <label class="field-label">Message</label>
+        <textarea class="field-input" id="support-msg" rows="5" placeholder="Type your complaint here..."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Attachment (Optional)</label>
+        <div class="file-upload-box">
+          <div id="upload-status">📸 Tap to take photo or upload</div>
+          <input type="file" id="support-file" accept="image/*" onchange="previewFile(this)">
+          <img id="file-preview" class="preview-img">
+        </div>
+      </div>
+
+      <button class="btn-submit" onclick="submitTicket()">Send Message ➔</button>
+    </div>
+
+    <div style="text-align:center;padding:10px 0;opacity:.5">
+      <p style="font-size:.8rem;font-weight:600">Quick Support: support@safarr.in</p>
+    </div>
+  </div>
+
+  <nav class="tab-btn-bar">
+    <a class="tab-btn" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="tab-txt">Book</span>
+    </a>
+    <a class="tab-btn" href="rides.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 3h15V19H1z"/><path d="M17 11V19h4V14L17 11z"/><circle cx="4" cy="19" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        <span class="tab-txt">Rides</span>
+    </a>
+    <a class="tab-btn" href="wallet.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+        <span class="tab-txt">Wallet</span>
+    </a>
+    <a class="tab-btn" href="profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="tab-txt">Profile</span>
+    </a>
+    <a class="tab-btn active" href="support.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"/></svg>
+        <span class="tab-txt">Support</span>
+    </a>
+  </nav>
+
+  <script>
+    const SUPABASE_URL = 'https://eouqjkvfbjefbyindqjp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvdXFqa3ZmYmplZmJ5aW5kcWpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTM2NjAsImV4cCI6MjA5MjY4OTY2MH0.yivlkQjKt4r6Lx507BsuM48t9aIM-7OBJOx91_6XEfw';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let APP = { user: JSON.parse(localStorage.getItem('sf_user') || 'null') };
+    let pendingFile = null;
+
+    window.onload = () => { if (!APP.user) window.location.href = 'index.html'; };
+
+    function previewFile(input) {
+      if (!input.files[0]) return;
+      pendingFile = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const p = document.getElementById('file-preview');
+        p.src = e.target.result; p.style.display = 'block';
+        document.getElementById('upload-status').textContent = '✅ Image attached';
+      };
+      reader.readAsDataURL(pendingFile);
+    }
+
+    async function submitTicket() {
+      const msg = document.getElementById('support-msg').value.trim();
+      if (!msg) { showToast('Please enter a message'); return; }
+      
+      setLoading(true);
+      let attachmentUrl = null;
+
+      try {
+        if (pendingFile) {
+          const path = `support/${Date.now()}_${pendingFile.name}`;
+          const { data: upData, error: upErr } = await _supabase.storage.from('safarr-storage').upload(path, pendingFile);
+          if (upErr) throw upErr;
+          const { data: urlData } = _supabase.storage.from('safarr-storage').getPublicUrl(path);
+          attachmentUrl = urlData.publicUrl;
+        }
+
+        const { error: dbErr } = await _supabase.from('safarr_support_tickets').insert({
+          user_id: APP.user.id,
+          user_name: APP.user.full_name,
+          message: msg,
+          attachment_url: attachmentUrl
+        });
+
+        if (dbErr) throw dbErr;
+
+        showToast('✅ Ticket raised successfully!');
+        setTimeout(() => window.location.reload(), 2000);
+      } catch (e) {
+        showToast('Error: ' + e.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function setLoading(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
+    function showToast(m) {
+      const t = document.getElementById('toast');
+      t.textContent = m; t.style.opacity = '1';
+      setTimeout(() => t.style.opacity = '0', 3000);
+    }
+
+    // Handle Back Button
+    window.history.pushState({page: 1}, "", "");
+    window.onpopstate = function(event) {
+      window.location.href = 'index.html';
+    };
+  </script>
+</body>
+</html>

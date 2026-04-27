@@ -17,16 +17,21 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
+    
+    // 1. Skip Supabase and external APIs entirely
     if (url.hostname.includes('supabase.co') || url.hostname.includes('api.')) return;
 
+    // 2. Optimized Fetch Logic
     event.respondWith(
-        fetch(event.request, {
-            cache: 'no-store',
-            headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
-        }).catch(() => {
+        fetch(event.request).catch(() => {
+            // Only show offline page for actual website navigation
             if (event.request.mode === 'navigate') {
-                return new Response(`<html><body style="font-family:sans-serif; text-align:center; padding:100px;"><h1>👤 Safarr</h1><p>Offline Mode. Please check internet.</p><button onclick="location.reload()">Retry</button></body></html>`, { headers: { 'Content-Type': 'text/html' } });
+                return new Response(`<html><body style="font-family:sans-serif; text-align:center; padding:100px;"><h1>👤 Safarr</h1><p>Offline Mode. Please check internet.</p><button onclick="location.reload()">Retry</button> body></html>`, { 
+                    headers: { 'Content-Type': 'text/html' } 
+                });
             }
+            // For images/fonts/etc, we MUST return a valid Response object even on failure
+            return new Response('Network Error', { status: 408, statusText: 'Network Error' }); 
         })
     );
 });
