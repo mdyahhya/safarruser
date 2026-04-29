@@ -7,7 +7,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { audio, targetLang } = JSON.parse(event.body);
+    const body = event.isBase64Encoded ? Buffer.from(event.body, 'base64').toString() : event.body;
+    const { audio, targetLang } = JSON.parse(body);
     const apiKey = process.env.AI_API_KEY;
 
     if (!apiKey) {

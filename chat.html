@@ -369,6 +369,7 @@
 
         const aiRes = await fetch('/.netlify/functions/translate-voice', {
           method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ audio: base64, targetLang: driverLang })
         });
         
