@@ -378,6 +378,7 @@
         } else {
           const errData = await aiRes.json().catch(() => ({}));
           console.error('Netlify Function Error:', aiRes.status, errData);
+          alert('AI Error: ' + (errData.message || 'Server Error ' + aiRes.status));
         }
       } catch (e) { 
         console.error('AI Processing Skip (Translation Failed):', e); 
