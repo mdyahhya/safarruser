@@ -82,7 +82,12 @@ exports.handler = async (event) => {
     console.error('AI Error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Internal Server Error', details: error.message })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        error: 'Translation Service Error', 
+        message: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      })
     };
   }
 };
