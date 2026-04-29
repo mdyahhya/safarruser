@@ -122,7 +122,44 @@
     .popup-route-dot{width:12px;height:12px;border-radius:50%;margin-top:4px;flex-shrink:0}
     .popup-route-txt{font-size:.9rem;font-weight:600;line-height:1.4}
     .route-connector{width:2px;height:16px;background:repeating-linear-gradient(to bottom,var(--gray-light) 0,var(--gray-light) 4px,transparent 4px,transparent 8px);margin-left:5px;margin-bottom:6px}
+
+    /* Autocomplete Dropdown */
+    .autocomplete-container { position: relative; width: 100%; }
+    .autocomplete-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--white); border-radius: 18px; box-shadow: var(--shadow-lg); z-index: 2000; display: none; max-height: 250px; overflow-y: auto; border: 1px solid var(--gray-light); margin-top: 8px; }
+    .autocomplete-item { padding: 14px 20px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all .2s; border-bottom: 1px solid var(--off-white); }
+    .autocomplete-item:last-child { border-bottom: none; }
+    .autocomplete-item:hover { background: var(--primary-soft); color: var(--primary); }
+    .autocomplete-item svg { width: 18px; height: 18px; color: var(--gray); }
+    .autocomplete-item:hover svg { color: var(--primary); }
+    .autocomplete-label { font-weight: 600; font-size: .95rem; }
+
+    /* New Sections */
+    .section-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+    .section-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 30px; }
+    .grid-item { background: var(--white); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; border: 1px solid var(--gray-light); transition: all .3s; cursor: pointer; }
+    .grid-item:active { transform: scale(.97); }
+    .grid-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--off-white); overflow: hidden; }
+    .grid-icon svg { width: 22px; height: 22px; stroke: var(--primary); stroke-width: 2; fill: none; }
+    .grid-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .grid-label { font-weight: 700; font-size: .85rem; color: var(--navy); }
+    .grid-sub { font-size: .7rem; color: var(--gray); font-weight: 500; }
+
+    /* Tourist Place Cards */
+    .place-card { position: relative; aspect-ratio: 1/1; border-radius: 22px; overflow: hidden; border: 1px solid var(--gray-light); cursor: pointer; transition: all .3s; }
+    .place-card:active { transform: scale(.96); }
+    .place-card img { width: 100%; height: 100%; object-fit: cover; }
+    .place-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.8) 0%, transparent 60%); display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; color: var(--white); }
+    .place-name { font-weight: 800; font-size: .95rem; font-family: 'Syne', sans-serif; }
+    .place-sub { font-size: .7rem; opacity: .8; font-weight: 500; margin-top: 2px; }
+
+    /* Saved Places Editing */
+    .suggest-item { position: relative; }
+    .delete-place-btn { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; background: var(--danger); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; border: 2px solid var(--white); box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+    .edit-mode .delete-place-btn { display: flex; }
+    .edit-mode .suggest-item { animation: wobble .3s infinite ease-in-out; }
+    @keyframes wobble { 0%, 100% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } }
   </style>
+
 </head>
 <body>
   <div class="loader" id="loader"><div class="spinner"></div></div>
@@ -338,25 +375,41 @@
           <div class="loc-line"></div>
           <div class="loc-row">
             <div class="loc-icon pickup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>
-            <input type="text" class="loc-input" id="inp-from" placeholder="Enter Pickup Location">
+            <div class="autocomplete-container">
+              <input type="text" class="loc-input" id="inp-from" placeholder="Enter Pickup Location" autocomplete="off">
+              <div id="dropdown-from" class="autocomplete-dropdown"></div>
+            </div>
           </div>
           <div class="loc-row">
             <div class="loc-icon drop"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg></div>
-            <input type="text" class="loc-input" id="inp-to" placeholder="Enter Destination">
+            <div class="autocomplete-container">
+              <input type="text" class="loc-input" id="inp-to" placeholder="Enter Destination" autocomplete="off">
+              <div id="dropdown-to" class="autocomplete-dropdown"></div>
+            </div>
           </div>
         </div>
         <div class="motto-bar"><div style="font-size:1.2rem">⏱️</div><div class="motto-txt">Only Meter Rates • No Hidden Fees</div></div>
         <button class="btn-primary" onclick="bookRide()">Order Auto Now ➔</button>
       </div>
 
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding:0 4px">
-        <h3 style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800">Saved Places</h3>
-        <span style="font-size:.85rem;color:var(--primary);font-weight:700">Edit</span>
+      <div class="section-title">
+        <span>Saved Places</span>
+        <span id="edit-places-btn" style="font-size:.85rem;color:var(--primary);font-weight:700;cursor:pointer" onclick="toggleEditPlaces()">Edit</span>
       </div>
-      <div class="suggestions">
-        <div class="suggest-item" onclick="quickBook('Swargate')"><div class="suggest-icon" style="background:#e8f5e9;color:#2e7d32">🏠</div><div class="suggest-label">Home</div><div style="font-size:.65rem;color:var(--gray)">Set Home</div></div>
-        <div class="suggest-item" onclick="quickBook('Pune Station')"><div class="suggest-icon" style="background:#e3f2fd;color:#1565c0">🏢</div><div class="suggest-label">Work</div><div style="font-size:.65rem;color:var(--gray)">Set Work</div></div>
-        <div class="suggest-item" onclick="quickBook('Phoenix Mall')"><div class="suggest-icon" style="background:#fff3e0;color:#ef6c00">🍿</div><div class="suggest-label">Mall</div><div style="font-size:.65rem;color:var(--gray)">Pune East</div></div>
+      <div class="suggestions" id="saved-places-list">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Colleges Section -->
+      <div class="section-title">Colleges & Universities</div>
+      <div class="section-grid" id="college-grid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Tourist Places Section -->
+      <div class="section-title">Places to Visit</div>
+      <div class="section-grid" id="tourist-grid">
+        <!-- Rendered by JS -->
       </div>
     </div>
 
@@ -407,6 +460,183 @@
         showScreen('screen-auth');
       }
     };
+
+    const PUNE_PLACES = [
+      "Swargate", "Pune Station", "Kothrud", "Viman Nagar", "Kalyani Nagar", "Koregaon Park", "Hadapsar", 
+      "Magarpatta City", "Amanora Mall", "Phoenix Marketcity", "Hinjewadi IT Park", "Baner", 
+      "Balewadi High Street", "Aundh", "Pashan", "Warje", "Dhayari", "Katraj Zoo", "Kondhwa", 
+      "Undri", "Wanowrie", "Camp (MG Road)", "Deccan Gymkhana", "Fergusson College Road", 
+      "Shivaji Nagar", "Pimpri", "Chinchwad", "Wakad", "Bavdhan", "Lullanagar"
+    ];
+
+    const COLLEGES = [
+      { name: "SPPU", full: "Savitribai Phule Pune University", img: 'sppu.png' },
+      { name: "Fergusson", full: "Fergusson College", img: 'fergusson.jpg' },
+      { name: "COEP Tech", full: "COEP Technological University", img: 'coep.jpg' },
+      { name: "Symbiosis", full: "Symbiosis International", img: 'symbiosis.png' },
+      { name: "MIT WPU", full: "MIT World Peace University", img: 'mit.jpg' }
+    ];
+
+    const TOURIST_PLACES = [
+      { name: "Shaniwar Wada", sub: "Historical Fort", img: "shaniwarwada.jpg" },
+      { name: "Aga Khan Palace", sub: "Freedom Landmark", img: "agakhan.jpg" },
+      { name: "Dagadusheth", sub: "Holy Temple", img: "Dagdusheth.jpg" },
+      { name: "Saras Baug", sub: "Peaceful Garden", img: "saras.jpg" },
+      { name: "Pu La Deshpande", sub: "Japanese Garden", img: "puladeshpande.jpg" },
+      { name: "Sinhagad Fort", sub: "Hilltop Trek", img: "sinhgadfort.jpg" },
+      { name: "Kelkar Museum", sub: "Antique Gallery", img: "kelkar.png" },
+      { name: "Osho Garden", sub: "Meditation Zen", img: "osho.jpg" },
+      { name: "Pataleshwar", sub: "Rock-cut Temple", img: "pataleshwar.jpg" },
+      { name: "Pashan Lake", sub: "Nature & Birds", img: "pashanlake.jpg" }
+    ];
+
+    let isEditMode = false;
+    let savedPlaces = JSON.parse(localStorage.getItem('sf_saved_places')) || [
+      { id: 1, label: 'Home', loc: 'Swargate', icon: '🏠', color: '#e8f5e9', text: '#2e7d32' },
+      { id: 2, label: 'Work', loc: 'Pune Station', icon: '🏢', color: '#e3f2fd', text: '#1565c0' },
+      { id: 3, label: 'Mall', loc: 'Phoenix Mall', icon: '🍿', color: '#fff3e0', text: '#ef6c00' }
+    ];
+
+    window.onload = () => {
+      APP.user = JSON.parse(localStorage.getItem('sf_user') || 'null');
+      updateGreeting();
+      renderSavedPlaces();
+      renderGrids();
+      setupAutocomplete();
+      
+      if (APP.user) {
+        showScreen('screen-app');
+        document.getElementById('app-user-name').textContent = APP.user.full_name?.split(' ')[0] || 'User';
+        if (APP.user.profile_image_url) {
+          document.getElementById('app-avatar-img').src = APP.user.profile_image_url + '?t=' + Date.now();
+        }
+        restoreRideState();
+        subscribeToRideUpdates();
+      } else {
+        showScreen('screen-auth');
+      }
+    };
+
+    function setupAutocomplete() {
+      ['from', 'to'].forEach(type => {
+        const input = document.getElementById(`inp-${type}`);
+        const dropdown = document.getElementById(`dropdown-${type}`);
+        
+        input.addEventListener('input', () => {
+          const val = input.value.toLowerCase().trim();
+          if (!val) { dropdown.style.display = 'none'; return; }
+          
+          const matches = PUNE_PLACES.filter(p => p.toLowerCase().includes(val)).slice(0, 5);
+          if (matches.length > 0) {
+            dropdown.innerHTML = matches.map(m => `
+              <div class="autocomplete-item" onclick="selectLocation('${type}', '${m}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <div class="autocomplete-label">${m}</div>
+              </div>
+            `).join('');
+            dropdown.style.display = 'block';
+          } else {
+            dropdown.style.display = 'none';
+          }
+        });
+
+        // Close on blur
+        document.addEventListener('click', (e) => {
+          if (!input.contains(e.target) && !dropdown.contains(e.target)) dropdown.style.display = 'none';
+        });
+      });
+    }
+
+    function selectLocation(type, loc) {
+      document.getElementById(`inp-${type}`).value = loc;
+      document.getElementById(`dropdown-${type}`).style.display = 'none';
+      if (type === 'to') showToast(`Destination: ${loc}`);
+    }
+
+    function renderSavedPlaces() {
+      const list = document.getElementById('saved-places-list');
+      const itemsHtml = savedPlaces.map(p => `
+        <div class="suggest-item" onclick="!isEditMode && quickBook('${p.loc}')">
+          <div class="delete-place-btn" onclick="event.stopPropagation(); deletePlace(${p.id})">×</div>
+          <div class="suggest-icon" style="background:${p.color};color:${p.text}">${p.icon}</div>
+          <div class="suggest-label">${p.label}</div>
+          <div style="font-size:.65rem;color:var(--gray)">${p.loc}</div>
+        </div>
+      `).join('');
+      
+      const addBtnHtml = `
+        <div class="suggest-item" onclick="addNewPlace()" style="border:1px dashed var(--primary); background:var(--primary-soft)">
+          <div class="suggest-icon" style="background:var(--white);color:var(--primary)">+</div>
+          <div class="suggest-label" style="color:var(--primary)">Add New</div>
+          <div style="font-size:.65rem;color:var(--primary)">Custom</div>
+        </div>
+      `;
+      
+      list.innerHTML = itemsHtml + addBtnHtml;
+    }
+
+    function toggleEditPlaces() {
+      isEditMode = !isEditMode;
+      const list = document.getElementById('saved-places-list');
+      const btn = document.getElementById('edit-places-btn');
+      if (isEditMode) {
+        list.classList.add('edit-mode');
+        btn.textContent = 'Done';
+      } else {
+        list.classList.remove('edit-mode');
+        btn.textContent = 'Edit';
+      }
+    }
+
+    function deletePlace(id) {
+      savedPlaces = savedPlaces.filter(p => p.id !== id);
+      localStorage.setItem('sf_saved_places', JSON.stringify(savedPlaces));
+      renderSavedPlaces();
+      if (savedPlaces.length === 0) toggleEditPlaces();
+    }
+
+    function addNewPlace() {
+      const label = prompt("Enter Label (e.g., Gym, Aunt's House):");
+      if (!label) return;
+      const loc = prompt("Enter Location in Pune:");
+      if (!loc) return;
+      
+      const newPlace = {
+        id: Date.now(),
+        label: label,
+        loc: loc,
+        icon: '📍',
+        color: '#f3f4f6',
+        text: '#4b5563'
+      };
+      
+      savedPlaces.push(newPlace);
+      localStorage.setItem('sf_saved_places', JSON.stringify(savedPlaces));
+      renderSavedPlaces();
+      showToast('Place added! ✨');
+    }
+
+    function renderGrids() {
+      document.getElementById('college-grid').innerHTML = COLLEGES.map(c => `
+        <div class="grid-item" onclick="quickBook('${c.full}')">
+          <div class="grid-icon"><img src="${c.img}" alt="${c.name}"></div>
+          <div style="display:flex;flex-direction:column">
+            <div class="grid-label">${c.name}</div>
+            <div class="grid-sub">${c.full.substring(0, 15)}...</div>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('tourist-grid').innerHTML = TOURIST_PLACES.map(t => `
+        <div class="place-card" onclick="quickBook('${t.name}')">
+          <img src="${t.img}" alt="${t.name}">
+          <div class="place-overlay">
+            <div class="place-name">${t.name}</div>
+            <div class="place-sub">${t.sub}</div>
+          </div>
+        </div>
+      `).join('');
+    }
 
     function updateGreeting() {
       const h = new Date().getHours();
@@ -648,7 +878,11 @@
       document.getElementById('ob-step-title').textContent = n === 2 ? 'Emergency Contacts' : 'Your Address';
     }
 
-    function quickBook(loc) { document.getElementById('inp-to').value = loc; showToast('Destination: ' + loc); }
+    function quickBook(loc) { 
+      document.getElementById('inp-to').value = loc; 
+      showToast('Destination: ' + loc); 
+      document.getElementById('booking-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     function setLoading(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
     function showToast(m) {
       const t = document.getElementById('toast');
