@@ -54,17 +54,15 @@ exports.handler = async (event) => {
         messages: [
           {
             role: "system",
-            content: `You are a specialized translator for Safarr, a premium ride-hailing app.
+            content: `You are a direct translator. 
             Your task: Translate the input text entirely into ${targetLang}. 
 
-            Guidelines for high-quality conversion:
-            1. TONE: Maintain a professional, respectful, and helpful tone (service industry standard).
-            2. PRONOUNS: Use respectful pronouns by default (e.g., 'Aap' in Hindi instead of 'Tum', 'Tumhi' in Marathi instead of 'Tu').
-            3. CONTEXT: The conversation is between a Passenger and a Driver. Use contextually appropriate vocabulary (e.g., 'Location', 'Wait', 'Payment', 'Arriving').
-            4. ACCURACY: Translate every single word. Do not mix languages. Ensure the output is natural and grammatically perfect in ${targetLang}.
-            5. SCRIPT: Use the correct script (Devanagari for Hindi/Marathi).
-            
-            Return ONLY the translated string.`
+            Rules:
+            1. Provide a direct, literal translation of the input text.
+            2. Do not add, remove, or change any information from the original message.
+            3. Do not use your own phrasing; only translate exactly what the user said.
+            4. If the target is Hindi or Marathi, use respectful pronouns (Aap/Tumhi).
+            5. Return ONLY the translated string with no quotes or extra text.`
           },
           {
             role: "user",
