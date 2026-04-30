@@ -1,0 +1,22 @@
+[
+  { "name": "Swargate",             "lat": 18.5005,  "lng": 73.8571 },
+  { "name": "Pune Station",         "lat": 18.5286,  "lng": 73.8727 },
+  { "name": "Kothrud",              "lat": 18.5074,  "lng": 73.8077 },
+  { "name": "Viman Nagar",          "lat": 18.5679,  "lng": 73.9143 },
+  { "name": "Kalyani Nagar",        "lat": 18.5460,  "lng": 73.9009 },
+  { "name": "Koregaon Park",        "lat": 18.5362,  "lng": 73.8940 },
+  { "name": "Hadapsar",             "lat": 18.4995,  "lng": 73.9256 },
+  { "name": "Magarpatta City",      "lat": 18.5128,  "lng": 73.9259 },
+  { "name": "Amanora Mall",         "lat": 18.5119,  "lng": 73.9315 },
+  { "name": "Phoenix Marketcity",   "lat": 18.5614,  "lng": 73.9157 },
+  { "name": "Hinjewadi IT Park",    "lat": 18.5913,  "lng": 73.7379 },
+  { "name": "Baner",                "lat": 18.5590,  "lng": 73.7867 },
+  { "name": "Balewadi High Street", "lat": 18.5735,  "lng": 73.7802 },
+  { "name": "Aundh",                "lat": 18.5590,  "lng": 73.8077 },
+  { "name": "Pashan",               "lat": 18.5259,  "lng": 73.7956 },
+  { "name": "Warje",                "lat": 18.4820,  "lng": 73.8239 },
+  { "name": "Dhayari",              "lat": 18.4660,  "lng": 73.8060 },
+  { "name": "Katraj Zoo",           "lat": 18.4503,  "lng": 73.8620 },
+  { "name": "Kondhwa",              "lat": 18.4699,  "lng": 73.8918 },
+  { "name": "Undri",                "lat": 18.4580,  "lng": 73.9110 }
+]

@@ -461,13 +461,18 @@
       }
     };
 
-    const PUNE_PLACES = [
-      "Swargate", "Pune Station", "Kothrud", "Viman Nagar", "Kalyani Nagar", "Koregaon Park", "Hadapsar", 
-      "Magarpatta City", "Amanora Mall", "Phoenix Marketcity", "Hinjewadi IT Park", "Baner", 
-      "Balewadi High Street", "Aundh", "Pashan", "Warje", "Dhayari", "Katraj Zoo", "Kondhwa", 
-      "Undri", "Wanowrie", "Camp (MG Road)", "Deccan Gymkhana", "Fergusson College Road", 
-      "Shivaji Nagar", "Pimpri", "Chinchwad", "Wakad", "Bavdhan", "Lullanagar"
-    ];
+    let PUNE_PLACES_DB = [];
+    const PUNE_PLACES = [];
+
+    async function loadPlaces() {
+      try {
+        const res = await fetch('places.json');
+        PUNE_PLACES_DB = await res.json();
+        PUNE_PLACES.length = 0;
+        PUNE_PLACES_DB.forEach(p => PUNE_PLACES.push(p.name));
+        console.log('Places DB Loaded:', PUNE_PLACES_DB.length);
+      } catch (e) { console.error('Failed to load places.json', e); }
+    }
 
     const COLLEGES = [
       { name: "SPPU", full: "Savitribai Phule Pune University", img: 'sppu.png' },
@@ -497,7 +502,8 @@
       { id: 3, label: 'Mall', loc: 'Phoenix Mall', icon: '🍿', color: '#fff3e0', text: '#ef6c00' }
     ];
 
-    window.onload = () => {
+    window.onload = async () => {
+      await loadPlaces();
       APP.user = JSON.parse(localStorage.getItem('sf_user') || 'null');
       updateGreeting();
       renderSavedPlaces();
@@ -550,7 +556,34 @@
     function selectLocation(type, loc) {
       document.getElementById(`inp-${type}`).value = loc;
       document.getElementById(`dropdown-${type}`).style.display = 'none';
-      if (type === 'to') showToast(`Destination: ${loc}`);
+      if (type === 'to') estimateFare();
+    }
+
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function estimateFare() {
+      const from = document.getElementById('inp-from').value;
+      const to = document.getElementById('inp-to').value;
+      if (!from || !to) return;
+      
+      const p1 = PUNE_PLACES_DB.find(p => p.name === from);
+      const p2 = PUNE_PLACES_DB.find(p => p.name === to);
+      if (!p1 || !p2) return;
+      
+      const dist = getDistance(p1.lat, p1.lng, p2.lat, p2.lng) * 1.3; // Road adjustment
+      let fare = 25;
+      if (dist > 1) fare += (dist - 1) * 17;
+      
+      showToast(`📏 ${dist.toFixed(1)} km | 💰 Est. Fare: ₹${Math.round(fare)}`);
     }
 
     function renderSavedPlaces() {
