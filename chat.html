@@ -204,7 +204,6 @@
 
       loadMessages();
       subscribeToMessages();
-      fetchDriverLang().catch(e => console.log('Driver lang fetch failed - using default:', e));
     };
 
     let driverLang = 'English';
@@ -280,14 +279,14 @@
             <span class="voice-dur">${msg.voice_duration || '0:05'}</span>
           </div>`;
         
-        if (msg.translated_text) {
+        if (!isSent && msg.translated_text) {
           bubbleContent += `
             <div class="translation-card">
               <button class="speak-btn" onclick="speakText('${msg.translated_text.replace(/'/g, "\\'")}')">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
               </button>
               <div>
-                <div style="font-size:0.6rem; opacity:0.6; margin-bottom:2px">AI TRANSLATION</div>
+                <div style="font-size:0.6rem; opacity:0.6; margin-bottom:2px">AI TRANSLATED</div>
                 ${msg.translated_text}
               </div>
             </div>`;
@@ -356,10 +355,13 @@
       if (!recordingChunks.length) return;
       const blob = new Blob(recordingChunks, { type: 'audio/webm' });
       
-      // 1. Get AI Translation (Fail-safe)
+      // 1. Get Driver's Latest Language
+      await fetchDriverLang();
+
+      // 2. Get AI Translation (Fail-safe)
       let translatedText = '';
       try {
-        showToast('AI translating...');
+        showToast(`AI Translating to ${driverLang}...`);
         const reader = new FileReader();
         reader.readAsDataURL(blob);
         const base64 = await new Promise((resolve, reject) => {
@@ -379,13 +381,13 @@
         } else {
           const errData = await aiRes.json().catch(() => ({}));
           console.error('Netlify Function Error:', aiRes.status, errData);
-          alert('AI Error: ' + (errData.message || 'Server Error ' + aiRes.status));
+          alert(`AI Error (${driverLang}): ` + (errData.message || 'Server Error ' + aiRes.status));
         }
       } catch (e) { 
         console.error('AI Processing Skip (Translation Failed):', e); 
       }
 
-      // 2. Upload to Storage
+      // 3. Upload to Storage
       try {
         const path = `voice/${Date.now()}.webm`;
         const { error: upErr } = await _supabase.storage.from('safarr-storage').upload(path, blob);
@@ -396,7 +398,7 @@
           sender_id: APP.user.id, sender_type: 'passenger', sender_name: APP.user.full_name,
           receiver_id: DRIVER_ID, message: '🎤 Voice message',
           message_type: 'voice', voice_url: data.publicUrl, voice_duration: '0:05',
-          translated_text: translatedText
+          translated_text: translatedText || null // Ensure it is null if empty
         };
 
         // 3. Save to DB (Fail-safe for missing columns)
@@ -421,9 +423,19 @@
     let activePlayBtn = null;
 
     function playVoice(u, b, transText) {
+      const isSent = b.closest('.msg-row').classList.contains('sent');
       const playIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
       const pauseIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
 
+      // NEW LOGIC: If I am receiver and translation exists, ONLY play AI voice
+      if (!isSent && transText) {
+        speakText(transText);
+        b.innerHTML = pauseIcon;
+        setTimeout(() => { b.innerHTML = playIcon; }, 4000); 
+        return;
+      }
+
+      // Default: Play original audio
       if (currentAudio && activePlayBtn) {
         if (currentAudio.src === u) {
           if (!currentAudio.paused) {
@@ -433,7 +445,6 @@
           } else {
             currentAudio.play();
             b.innerHTML = pauseIcon;
-            if (transText) speakText(transText); // Auto-speak translation
             return;
           }
         } else {
@@ -446,7 +457,6 @@
       activePlayBtn = b;
       currentAudio.play();
       b.innerHTML = pauseIcon;
-      if (transText) speakText(transText); // Auto-speak translation
 
       currentAudio.onended = () => {
         b.innerHTML = playIcon;
