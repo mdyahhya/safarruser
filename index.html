@@ -244,6 +244,11 @@
           <h3 style="font-family:'Syne',sans-serif;font-size:1.1rem" id="ar-status-title">🔍 Searching for Auto...</h3>
           <div style="background:var(--primary);color:#fff;padding:4px 12px;border-radius:12px;font-size:.8rem;font-weight:700" id="ar-eta">-- min</div>
         </div>
+        
+        <div style="margin-bottom:12px;padding:8px 12px;background:rgba(0,80,255,0.05);border-radius:10px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.8rem;color:var(--gray);font-weight:600">Estimated Fare</span>
+          <span id="ar-fare" style="font-weight:800;color:var(--primary);font-size:1rem">₹--</span>
+        </div>
 
         <div class="driver-info-box" id="ar-driver-box" style="display:none">
           <img id="ar-driver-img" src="auto.jpg" class="driver-photo" onerror="this.src='auto.jpg'">
@@ -361,6 +366,15 @@
             </div>
           </div>
 
+          <!-- Fare Detail in Popup -->
+          <div style="background:var(--primary-soft);border:1px dashed var(--primary);border-radius:18px;padding:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+             <div>
+                <div style="font-size:.7rem;color:var(--primary);font-weight:700;text-transform:uppercase">Final Meter Fare</div>
+                <div style="font-size:.8rem;color:var(--gray);font-weight:600">Incl. all taxes</div>
+             </div>
+             <div id="popup-fare" style="font-size:1.4rem;font-weight:800;color:var(--primary)">₹--</div>
+          </div>
+
           <div style="text-align:center;font-size:.8rem;color:var(--gray);font-weight:600">🔒 GPS Tracked &nbsp;·&nbsp; Meter Rate Only &nbsp;·&nbsp; Safe Ride</div>
         </div>
       </div>
@@ -389,7 +403,17 @@
           </div>
         </div>
         <div class="motto-bar"><div style="font-size:1.2rem">⏱️</div><div class="motto-txt">Only Meter Rates • No Hidden Fees</div></div>
-        <button class="btn-primary" onclick="bookRide()">Order Auto Now ➔</button>
+        
+        <!-- Live Fare Display -->
+        <div id="fare-estimate-box" style="display:none;margin-top:16px;padding:12px;background:var(--primary-soft);border-radius:12px;border:1px solid var(--primary);animation:slideUp .3s ease">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="color:var(--primary);font-weight:700;font-size:.9rem">💰 Estimated Fare</div>
+            <div id="est-fare-val" style="font-weight:800;font-size:1.2rem;color:var(--primary)">₹0</div>
+          </div>
+          <div id="est-dist-val" style="font-size:.75rem;color:var(--gray);margin-top:2px;font-weight:600">Distance: 0.0 km</div>
+        </div>
+
+        <button class="btn-primary" onclick="bookRide()" style="margin-top:16px">Order Auto Now ➔</button>
       </div>
 
       <div class="section-title">
@@ -570,20 +594,27 @@
       return R * c;
     }
 
+    let lastCalculatedFare = 25;
+
     function estimateFare() {
       const from = document.getElementById('inp-from').value;
       const to = document.getElementById('inp-to').value;
-      if (!from || !to) return;
+      const box = document.getElementById('fare-estimate-box');
+      if (!from || !to) { box.style.display = 'none'; return; }
       
       const p1 = PUNE_PLACES_DB.find(p => p.name === from);
       const p2 = PUNE_PLACES_DB.find(p => p.name === to);
-      if (!p1 || !p2) return;
+      if (!p1 || !p2) { box.style.display = 'none'; return; }
       
       const dist = getDistance(p1.lat, p1.lng, p2.lat, p2.lng) * 1.3; // Road adjustment
       let fare = 25;
       if (dist > 1) fare += (dist - 1) * 17;
       
-      showToast(`📏 ${dist.toFixed(1)} km | 💰 Est. Fare: ₹${Math.round(fare)}`);
+      lastCalculatedFare = Math.round(fare);
+      
+      document.getElementById('est-fare-val').textContent = `₹${lastCalculatedFare}`;
+      document.getElementById('est-dist-val').textContent = `Distance: ${dist.toFixed(1)} km (Meter Rate)`;
+      box.style.display = 'block';
     }
 
     function renderSavedPlaces() {
@@ -786,7 +817,7 @@
         customer_profile_image: APP.user.profile_image_url || null,
         pickup_address: pickup,
         dropoff_address: drop,
-        estimated_fare: Math.floor(25 + Math.random() * 150),
+        estimated_fare: lastCalculatedFare,
         status: 'pending'
       };
 
@@ -814,6 +845,7 @@
 
       document.getElementById('ar-pickup').textContent = '📍 ' + (ride.pickup_address || '');
       document.getElementById('ar-drop').textContent = '➜ ' + (ride.dropoff_address || '');
+      document.getElementById('ar-fare').textContent = '₹' + (ride.estimated_fare || '--');
 
       if (ride.status === 'accepted') {
         const minutes = eta || (3 + Math.floor(Math.random() * 8));
@@ -831,6 +863,14 @@
         document.getElementById('ar-eta').textContent = '-- min';
         document.getElementById('ar-driver-box').style.display = 'none';
       }
+      
+      // Update Popup Values as well
+      const popupPickup = document.getElementById('popup-pickup');
+      const popupDrop = document.getElementById('popup-drop');
+      const popupFare = document.getElementById('popup-fare');
+      if (popupPickup) popupPickup.textContent = ride.pickup_address || 'Pickup';
+      if (popupDrop) popupDrop.textContent = ride.dropoff_address || 'Drop';
+      if (popupFare) popupFare.textContent = '₹' + (ride.estimated_fare || '--');
     }
 
     function restoreRideState() {
