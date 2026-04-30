@@ -203,8 +203,13 @@
       try {
         const { data, error } = await _supabase.from('safarr_users').select('preferred_language').eq('id', APP.user.id).single();
         if (!error && data) {
-          const dbLang = data.preferred_language || 'English';
-          document.getElementById('my-lang').value = dbLang;
+          let dbLang = data.preferred_language || 'English';
+          // Normalize to Capitalized for dropdown matching
+          dbLang = dbLang.charAt(0).toUpperCase() + dbLang.slice(1).toLowerCase();
+          
+          const el = document.getElementById('my-lang');
+          if (el) el.value = dbLang;
+          
           APP.user.preferred_language = dbLang;
           localStorage.setItem('sf_user', JSON.stringify(APP.user));
         }
