@@ -199,10 +199,16 @@
         else { window.location.href = 'index.html'; return; }
       }
       
-      // Load preference
-      if (APP.user.preferred_language) {
-        document.getElementById('my-lang').value = APP.user.preferred_language;
-      }
+      // PERMANENT FIX: Always fetch latest lang from DB on load
+      try {
+        const { data, error } = await _supabase.from('safarr_users').select('preferred_language').eq('id', APP.user.id).single();
+        if (!error && data) {
+          const dbLang = data.preferred_language || 'English';
+          document.getElementById('my-lang').value = dbLang;
+          APP.user.preferred_language = dbLang;
+          localStorage.setItem('sf_user', JSON.stringify(APP.user));
+        }
+      } catch (e) { console.warn('Sync lang failed:', e); }
 
       loadMessages();
       subscribeToMessages();
