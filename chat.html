@@ -257,15 +257,15 @@
     }
 
     function subscribeToMessages() {
-      _supabase.channel('room-1')
+      // Unify channel name for reliable delivery
+      _supabase.channel('safarr-chat-sync')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'safarr_messages' }, (p) => {
           const m = p.new;
-          if ((m.sender_id === APP.user.id && m.receiver_id === DRIVER_ID) || (m.sender_id === DRIVER_ID && m.receiver_id === APP.user.id)) {
-            if (!document.getElementById('msg-' + m.id)) {
-              document.getElementById('empty-state').style.display = 'none';
-              renderMessage(m);
-              scrollToBottom();
-            }
+          // Only render if it involves me and isn't already on screen
+          if ((m.sender_id === APP.user.id || m.receiver_id === APP.user.id) && !document.getElementById('msg-' + m.id)) {
+            document.getElementById('empty-state').style.display = 'none';
+            renderMessage(m);
+            scrollToBottom();
           }
         }).subscribe();
     }
@@ -314,11 +314,17 @@
 
     function speakText(text) {
       if (!text) return;
+      window.speechSynthesis.cancel(); // Stop any current speaking
       const utterance = new SpeechSynthesisUtterance(text);
       const myLang = document.getElementById('my-lang').value;
+      
+      // Better voice selection for PC/Mobile
+      const voices = window.speechSynthesis.getVoices();
       if (myLang === 'Hindi') utterance.lang = 'hi-IN';
       else if (myLang === 'Marathi') utterance.lang = 'mr-IN';
       else utterance.lang = 'en-IN';
+      
+      utterance.rate = 0.9; // Slightly slower for clarity
       window.speechSynthesis.speak(utterance);
     }
 
