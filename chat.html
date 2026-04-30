@@ -219,7 +219,10 @@
       try {
         const { data, error } = await _supabase.from('auto_drivers').select('language').eq('id', DRIVER_ID).single();
         if (error) throw error;
-        if (data) driverLang = data.language || 'English';
+        if (data) {
+          console.log('DEBUG: Raw Driver Language from DB:', data.language);
+          driverLang = data.language || 'English';
+        }
       } catch (e) {
         console.warn('Could not fetch driver language (SQL might not be applied):', e);
       }
