@@ -381,9 +381,12 @@
 
       <!-- Booking Card -->
       <div class="booking-card" id="booking-card">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Where to?
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+          <div style="display:flex;align-items:center;gap:8px;font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Where to?
+          </div>
+          <span style="font-size:.8rem;color:var(--gray);font-weight:700;cursor:pointer;padding:4px 8px;border-radius:6px" onclick="clearInputs()">🔄 Clear All</span>
         </div>
         <div class="location-picker">
           <div class="loc-line"></div>
@@ -610,11 +613,20 @@
       let fare = 25;
       if (dist > 1) fare += (dist - 1) * 17;
       
+      showToast(`📏 ${dist.toFixed(1)} km | 💰 Est. Fare: ₹${Math.round(fare)}`);
       lastCalculatedFare = Math.round(fare);
       
       document.getElementById('est-fare-val').textContent = `₹${lastCalculatedFare}`;
       document.getElementById('est-dist-val').textContent = `Distance: ${dist.toFixed(1)} km (Meter Rate)`;
       box.style.display = 'block';
+    }
+
+    function clearInputs() {
+      document.getElementById('inp-from').value = '';
+      document.getElementById('inp-to').value = '';
+      document.getElementById('fare-estimate-box').style.display = 'none';
+      lastCalculatedFare = 25;
+      showToast('Form cleared 🧹');
     }
 
     function renderSavedPlaces() {
