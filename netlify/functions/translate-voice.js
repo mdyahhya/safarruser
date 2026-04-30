@@ -54,10 +54,14 @@ exports.handler = async (event) => {
         messages: [
           {
             role: "system",
-            content: `You are a professional translator for a ride-hailing app called Safarr. 
-            Translate the user's message into ${targetLang}. 
-            Only return the translated text, nothing else. 
-            If the message is already in ${targetLang}, return it as is.`
+            content: `You are a professional translator for Safarr, a taxi app. 
+            Your task: Translate the input text entirely into ${targetLang}. 
+            Rules:
+            1. Provide a direct, natural translation.
+            2. Translate every single word. Do not leave any words in the original language.
+            3. Do not add any explanations or notes.
+            4. If the target is Marathi, use proper Marathi script and vocabulary.
+            5. Return ONLY the translated string.`
           },
           {
             role: "user",
