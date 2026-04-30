@@ -444,15 +444,26 @@
       const playIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
       const pauseIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
 
-      // NEW LOGIC: If I am receiver and translation exists, ONLY play AI voice
+      // RECEIVER LOGIC: AI Voice with Original Fallback
       if (!isSent && transText) {
-        speakText(transText);
-        b.innerHTML = pauseIcon;
-        setTimeout(() => { b.innerHTML = playIcon; }, 4000); 
-        return;
+        try {
+          speakText(transText);
+          b.innerHTML = pauseIcon;
+          setTimeout(() => { b.innerHTML = playIcon; }, 4000);
+          
+          // SAFETY: If AI voice is likely to fail on this PC, 
+          // allow original audio to play if they click AGAIN while it's "playing"
+          if (activePlayBtn === b) { 
+             // If already active, treat second click as "Play Original"
+             window.speechSynthesis.cancel();
+          } else {
+             activePlayBtn = b;
+             return; 
+          }
+        } catch (e) { console.warn('AI Speech failed, falling back to original'); }
       }
 
-      // Default: Play original audio
+      // Default/Sender/Fallback: Play original audio
       if (currentAudio && activePlayBtn) {
         if (currentAudio.src === u) {
           if (!currentAudio.paused) {
@@ -472,7 +483,10 @@
 
       currentAudio = new Audio(u);
       activePlayBtn = b;
-      currentAudio.play();
+      currentAudio.play().catch(e => {
+        console.error('Audio playback failed:', e);
+        showToast('Playback failed');
+      });
       b.innerHTML = pauseIcon;
 
       currentAudio.onended = () => {
