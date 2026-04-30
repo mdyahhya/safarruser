@@ -391,10 +391,16 @@
           reader.onerror = reject;
         });
 
+        // Send BOTH source and target lang for better accuracy
+        const myLang = document.getElementById('my-lang').value;
         const aiRes = await fetch('/.netlify/functions/translate-voice', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ audio: base64, targetLang: driverLang })
+          body: JSON.stringify({ 
+            audio: base64, 
+            targetLang: driverLang,
+            sourceLang: myLang
+          })
         });
         
         if (aiRes.ok) {

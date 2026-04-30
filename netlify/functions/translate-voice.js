@@ -8,7 +8,7 @@ exports.handler = async (event) => {
 
   try {
     const body = event.isBase64Encoded ? Buffer.from(event.body, 'base64').toString() : event.body;
-    const { audio, targetLang } = JSON.parse(body);
+    const { audio, targetLang, sourceLang } = JSON.parse(body);
     const apiKey = process.env.AI_API_KEY;
 
     if (!apiKey) {
@@ -23,6 +23,11 @@ exports.handler = async (event) => {
     form.append('file', audioBuffer, { filename: 'speech.webm', contentType: 'audio/webm' });
     form.append('model', 'whisper-large-v3-turbo');
     form.append('response_format', 'json');
+    
+    // Improve accuracy by hinting the source language
+    if (sourceLang === 'Marathi') form.append('language', 'mr');
+    else if (sourceLang === 'Hindi') form.append('language', 'hi');
+    else if (sourceLang === 'English') form.append('language', 'en');
 
     const whisperRes = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
       method: 'POST',
