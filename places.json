@@ -1,22 +1,1772 @@
 [
-  { "name": "Swargate",             "lat": 18.5005,  "lng": 73.8571 },
-  { "name": "Pune Station",         "lat": 18.5286,  "lng": 73.8727 },
-  { "name": "Kothrud",              "lat": 18.5074,  "lng": 73.8077 },
-  { "name": "Viman Nagar",          "lat": 18.5679,  "lng": 73.9143 },
-  { "name": "Kalyani Nagar",        "lat": 18.5460,  "lng": 73.9009 },
-  { "name": "Koregaon Park",        "lat": 18.5362,  "lng": 73.8940 },
-  { "name": "Hadapsar",             "lat": 18.4995,  "lng": 73.9256 },
-  { "name": "Magarpatta City",      "lat": 18.5128,  "lng": 73.9259 },
-  { "name": "Amanora Mall",         "lat": 18.5119,  "lng": 73.9315 },
-  { "name": "Phoenix Marketcity",   "lat": 18.5614,  "lng": 73.9157 },
-  { "name": "Hinjewadi IT Park",    "lat": 18.5913,  "lng": 73.7379 },
-  { "name": "Baner",                "lat": 18.5590,  "lng": 73.7867 },
-  { "name": "Balewadi High Street", "lat": 18.5735,  "lng": 73.7802 },
-  { "name": "Aundh",                "lat": 18.5590,  "lng": 73.8077 },
-  { "name": "Pashan",               "lat": 18.5259,  "lng": 73.7956 },
-  { "name": "Warje",                "lat": 18.4820,  "lng": 73.8239 },
-  { "name": "Dhayari",              "lat": 18.4660,  "lng": 73.8060 },
-  { "name": "Katraj Zoo",           "lat": 18.4503,  "lng": 73.8620 },
-  { "name": "Kondhwa",              "lat": 18.4699,  "lng": 73.8918 },
-  { "name": "Undri",                "lat": 18.4580,  "lng": 73.9110 }
+  {
+    "name": "AFMC (Armed Forces Medical College)",
+    "lat": 18.5651,
+    "lng": 73.8714
+  },
+  {
+    "name": "Aga Khan Palace",
+    "lat": 18.5536,
+    "lng": 73.9095
+  },
+  {
+    "name": "Airport Road Lohegaon",
+    "lat": 18.5821,
+    "lng": 73.9147
+  },
+  {
+    "name": "Akurdi",
+    "lat": 18.6423,
+    "lng": 73.7648
+  },
+  {
+    "name": "Akurdi Railway Station",
+    "lat": 18.6432,
+    "lng": 73.7638
+  },
+  {
+    "name": "Alandi",
+    "lat": 18.6783,
+    "lng": 73.8988
+  },
+  {
+    "name": "Alandi Road",
+    "lat": 18.6234,
+    "lng": 73.8722
+  },
+  {
+    "name": "Amanora Mall",
+    "lat": 18.5119,
+    "lng": 73.9315
+  },
+  {
+    "name": "Amanora Township",
+    "lat": 18.5113,
+    "lng": 73.9304
+  },
+  {
+    "name": "Ambegaon Budruk",
+    "lat": 18.4568,
+    "lng": 73.8414
+  },
+  {
+    "name": "Ambegaon Khurd",
+    "lat": 18.4600,
+    "lng": 73.8451
+  },
+  {
+    "name": "Anand Nagar",
+    "lat": 18.5055,
+    "lng": 73.8491
+  },
+  {
+    "name": "Annasaheb Magar Stadium",
+    "lat": 18.5199,
+    "lng": 73.8702
+  },
+  {
+    "name": "Apte Road",
+    "lat": 18.5229,
+    "lng": 73.8405
+  },
+  {
+    "name": "Aranyeshwar Temple",
+    "lat": 18.4882,
+    "lng": 73.8577
+  },
+  {
+    "name": "Aundh",
+    "lat": 18.5590,
+    "lng": 73.8077
+  },
+  {
+    "name": "Aundh IT Park",
+    "lat": 18.5601,
+    "lng": 73.8060
+  },
+  {
+    "name": "Aundh Road",
+    "lat": 18.5536,
+    "lng": 73.8133
+  },
+  {
+    "name": "Auto Cluster Chinchwad",
+    "lat": 18.6336,
+    "lng": 73.7845
+  },
+  {
+    "name": "Avinash College of Commerce",
+    "lat": 18.5205,
+    "lng": 73.8636
+  },
+  {
+    "name": "Bajirao Road",
+    "lat": 18.5196,
+    "lng": 73.8536
+  },
+  {
+    "name": "Balaji Nagar",
+    "lat": 18.5060,
+    "lng": 73.8641
+  },
+  {
+    "name": "Baner",
+    "lat": 18.5590,
+    "lng": 73.7867
+  },
+  {
+    "name": "Baner Road",
+    "lat": 18.5576,
+    "lng": 73.7921
+  },
+  {
+    "name": "Baner Gaon",
+    "lat": 18.5610,
+    "lng": 73.7831
+  },
+  {
+    "name": "Balewadi",
+    "lat": 18.5735,
+    "lng": 73.7802
+  },
+  {
+    "name": "Balewadi High Street",
+    "lat": 18.5740,
+    "lng": 73.7812
+  },
+  {
+    "name": "Balewadi Sports Complex",
+    "lat": 18.5715,
+    "lng": 73.7762
+  },
+  {
+    "name": "Bavdhan",
+    "lat": 18.5131,
+    "lng": 73.7834
+  },
+  {
+    "name": "Bavdhan Khurd",
+    "lat": 18.5108,
+    "lng": 73.7809
+  },
+  {
+    "name": "Bhavani Peth",
+    "lat": 18.5109,
+    "lng": 73.8624
+  },
+  {
+    "name": "Bhekrainagar",
+    "lat": 18.5009,
+    "lng": 73.9049
+  },
+  {
+    "name": "Bhosale Nagar",
+    "lat": 18.5287,
+    "lng": 73.8571
+  },
+  {
+    "name": "Bhosari",
+    "lat": 18.6387,
+    "lng": 73.8474
+  },
+  {
+    "name": "Bhosari Industrial Estate",
+    "lat": 18.6351,
+    "lng": 73.8461
+  },
+  {
+    "name": "Bhugaon",
+    "lat": 18.5048,
+    "lng": 73.7574
+  },
+  {
+    "name": "Bhusari Colony",
+    "lat": 18.5010,
+    "lng": 73.8000
+  },
+  {
+    "name": "Bibvewadi",
+    "lat": 18.4874,
+    "lng": 73.8549
+  },
+  {
+    "name": "Blue Ridge Township",
+    "lat": 18.5870,
+    "lng": 73.7632
+  },
+  {
+    "name": "Boat Club Road",
+    "lat": 18.5230,
+    "lng": 73.8705
+  },
+  {
+    "name": "Bopkhel",
+    "lat": 18.6217,
+    "lng": 73.8100
+  },
+  {
+    "name": "Bopodi",
+    "lat": 18.5602,
+    "lng": 73.8426
+  },
+  {
+    "name": "Budhwar Peth",
+    "lat": 18.5143,
+    "lng": 73.8600
+  },
+  {
+    "name": "Bund Garden",
+    "lat": 18.5343,
+    "lng": 73.8780
+  },
+  {
+    "name": "Bund Garden Road",
+    "lat": 18.5381,
+    "lng": 73.8804
+  },
+  {
+    "name": "Byramji Town",
+    "lat": 18.5196,
+    "lng": 73.8680
+  },
+  {
+    "name": "Camp",
+    "lat": 18.5168,
+    "lng": 73.8758
+  },
+  {
+    "name": "Camp Railway Station",
+    "lat": 18.5175,
+    "lng": 73.8743
+  },
+  {
+    "name": "Chakan",
+    "lat": 18.7596,
+    "lng": 73.8638
+  },
+  {
+    "name": "Chandan Nagar",
+    "lat": 18.5503,
+    "lng": 73.9366
+  },
+  {
+    "name": "Charholi",
+    "lat": 18.6174,
+    "lng": 73.8845
+  },
+  {
+    "name": "Chikhali",
+    "lat": 18.6348,
+    "lng": 73.8048
+  },
+  {
+    "name": "Chinchwad",
+    "lat": 18.6273,
+    "lng": 73.7990
+  },
+  {
+    "name": "Chinchwad Railway Station",
+    "lat": 18.6226,
+    "lng": 73.8006
+  },
+  {
+    "name": "Chinchwadgaon",
+    "lat": 18.6192,
+    "lng": 73.8052
+  },
+  {
+    "name": "City Pride Kothrud",
+    "lat": 18.5074,
+    "lng": 73.8085
+  },
+  {
+    "name": "Clover Center",
+    "lat": 18.5230,
+    "lng": 73.8722
+  },
+  {
+    "name": "College of Engineering Pune (COEP)",
+    "lat": 18.5300,
+    "lng": 73.8551
+  },
+  {
+    "name": "Cummins College of Engineering",
+    "lat": 18.4969,
+    "lng": 73.8165
+  },
+  {
+    "name": "Dagadusheth Halwai Ganapati Temple",
+    "lat": 18.5165,
+    "lng": 73.8562
+  },
+  {
+    "name": "Dapodi",
+    "lat": 18.5832,
+    "lng": 73.8313
+  },
+  {
+    "name": "Dapodi Bazar",
+    "lat": 18.5841,
+    "lng": 73.8345
+  },
+  {
+    "name": "Dattawadi",
+    "lat": 18.4979,
+    "lng": 73.8315
+  },
+  {
+    "name": "Deccan Gymkhana",
+    "lat": 18.5176,
+    "lng": 73.8398
+  },
+  {
+    "name": "Deccan College",
+    "lat": 18.5472,
+    "lng": 73.8665
+  },
+  {
+    "name": "Deccan Bus Stand",
+    "lat": 18.5200,
+    "lng": 73.8419
+  },
+  {
+    "name": "Deenanath Mangeshkar Hospital",
+    "lat": 18.5095,
+    "lng": 73.8113
+  },
+  {
+    "name": "Dehu Road",
+    "lat": 18.6817,
+    "lng": 73.7539
+  },
+  {
+    "name": "Dhankawadi",
+    "lat": 18.4689,
+    "lng": 73.8716
+  },
+  {
+    "name": "Dhayari",
+    "lat": 18.4660,
+    "lng": 73.8060
+  },
+  {
+    "name": "Dhanori",
+    "lat": 18.5843,
+    "lng": 73.9093
+  },
+  {
+    "name": "Dhole Patil Road",
+    "lat": 18.5381,
+    "lng": 73.8921
+  },
+  {
+    "name": "Dighi",
+    "lat": 18.6100,
+    "lng": 73.8581
+  },
+  {
+    "name": "Dorabjee's Mall",
+    "lat": 18.5056,
+    "lng": 73.8734
+  },
+  {
+    "name": "DP Road Aundh",
+    "lat": 18.5583,
+    "lng": 73.8068
+  },
+  {
+    "name": "Dr. Babasaheb Ambedkar Chowk",
+    "lat": 18.5196,
+    "lng": 73.8571
+  },
+  {
+    "name": "Empress Garden",
+    "lat": 18.5346,
+    "lng": 73.8820
+  },
+  {
+    "name": "EON IT Park Kharadi",
+    "lat": 18.5513,
+    "lng": 73.9443
+  },
+  {
+    "name": "Erandwane",
+    "lat": 18.5095,
+    "lng": 73.8193
+  },
+  {
+    "name": "Exhibition Centre Chinchwad",
+    "lat": 18.6344,
+    "lng": 73.8006
+  },
+  {
+    "name": "Fatima Nagar",
+    "lat": 18.5005,
+    "lng": 73.8891
+  },
+  {
+    "name": "FC Road (Fergusson College Road)",
+    "lat": 18.5229,
+    "lng": 73.8421
+  },
+  {
+    "name": "Fergusson College",
+    "lat": 18.5240,
+    "lng": 73.8436
+  },
+  {
+    "name": "Film & Television Institute (FTII)",
+    "lat": 18.5183,
+    "lng": 73.8231
+  },
+  {
+    "name": "Fursungi",
+    "lat": 18.4884,
+    "lng": 73.9414
+  },
+  {
+    "name": "Gahunje",
+    "lat": 18.6551,
+    "lng": 73.7294
+  },
+  {
+    "name": "Galaxy Care Hospital",
+    "lat": 18.5048,
+    "lng": 73.8143
+  },
+  {
+    "name": "Ganesh Peth",
+    "lat": 18.5135,
+    "lng": 73.8576
+  },
+  {
+    "name": "Ganeshkhind",
+    "lat": 18.5367,
+    "lng": 73.8338
+  },
+  {
+    "name": "Ganeshkhind Road",
+    "lat": 18.5430,
+    "lng": 73.8297
+  },
+  {
+    "name": "Garware College",
+    "lat": 18.5100,
+    "lng": 73.8368
+  },
+  {
+    "name": "Gawli Nagar",
+    "lat": 18.5229,
+    "lng": 73.8701
+  },
+  {
+    "name": "Ghorpadi",
+    "lat": 18.5118,
+    "lng": 73.9000
+  },
+  {
+    "name": "Ghorpude Peth",
+    "lat": 18.5120,
+    "lng": 73.8651
+  },
+  {
+    "name": "Gokhale Nagar",
+    "lat": 18.5324,
+    "lng": 73.8286
+  },
+  {
+    "name": "Goodluck Chowk Deccan",
+    "lat": 18.5201,
+    "lng": 73.8420
+  },
+  {
+    "name": "Gultekdi",
+    "lat": 18.4860,
+    "lng": 73.8572
+  },
+  {
+    "name": "Guruwar Peth",
+    "lat": 18.5121,
+    "lng": 73.8540
+  },
+  {
+    "name": "Hadapsar",
+    "lat": 18.4995,
+    "lng": 73.9256
+  },
+  {
+    "name": "Hadapsar Industrial Estate",
+    "lat": 18.5032,
+    "lng": 73.9337
+  },
+  {
+    "name": "Hadapsar Bus Stand",
+    "lat": 18.4990,
+    "lng": 73.9260
+  },
+  {
+    "name": "Hingne Budruk",
+    "lat": 18.4792,
+    "lng": 73.8178
+  },
+  {
+    "name": "Hingne Khurd",
+    "lat": 18.4820,
+    "lng": 73.8145
+  },
+  {
+    "name": "Hinjewadi",
+    "lat": 18.5913,
+    "lng": 73.7379
+  },
+  {
+    "name": "Hinjewadi Phase 1",
+    "lat": 18.5931,
+    "lng": 73.7352
+  },
+  {
+    "name": "Hinjewadi Phase 2",
+    "lat": 18.5908,
+    "lng": 73.7290
+  },
+  {
+    "name": "Hinjewadi Phase 3",
+    "lat": 18.5850,
+    "lng": 73.7228
+  },
+  {
+    "name": "Holkar Science College",
+    "lat": 18.5196,
+    "lng": 73.8457
+  },
+  {
+    "name": "IAF Station Lohegaon",
+    "lat": 18.5826,
+    "lng": 73.9109
+  },
+  {
+    "name": "IISER Pune (Pashan)",
+    "lat": 18.5421,
+    "lng": 73.8076
+  },
+  {
+    "name": "IIM Pune",
+    "lat": 18.5974,
+    "lng": 73.7681
+  },
+  {
+    "name": "Indian Meteorological Dept Shivajinagar",
+    "lat": 18.5314,
+    "lng": 73.8452
+  },
+  {
+    "name": "Indrayani Nagar",
+    "lat": 18.6423,
+    "lng": 73.7780
+  },
+  {
+    "name": "Inorbit Mall Wakad",
+    "lat": 18.5972,
+    "lng": 73.7683
+  },
+  {
+    "name": "Ishanya Mall Hadapsar",
+    "lat": 18.5027,
+    "lng": 73.9310
+  },
+  {
+    "name": "ISRO Pune",
+    "lat": 18.5259,
+    "lng": 73.7956
+  },
+  {
+    "name": "IT Park Kharadi (EON Free Zone)",
+    "lat": 18.5513,
+    "lng": 73.9443
+  },
+  {
+    "name": "Jambhulwadi",
+    "lat": 18.4553,
+    "lng": 73.8477
+  },
+  {
+    "name": "Jangli Maharaj Road",
+    "lat": 18.5196,
+    "lng": 73.8483
+  },
+  {
+    "name": "Jehangir Hospital",
+    "lat": 18.5236,
+    "lng": 73.8704
+  },
+  {
+    "name": "Jejuri",
+    "lat": 18.2718,
+    "lng": 74.1547
+  },
+  {
+    "name": "Juna Bazar",
+    "lat": 18.5165,
+    "lng": 73.8572
+  },
+  {
+    "name": "Kalewadi",
+    "lat": 18.6100,
+    "lng": 73.7895
+  },
+  {
+    "name": "Kalyani Nagar",
+    "lat": 18.5460,
+    "lng": 73.9009
+  },
+  {
+    "name": "Kapurhol",
+    "lat": 18.5742,
+    "lng": 73.7564
+  },
+  {
+    "name": "Karve Nagar",
+    "lat": 18.5000,
+    "lng": 73.8236
+  },
+  {
+    "name": "Karve Road",
+    "lat": 18.5074,
+    "lng": 73.8177
+  },
+  {
+    "name": "Kasarwadi",
+    "lat": 18.6138,
+    "lng": 73.8103
+  },
+  {
+    "name": "Kasba Ganapati Temple",
+    "lat": 18.5196,
+    "lng": 73.8559
+  },
+  {
+    "name": "Kasba Peth",
+    "lat": 18.5196,
+    "lng": 73.8549
+  },
+  {
+    "name": "Katraj",
+    "lat": 18.4503,
+    "lng": 73.8636
+  },
+  {
+    "name": "Katraj Bus Stand",
+    "lat": 18.4519,
+    "lng": 73.8648
+  },
+  {
+    "name": "Katraj Zoo (Rajiv Gandhi Zoological Park)",
+    "lat": 18.4503,
+    "lng": 73.8620
+  },
+  {
+    "name": "KEM Hospital Rasta Peth",
+    "lat": 18.5091,
+    "lng": 73.8623
+  },
+  {
+    "name": "Khadakwasla",
+    "lat": 18.4416,
+    "lng": 73.7721
+  },
+  {
+    "name": "Khadakwasla Dam",
+    "lat": 18.4366,
+    "lng": 73.7665
+  },
+  {
+    "name": "Khadki",
+    "lat": 18.5680,
+    "lng": 73.8580
+  },
+  {
+    "name": "Khadki Bazar",
+    "lat": 18.5686,
+    "lng": 73.8561
+  },
+  {
+    "name": "Khadki Railway Station",
+    "lat": 18.5684,
+    "lng": 73.8596
+  },
+  {
+    "name": "Kharadi",
+    "lat": 18.5520,
+    "lng": 73.9457
+  },
+  {
+    "name": "Kharadi Bypass",
+    "lat": 18.5501,
+    "lng": 73.9486
+  },
+  {
+    "name": "Kiwale",
+    "lat": 18.6327,
+    "lng": 73.7560
+  },
+  {
+    "name": "Kondhwa",
+    "lat": 18.4699,
+    "lng": 73.8918
+  },
+  {
+    "name": "Kondhwa Budruk",
+    "lat": 18.4630,
+    "lng": 73.8889
+  },
+  {
+    "name": "Kondhwa Khurd",
+    "lat": 18.4729,
+    "lng": 73.8941
+  },
+  {
+    "name": "Koregaon Park",
+    "lat": 18.5362,
+    "lng": 73.8940
+  },
+  {
+    "name": "Kothrud",
+    "lat": 18.5074,
+    "lng": 73.8077
+  },
+  {
+    "name": "Kothrud Depot",
+    "lat": 18.5038,
+    "lng": 73.8087
+  },
+  {
+    "name": "Kudalwadi",
+    "lat": 18.6463,
+    "lng": 73.7798
+  },
+  {
+    "name": "Kumar Pacific Mall",
+    "lat": 18.5168,
+    "lng": 73.8758
+  },
+  {
+    "name": "Lal Mahal",
+    "lat": 18.5204,
+    "lng": 73.8553
+  },
+  {
+    "name": "Lavale",
+    "lat": 18.5616,
+    "lng": 73.7420
+  },
+  {
+    "name": "Lavasa",
+    "lat": 18.4066,
+    "lng": 73.5122
+  },
+  {
+    "name": "Law College Road",
+    "lat": 18.5183,
+    "lng": 73.8300
+  },
+  {
+    "name": "Laxmi Road",
+    "lat": 18.5163,
+    "lng": 73.8572
+  },
+  {
+    "name": "Lohegaon",
+    "lat": 18.5945,
+    "lng": 73.9089
+  },
+  {
+    "name": "Lohegaon Airport",
+    "lat": 18.5822,
+    "lng": 73.9197
+  },
+  {
+    "name": "Lokmanyanagar",
+    "lat": 18.5027,
+    "lng": 73.8077
+  },
+  {
+    "name": "Loni Kalbhor",
+    "lat": 18.4769,
+    "lng": 74.0176
+  },
+  {
+    "name": "Lonikand",
+    "lat": 18.5373,
+    "lng": 73.9842
+  },
+  {
+    "name": "Lulla Nagar",
+    "lat": 18.5100,
+    "lng": 73.8891
+  },
+  {
+    "name": "Magarpatta City",
+    "lat": 18.5128,
+    "lng": 73.9259
+  },
+  {
+    "name": "Magarpatta Cybercity",
+    "lat": 18.5133,
+    "lng": 73.9272
+  },
+  {
+    "name": "Mahalunge",
+    "lat": 18.5800,
+    "lng": 73.7500
+  },
+  {
+    "name": "Mahatma Phule Museum",
+    "lat": 18.5204,
+    "lng": 73.8571
+  },
+  {
+    "name": "Mangalwar Peth",
+    "lat": 18.5143,
+    "lng": 73.8631
+  },
+  {
+    "name": "Manjari",
+    "lat": 18.4997,
+    "lng": 73.9568
+  },
+  {
+    "name": "Manjari Road",
+    "lat": 18.5010,
+    "lng": 73.9490
+  },
+  {
+    "name": "Market Yard",
+    "lat": 18.4967,
+    "lng": 73.8573
+  },
+  {
+    "name": "MIT College of Engineering Kothrud",
+    "lat": 18.4969,
+    "lng": 73.8076
+  },
+  {
+    "name": "Model Colony",
+    "lat": 18.5324,
+    "lng": 73.8353
+  },
+  {
+    "name": "Modern College Shivajinagar",
+    "lat": 18.5296,
+    "lng": 73.8477
+  },
+  {
+    "name": "Mohammedwadi",
+    "lat": 18.4760,
+    "lng": 73.9067
+  },
+  {
+    "name": "Moshi",
+    "lat": 18.6573,
+    "lng": 73.8446
+  },
+  {
+    "name": "Mundhwa",
+    "lat": 18.5229,
+    "lng": 73.9147
+  },
+  {
+    "name": "Mukundnagar",
+    "lat": 18.5005,
+    "lng": 73.8776
+  },
+  {
+    "name": "Nagar Road",
+    "lat": 18.5460,
+    "lng": 73.9192
+  },
+  {
+    "name": "Nana Peth",
+    "lat": 18.5143,
+    "lng": 73.8631
+  },
+  {
+    "name": "Nanded City",
+    "lat": 18.4567,
+    "lng": 73.8074
+  },
+  {
+    "name": "Narayan Peth",
+    "lat": 18.5148,
+    "lng": 73.8547
+  },
+  {
+    "name": "Narhe",
+    "lat": 18.4676,
+    "lng": 73.8214
+  },
+  {
+    "name": "National Defence Academy (NDA)",
+    "lat": 18.4917,
+    "lng": 73.7438
+  },
+  {
+    "name": "Navsahyadri College",
+    "lat": 18.5324,
+    "lng": 73.8297
+  },
+  {
+    "name": "NCL Pune (National Chemical Laboratory)",
+    "lat": 18.5218,
+    "lng": 73.8097
+  },
+  {
+    "name": "NDA Road Warje",
+    "lat": 18.4820,
+    "lng": 73.8168
+  },
+  {
+    "name": "Nehru Stadium",
+    "lat": 18.5196,
+    "lng": 73.8617
+  },
+  {
+    "name": "New Sangvi",
+    "lat": 18.5784,
+    "lng": 73.8099
+  },
+  {
+    "name": "NIBM Road",
+    "lat": 18.4760,
+    "lng": 73.9004
+  },
+  {
+    "name": "Nigdi",
+    "lat": 18.6572,
+    "lng": 73.7679
+  },
+  {
+    "name": "Okayama Friendship Garden",
+    "lat": 18.5183,
+    "lng": 73.8234
+  },
+  {
+    "name": "Old Mumbai Highway",
+    "lat": 18.5974,
+    "lng": 73.7437
+  },
+  {
+    "name": "Osho Ashram",
+    "lat": 18.5362,
+    "lng": 73.8956
+  },
+  {
+    "name": "Panmala",
+    "lat": 18.4605,
+    "lng": 73.8101
+  },
+  {
+    "name": "Pashan",
+    "lat": 18.5259,
+    "lng": 73.7956
+  },
+  {
+    "name": "Pashan Lake",
+    "lat": 18.5313,
+    "lng": 73.7908
+  },
+  {
+    "name": "Parvati Hill",
+    "lat": 18.4975,
+    "lng": 73.8538
+  },
+  {
+    "name": "Parvati Gaon",
+    "lat": 18.4979,
+    "lng": 73.8497
+  },
+  {
+    "name": "Paud Road",
+    "lat": 18.5074,
+    "lng": 73.7946
+  },
+  {
+    "name": "Peshwa Road",
+    "lat": 18.5165,
+    "lng": 73.8536
+  },
+  {
+    "name": "Phoenix Marketcity",
+    "lat": 18.5614,
+    "lng": 73.9157
+  },
+  {
+    "name": "Phursungi",
+    "lat": 18.4884,
+    "lng": 73.9414
+  },
+  {
+    "name": "Pimple Gurav",
+    "lat": 18.5760,
+    "lng": 73.8045
+  },
+  {
+    "name": "Pimple Nilakh",
+    "lat": 18.5988,
+    "lng": 73.7960
+  },
+  {
+    "name": "Pimple Saudagar",
+    "lat": 18.6028,
+    "lng": 73.7880
+  },
+  {
+    "name": "Pimpri",
+    "lat": 18.6187,
+    "lng": 73.7989
+  },
+  {
+    "name": "Pimpri Colony",
+    "lat": 18.6230,
+    "lng": 73.8027
+  },
+  {
+    "name": "Pimpri Railway Station",
+    "lat": 18.6198,
+    "lng": 73.8003
+  },
+  {
+    "name": "Pirangut",
+    "lat": 18.5048,
+    "lng": 73.6870
+  },
+  {
+    "name": "Prabhat Road",
+    "lat": 18.5176,
+    "lng": 73.8344
+  },
+  {
+    "name": "Pulgate",
+    "lat": 18.5030,
+    "lng": 73.8627
+  },
+  {
+    "name": "Pune Airport (Lohegaon)",
+    "lat": 18.5822,
+    "lng": 73.9197
+  },
+  {
+    "name": "Pune Cantonment",
+    "lat": 18.5168,
+    "lng": 73.8758
+  },
+  {
+    "name": "Pune Central Mall",
+    "lat": 18.5221,
+    "lng": 73.8416
+  },
+  {
+    "name": "Pune Junction Railway Station",
+    "lat": 18.5286,
+    "lng": 73.8727
+  },
+  {
+    "name": "Pune University",
+    "lat": 18.5593,
+    "lng": 73.8144
+  },
+  {
+    "name": "Punawale",
+    "lat": 18.6063,
+    "lng": 73.7592
+  },
+  {
+    "name": "Purandar Fort",
+    "lat": 18.2820,
+    "lng": 74.0877
+  },
+  {
+    "name": "Rahatani",
+    "lat": 18.6062,
+    "lng": 73.7938
+  },
+  {
+    "name": "Raja Dinkar Kelkar Museum",
+    "lat": 18.5165,
+    "lng": 73.8541
+  },
+  {
+    "name": "Rajgad Fort",
+    "lat": 18.2487,
+    "lng": 73.6826
+  },
+  {
+    "name": "Rajgurunagar",
+    "lat": 18.8605,
+    "lng": 73.8845
+  },
+  {
+    "name": "Range Hills",
+    "lat": 18.5680,
+    "lng": 73.8590
+  },
+  {
+    "name": "Ranka Hospital",
+    "lat": 18.5380,
+    "lng": 73.8938
+  },
+  {
+    "name": "Rasta Peth",
+    "lat": 18.5091,
+    "lng": 73.8591
+  },
+  {
+    "name": "Ravet",
+    "lat": 18.6388,
+    "lng": 73.7406
+  },
+  {
+    "name": "Raviwar Peth",
+    "lat": 18.5148,
+    "lng": 73.8584
+  },
+  {
+    "name": "Ruby Hall Clinic Sassoon Road",
+    "lat": 18.5236,
+    "lng": 73.8704
+  },
+  {
+    "name": "Ruby Hall Clinic Wanowrie",
+    "lat": 18.4948,
+    "lng": 73.8953
+  },
+  {
+    "name": "Sadashiv Peth",
+    "lat": 18.5143,
+    "lng": 73.8506
+  },
+  {
+    "name": "Sahakarnagar",
+    "lat": 18.4928,
+    "lng": 73.8603
+  },
+  {
+    "name": "Sahyadri Hospital Karve Road",
+    "lat": 18.5259,
+    "lng": 73.8079
+  },
+  {
+    "name": "Salisbury Park",
+    "lat": 18.5027,
+    "lng": 73.8870
+  },
+  {
+    "name": "Sancheti Hospital",
+    "lat": 18.5301,
+    "lng": 73.8485
+  },
+  {
+    "name": "Sangamwadi",
+    "lat": 18.5467,
+    "lng": 73.8762
+  },
+  {
+    "name": "Sangvi",
+    "lat": 18.5784,
+    "lng": 73.8153
+  },
+  {
+    "name": "Saras Baug",
+    "lat": 18.5001,
+    "lng": 73.8524
+  },
+  {
+    "name": "Satara Road",
+    "lat": 18.4782,
+    "lng": 73.8516
+  },
+  {
+    "name": "Saswad",
+    "lat": 18.3507,
+    "lng": 74.0302
+  },
+  {
+    "name": "Seasons Mall Hadapsar",
+    "lat": 18.5024,
+    "lng": 73.9305
+  },
+  {
+    "name": "Senapati Bapat Road",
+    "lat": 18.5322,
+    "lng": 73.8480
+  },
+  {
+    "name": "SGS Mall MG Road",
+    "lat": 18.5205,
+    "lng": 73.8589
+  },
+  {
+    "name": "Shaniwar Peth",
+    "lat": 18.5196,
+    "lng": 73.8520
+  },
+  {
+    "name": "Shaniwar Wada",
+    "lat": 18.5196,
+    "lng": 73.8557
+  },
+  {
+    "name": "Shankar Sheth Road",
+    "lat": 18.5148,
+    "lng": 73.8631
+  },
+  {
+    "name": "Shivajinagar",
+    "lat": 18.5314,
+    "lng": 73.8446
+  },
+  {
+    "name": "Shivajinagar Railway Station",
+    "lat": 18.5296,
+    "lng": 73.8467
+  },
+  {
+    "name": "Sinhagad Fort",
+    "lat": 18.3663,
+    "lng": 73.7549
+  },
+  {
+    "name": "Sinhagad Road",
+    "lat": 18.4751,
+    "lng": 73.8201
+  },
+  {
+    "name": "Solapur Road",
+    "lat": 18.4760,
+    "lng": 73.9004
+  },
+  {
+    "name": "SP College",
+    "lat": 18.5196,
+    "lng": 73.8409
+  },
+  {
+    "name": "Sus Road",
+    "lat": 18.5347,
+    "lng": 73.7748
+  },
+  {
+    "name": "Sus Village",
+    "lat": 18.5327,
+    "lng": 73.7700
+  },
+  {
+    "name": "Swargate",
+    "lat": 18.5005,
+    "lng": 73.8571
+  },
+  {
+    "name": "Swargate Bus Stand",
+    "lat": 18.5001,
+    "lng": 73.8568
+  },
+  {
+    "name": "Swargate Metro Station",
+    "lat": 18.5008,
+    "lng": 73.8561
+  },
+  {
+    "name": "Symbiosis International University",
+    "lat": 18.5183,
+    "lng": 73.8231
+  },
+  {
+    "name": "Tadiwala Road",
+    "lat": 18.5236,
+    "lng": 73.8763
+  },
+  {
+    "name": "Talegaon Dabhade",
+    "lat": 18.7321,
+    "lng": 73.6741
+  },
+  {
+    "name": "Talawade",
+    "lat": 18.6336,
+    "lng": 73.7800
+  },
+  {
+    "name": "Talawade IT Park",
+    "lat": 18.6295,
+    "lng": 73.7785
+  },
+  {
+    "name": "Tathawade",
+    "lat": 18.6136,
+    "lng": 73.7625
+  },
+  {
+    "name": "Thergaon",
+    "lat": 18.6078,
+    "lng": 73.7883
+  },
+  {
+    "name": "Tilak Road",
+    "lat": 18.5148,
+    "lng": 73.8617
+  },
+  {
+    "name": "Tingre Nagar",
+    "lat": 18.5763,
+    "lng": 73.9093
+  },
+  {
+    "name": "Tukai Temple Dhayari",
+    "lat": 18.4618,
+    "lng": 73.8052
+  },
+  {
+    "name": "Undri",
+    "lat": 18.4580,
+    "lng": 73.9110
+  },
+  {
+    "name": "University Road",
+    "lat": 18.5501,
+    "lng": 73.8213
+  },
+  {
+    "name": "Upper Indira Nagar",
+    "lat": 18.5090,
+    "lng": 73.9040
+  },
+  {
+    "name": "Upper Kondhwa",
+    "lat": 18.4750,
+    "lng": 73.8960
+  },
+  {
+    "name": "Uruli Kanchan",
+    "lat": 18.4388,
+    "lng": 74.0127
+  },
+  {
+    "name": "Vadgaon Budruk",
+    "lat": 18.4700,
+    "lng": 73.8077
+  },
+  {
+    "name": "Vadgaon Sheri",
+    "lat": 18.5448,
+    "lng": 73.9238
+  },
+  {
+    "name": "Vetal Hill (Vetal Tekdi)",
+    "lat": 18.5196,
+    "lng": 73.7989
+  },
+  {
+    "name": "Vidyanagar",
+    "lat": 18.5429,
+    "lng": 73.8459
+  },
+  {
+    "name": "Vijay Nagar Kothrud",
+    "lat": 18.5048,
+    "lng": 73.8105
+  },
+  {
+    "name": "Viman Nagar",
+    "lat": 18.5679,
+    "lng": 73.9143
+  },
+  {
+    "name": "Vishrantwadi",
+    "lat": 18.5763,
+    "lng": 73.8989
+  },
+  {
+    "name": "Vishrambaug Wada",
+    "lat": 18.5179,
+    "lng": 73.8544
+  },
+  {
+    "name": "Vitthalwadi",
+    "lat": 18.4660,
+    "lng": 73.9036
+  },
+  {
+    "name": "Wadgaon Sheri",
+    "lat": 18.5448,
+    "lng": 73.9238
+  },
+  {
+    "name": "Wadia College",
+    "lat": 18.5243,
+    "lng": 73.8746
+  },
+  {
+    "name": "Wagholi",
+    "lat": 18.5617,
+    "lng": 73.9760
+  },
+  {
+    "name": "Wakad",
+    "lat": 18.5974,
+    "lng": 73.7681
+  },
+  {
+    "name": "Walhekarwadi",
+    "lat": 18.6168,
+    "lng": 73.7893
+  },
+  {
+    "name": "Wanowrie",
+    "lat": 18.4866,
+    "lng": 73.8961
+  },
+  {
+    "name": "Wanwadi",
+    "lat": 18.4960,
+    "lng": 73.8947
+  },
+  {
+    "name": "Warje",
+    "lat": 18.4820,
+    "lng": 73.8239
+  },
+  {
+    "name": "Warje Malwadi",
+    "lat": 18.4790,
+    "lng": 73.8200
+  },
+  {
+    "name": "Westend Mall Aundh",
+    "lat": 18.5588,
+    "lng": 73.8073
+  },
+  {
+    "name": "Yerwada",
+    "lat": 18.5536,
+    "lng": 73.8982
+  },
+  {
+    "name": "Yewalewadi",
+    "lat": 18.4623,
+    "lng": 73.9152
+  },
+  {
+    "name": "Infosys BPO Hinjewadi",
+    "lat": 18.5919,
+    "lng": 73.7384
+  },
+  {
+    "name": "Wipro Technologies Hinjewadi",
+    "lat": 18.5912,
+    "lng": 73.7391
+  },
+  {
+    "name": "TCS Hinjewadi",
+    "lat": 18.5908,
+    "lng": 73.7395
+  },
+  {
+    "name": "Cognizant Hinjewadi",
+    "lat": 18.5920,
+    "lng": 73.7380
+  },
+  {
+    "name": "Accenture Hinjewadi",
+    "lat": 18.5915,
+    "lng": 73.7375
+  },
+  {
+    "name": "IBM Pune Hinjewadi",
+    "lat": 18.5905,
+    "lng": 73.7370
+  },
+  {
+    "name": "Capgemini Hinjewadi",
+    "lat": 18.5925,
+    "lng": 73.7388
+  },
+  {
+    "name": "Oracle Pune Hinjewadi",
+    "lat": 18.5910,
+    "lng": 73.7385
+  },
+  {
+    "name": "Tech Mahindra Hinjewadi",
+    "lat": 18.5918,
+    "lng": 73.7390
+  },
+  {
+    "name": "Qualcomm Hinjewadi",
+    "lat": 18.5901,
+    "lng": 73.7365
+  },
+  {
+    "name": "Persistent Systems Senapati Bapat Road",
+    "lat": 18.5322,
+    "lng": 73.8480
+  },
+  {
+    "name": "KPIT Technologies Pune",
+    "lat": 18.5590,
+    "lng": 73.7867
+  },
+  {
+    "name": "Zensar Technologies Kharadi",
+    "lat": 18.5520,
+    "lng": 73.9457
+  },
+  {
+    "name": "Honeywell Magarpatta",
+    "lat": 18.5128,
+    "lng": 73.9259
+  },
+  {
+    "name": "Cummins India Kothrud",
+    "lat": 18.5060,
+    "lng": 73.8095
+  },
+  {
+    "name": "Bajaj Auto Akurdi",
+    "lat": 18.6423,
+    "lng": 73.7648
+  },
+  {
+    "name": "Tata Motors Chinchwad",
+    "lat": 18.6273,
+    "lng": 73.7990
+  },
+  {
+    "name": "Force Motors Pimpri",
+    "lat": 18.6187,
+    "lng": 73.7989
+  },
+  {
+    "name": "ThoughtWorks Kalyani Nagar",
+    "lat": 18.5460,
+    "lng": 73.9009
+  },
+  {
+    "name": "Syntel Hinjewadi",
+    "lat": 18.5916,
+    "lng": 73.7376
+  },
+  {
+    "name": "L&T Infotech Pune",
+    "lat": 18.5920,
+    "lng": 73.7382
+  },
+  {
+    "name": "Mphasis Hinjewadi",
+    "lat": 18.5906,
+    "lng": 73.7378
+  },
+  {
+    "name": "Hexaware Technologies Hinjewadi",
+    "lat": 18.5911,
+    "lng": 73.7368
+  },
+  {
+    "name": "Deutsche Bank Pune Baner",
+    "lat": 18.5590,
+    "lng": 73.7867
+  },
+  {
+    "name": "Barclays Pune Magarpatta",
+    "lat": 18.5128,
+    "lng": 73.9262
+  },
+  {
+    "name": "HSBC Pune Magarpatta",
+    "lat": 18.5131,
+    "lng": 73.9268
+  },
+  {
+    "name": "Credit Suisse Pune Kalyani Nagar",
+    "lat": 18.5465,
+    "lng": 73.9015
+  },
+  {
+    "name": "BNY Mellon Pune Magarpatta",
+    "lat": 18.5135,
+    "lng": 73.9275
+  },
+  {
+    "name": "JP Morgan Baner",
+    "lat": 18.5597,
+    "lng": 73.7878
+  },
+  {
+    "name": "Fiserv Hinjewadi",
+    "lat": 18.5904,
+    "lng": 73.7372
+  },
+  {
+    "name": "NVIDIA Pune Kalyani Nagar",
+    "lat": 18.5458,
+    "lng": 73.9020
+  },
+  {
+    "name": "SAP Labs Hinjewadi",
+    "lat": 18.5893,
+    "lng": 73.7350
+  },
+  {
+    "name": "Siemens Hinjewadi",
+    "lat": 18.5902,
+    "lng": 73.7355
+  },
+  {
+    "name": "Bosch Hinjewadi",
+    "lat": 18.5885,
+    "lng": 73.7340
+  },
+  {
+    "name": "Mahindra & Mahindra Kothrud",
+    "lat": 18.5074,
+    "lng": 73.8077
+  },
+  {
+    "name": "Bharat Forge Mundhwa",
+    "lat": 18.5120,
+    "lng": 73.9100
+  },
+  {
+    "name": "Thermax Baner",
+    "lat": 18.5590,
+    "lng": 73.7867
+  },
+  {
+    "name": "Bishop's School Camp",
+    "lat": 18.5168,
+    "lng": 73.8758
+  },
+  {
+    "name": "Bishop's School Kalyani Nagar",
+    "lat": 18.5453,
+    "lng": 73.8997
+  },
+  {
+    "name": "The Orchid School Baner",
+    "lat": 18.5590,
+    "lng": 73.7867
+  },
+  {
+    "name": "Symbiosis School Viman Nagar",
+    "lat": 18.5651,
+    "lng": 73.9145
+  },
+  {
+    "name": "St. Vincent's High School Camp",
+    "lat": 18.5177,
+    "lng": 73.8749
+  },
+  {
+    "name": "Delhi Public School Lohegaon",
+    "lat": 18.5945,
+    "lng": 73.9089
+  },
+  {
+    "name": "Vikhe Patil Memorial School",
+    "lat": 18.5460,
+    "lng": 73.9009
+  },
+  {
+    "name": "The Indus School Baner",
+    "lat": 18.5597,
+    "lng": 73.7878
+  },
+  {
+    "name": "VIBGYOR School Wagholi",
+    "lat": 18.5617,
+    "lng": 73.9760
+  },
+  {
+    "name": "Akshara International School Pashan",
+    "lat": 18.5259,
+    "lng": 73.7956
+  },
+  {
+    "name": "Ryan International School Baner",
+    "lat": 18.5576,
+    "lng": 73.7860
+  },
+  {
+    "name": "Sanskriti School Mundhwa",
+    "lat": 18.5229,
+    "lng": 73.9147
+  },
+  {
+    "name": "Kendriya Vidyalaya Khadki",
+    "lat": 18.5680,
+    "lng": 73.8580
+  },
+  {
+    "name": "Kendriya Vidyalaya AFMC",
+    "lat": 18.5651,
+    "lng": 73.8714
+  },
+  {
+    "name": "Podar International School Wakad",
+    "lat": 18.5974,
+    "lng": 73.7681
+  },
+  {
+    "name": "Euro School Undri",
+    "lat": 18.4580,
+    "lng": 73.9110
+  },
+  {
+    "name": "DPS Pune Hadapsar",
+    "lat": 18.4995,
+    "lng": 73.9256
+  },
+  {
+    "name": "Dorabjee's Royale Heritage Mall",
+    "lat": 18.5056,
+    "lng": 73.8740
+  },
+  {
+    "name": "Xion Mall Hinjewadi",
+    "lat": 18.5913,
+    "lng": 73.7379
+  },
+  {
+    "name": "Pune Central FC Road",
+    "lat": 18.5221,
+    "lng": 73.8416
+  },
+  {
+    "name": "City One Mall Bibvewadi",
+    "lat": 18.4874,
+    "lng": 73.8549
+  },
+  {
+    "name": "Pavilion Mall Kharadi",
+    "lat": 18.5520,
+    "lng": 73.9457
+  },
+  {
+    "name": "DMart Wakad",
+    "lat": 18.5974,
+    "lng": 73.7684
+  },
+  {
+    "name": "DMart Kothrud",
+    "lat": 18.5074,
+    "lng": 73.8077
+  },
+  {
+    "name": "Big Bazaar Aundh",
+    "lat": 18.5590,
+    "lng": 73.8077
+  },
+  {
+    "name": "Westside Laxmi Road",
+    "lat": 18.5163,
+    "lng": 73.8572
+  }
 ]

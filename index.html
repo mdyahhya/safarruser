@@ -386,7 +386,10 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             Where to?
           </div>
-          <span style="font-size:.8rem;color:var(--gray);font-weight:700;cursor:pointer;padding:4px 8px;border-radius:6px" onclick="clearInputs()">🔄 Clear All</span>
+          <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--gray);font-weight:700;cursor:pointer;padding:6px 10px;background:var(--off-white);border-radius:10px;transition:all .2s" onclick="clearInputs()" onactive="transform:scale(.95)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            Clear All
+          </div>
         </div>
         <div class="location-picker">
           <div class="loc-line"></div>
@@ -581,9 +584,13 @@
     }
 
     function selectLocation(type, loc) {
-      document.getElementById(`inp-${type}`).value = loc;
-      document.getElementById(`dropdown-${type}`).style.display = 'none';
-      if (type === 'to') estimateFare();
+      const inp = document.getElementById(`inp-${type}`);
+      if (inp) inp.value = loc;
+      const dd = document.getElementById(`dropdown-${type}`);
+      if (dd) dd.style.display = 'none';
+      
+      // CRITICAL: Always re-calculate fare whenever ANY location changes
+      estimateFare();
     }
 
     function getDistance(lat1, lon1, lat2, lon2) {
