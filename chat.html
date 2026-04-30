@@ -493,6 +493,19 @@
       window.addEventListener('resize', setVh);
     }
 
+    function showToast(m) {
+      let t = document.getElementById('_t');
+      if (!t) { 
+        t = document.createElement('div'); 
+        t.id = '_t'; 
+        t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#0a1628;color:#fff;padding:12px 24px;border-radius:50px;font-size:.9rem;z-index:99999;transition:opacity .3s;pointer-events:none;font-weight:600;box-shadow:0 4px 15px rgba(0,0,0,0.2)'; 
+        document.body.appendChild(t); 
+      }
+      t.textContent = m; 
+      t.style.opacity = '1';
+      setTimeout(() => t.style.opacity = '0', 3000);
+    }
+
     // Back button
     window.history.pushState({page:1}, '', '');
     window.onpopstate = () => window.location.href = 'index.html';
