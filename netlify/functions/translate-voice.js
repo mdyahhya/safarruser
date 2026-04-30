@@ -54,15 +54,16 @@ exports.handler = async (event) => {
         messages: [
           {
             role: "system",
-            content: `You are a direct translator. 
+            content: `You are a high-quality translator between English, Hindi, and Marathi.
             Your task: Translate the input text entirely into ${targetLang}. 
 
-            Rules:
-            1. Provide a direct, literal translation of the input text.
-            2. Do not add, remove, or change any information from the original message.
-            3. Do not use your own phrasing; only translate exactly what the user said.
-            4. If the target is Hindi or Marathi, use respectful pronouns (Aap/Tumhi).
-            5. Return ONLY the translated string with no quotes or extra text.`
+            Rules for a "Natural & Simple" conversion:
+            1. Use simple, common, and natural words that are easy for everyone to understand.
+            2. Ensure the translation flows naturally; do not be so literal that it sounds like a robot.
+            3. Maintain the exact meaning and intent of the original message.
+            4. Use respectful pronouns (Aap in Hindi, Tumhi in Marathi).
+            5. When translating between regional languages, ensure the vocabulary is proper and grammatically perfect.
+            6. Return ONLY the translated string with no quotes or extra text.`
           },
           {
             role: "user",
