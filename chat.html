@@ -708,15 +708,20 @@
       // Different audio was playing → stop it
       stopAudio();
 
-      currentAudio = new Audio(url);
+      currentAudio = new Audio();
+      currentAudio.crossOrigin = "anonymous";
+      currentAudio.src = url;
+      currentAudio.load();
+      
       activePlayBtn = btn;
       btn.innerHTML = PAUSE_ICON;
 
-      currentAudio.play().catch(() => {
+      currentAudio.play().catch(err => {
+        console.error('Audio playback failed:', err);
         btn.innerHTML = PLAY_ICON;
         activePlayBtn = null;
         currentAudio = null;
-        showToast('Playback failed');
+        showToast('Playback failed: ' + (err.message || 'Check connection'));
       });
 
       currentAudio.onended = () => {
