@@ -471,6 +471,14 @@
     const PLAY_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
     const PAUSE_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
 
+    // Preload speech voices on first interaction (fixes desktop Chrome silent fail)
+    let _voicesReady = false;
+    function ensureVoices(cb) {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length) { _voicesReady = true; cb(); return; }
+      window.speechSynthesis.onvoiceschanged = () => { _voicesReady = true; cb(); };
+    }
+
     // ── Init ─────────────────────────────────────────────────────────────────
     window.onload = async () => {
       if (!APP.user) {
@@ -680,8 +688,8 @@
           showToast('Could not play translated audio');
         };
 
-        window.speechSynthesis.speak(utterance);
-        return; // ✅ Always return — original audio never plays on second click
+        ensureVoices(() => window.speechSynthesis.speak(utterance));
+        return;
       }
 
       // SENDER or no translation: play original audio file
@@ -723,18 +731,19 @@
       if (!text) return;
       if (activeSpeechBtn === btn) { stopSpeech(); return; }
       stopSpeech();
-
       activeSpeechBtn = btn || null;
 
       const utterance = new SpeechSynthesisUtterance(text);
-      const myLang = document.getElementById('my-lang').value;
-      utterance.lang = myLang === 'Hindi' ? 'hi-IN'
-        : myLang === 'Marathi' ? 'mr-IN' : 'en-IN';
+      // Driver file → use 'driver-lang' | Passenger file → use 'my-lang'
+      const myLang = document.getElementById('driver-lang')?.value
+        || document.getElementById('my-lang')?.value
+        || 'English';
+      utterance.lang = myLang === 'Hindi' ? 'hi-IN' : myLang === 'Marathi' ? 'mr-IN' : 'en-IN';
       utterance.rate = 0.9;
       utterance.onend = utterance.onerror = () => { activeSpeechBtn = null; };
-      window.speechSynthesis.speak(utterance);
-    }
 
+      ensureVoices(() => window.speechSynthesis.speak(utterance));
+    }
     function stopSpeech() {
       window.speechSynthesis.cancel();
       if (activeSpeechBtn) {
